@@ -1,0 +1,6 @@
+﻿  Game.cpp
+c:\users\riqui\documents\fib\vj\exlemmings\exlemmings\lemmings\02-lemming\sceneaux.h(11): warning C4005: 'CAMERA_WIDTH': redefinición de macro
+  c:\users\riqui\documents\fib\vj\exlemmings\exlemmings\lemmings\02-lemming\common_defs.h(5): note: vea la definición anterior de 'CAMERA_WIDTH'
+c:\users\riqui\documents\fib\vj\exlemmings\exlemmings\lemmings\02-lemming\sceneaux.h(12): warning C4005: 'CAMERA_HEIGHT': redefinición de macro
+  c:\users\riqui\documents\fib\vj\exlemmings\exlemmings\lemmings\02-lemming\common_defs.h(6): note: vea la definición anterior de 'CAMERA_HEIGHT'
+  02-Lemming.vcxproj -> C:\Users\Riqui\Documents\FIB\VJ\ExLemmings\ExLemmings\Lemmings\02-Lemming\Debug\02-Lemming.exe
