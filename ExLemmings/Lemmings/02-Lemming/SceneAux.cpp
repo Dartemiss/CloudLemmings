@@ -44,7 +44,7 @@ void SceneAux::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	accion = 1;
-	if(Game::instance().getKey(1)){
+	if(Game::instance().getKey(13)){
 		Game::instance().newAction(accion);
 	}
 }
