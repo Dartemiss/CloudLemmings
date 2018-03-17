@@ -22,9 +22,11 @@ bool Game::update(int deltaTime)
 		sceneaux.update(deltaTime);
 		break;
 	case 1:
+		if (hasWon()) bPlay = false;
 		scene.update(deltaTime);
 		break;
 	}
+
 	return bPlay;
 }
 
@@ -114,6 +116,17 @@ bool Game::getKey(int key) const
 bool Game::getSpecialKey(int key) const
 {
 	return specialKeys[key];
+}
+
+bool Game::hasWon()
+{
+	if (gstate == 1) {
+		if (scene.lemArrived()) {
+			return true;
+		}
+		else return false;
+	}
+	else return false;
 }
 
 

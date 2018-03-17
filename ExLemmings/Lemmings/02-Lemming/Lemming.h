@@ -19,6 +19,8 @@ public:
 	void render();
 	
 	void setMapMask(VariableTexture *mapMask);
+
+	glm::ivec2 getLemPos();
 	
 private:
 	int collisionFloor(int maxFall);

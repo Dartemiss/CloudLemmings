@@ -74,6 +74,13 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 		applyMask(mouseX, mouseY);
 }
 
+bool Scene::lemArrived()
+{
+	glm::ivec2 pos = lemming.getLemPos();
+	if (pos.x > 200) return true;
+	else return false;
+}
+
 void Scene::eraseMask(int mouseX, int mouseY)
 {
 	int posX, posY;
