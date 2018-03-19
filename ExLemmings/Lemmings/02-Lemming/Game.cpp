@@ -22,7 +22,7 @@ bool Game::update(int deltaTime)
 		sceneaux.update(deltaTime);
 		break;
 	case 1:
-		if (hasWon()) bPlay = false;
+		if (hasWon()) gstate = 0;
 		scene.update(deltaTime);
 		break;
 	}
