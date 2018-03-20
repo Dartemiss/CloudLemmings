@@ -7,7 +7,6 @@
 #include "Quad.h"
 #include "TexturedQuad.h"
 
-
 #define CAMERA_WIDTH 640
 #define CAMERA_HEIGHT 480
 
@@ -33,8 +32,8 @@ private:
 private:
 	int accion;
 	Quad * quad;
-	Texture texs[2];
-	TexturedQuad *texQuad[3];
+	Texture texs[2],imgFondo,imgCursor,imgPlay,imgPlaySelected;
+	TexturedQuad *texQuad[3],*fondo,*cursor,*play;
 	ShaderProgram simpleProgram, texProgram;
 	float currentTime;
 	glm::mat4 projection;

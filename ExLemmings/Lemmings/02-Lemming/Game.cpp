@@ -118,6 +118,10 @@ bool Game::getSpecialKey(int key) const
 	return specialKeys[key];
 }
 
+void Game::setSpecialKey(int key) {
+	specialKeyReleased(key);
+}
+
 bool Game::hasWon()
 {
 	if (gstate == 1) {

@@ -40,6 +40,7 @@ public:
 
 	bool getKey(int key) const;
 	bool getSpecialKey(int key) const;
+	void setSpecialKey(int key);
 
 	bool hasWon();
 
