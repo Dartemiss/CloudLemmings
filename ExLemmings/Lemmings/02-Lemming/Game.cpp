@@ -121,7 +121,7 @@ bool Game::getSpecialKey(int key) const
 bool Game::hasWon()
 {
 	if (gstate == 1) {
-		if (scene.lemArrived()) {
+		if (scene.lemArrived() == 10) {
 			return true;
 		}
 		else return false;

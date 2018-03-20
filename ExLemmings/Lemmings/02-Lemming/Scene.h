@@ -25,7 +25,7 @@ public:
 	
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton);
 
-	bool lemArrived();
+	int lemArrived();
 
 private:
 	void initShaders();
@@ -39,6 +39,11 @@ private:
 	ShaderProgram simpleTexProgram, maskedTexProgram;
 	float currentTime;
 	glm::mat4 projection;
+	vector<Lemming> listOflemmings;
+	float lastLemming;
+	int howmanyLem;
+	int lemmingsTotal;
+	int allCreatedLemm;
 	Lemming lemming;
 
 };

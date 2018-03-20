@@ -34,9 +34,15 @@ void Scene::init()
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
-	
-	lemming.init(glm::vec2(60, 30), simpleTexProgram);
-	lemming.setMapMask(&maskTexture);
+
+	for (int i = 0; i < 10; i++) {
+		lemming.init(glm::vec2(60, 30), simpleTexProgram);
+		lemming.setMapMask(&maskTexture);
+		listOflemmings.push_back(lemming);
+	}
+	lastLemming = 0;
+	howmanyLem = 0;
+	allCreatedLemm = 0;
 }
 
 //unsigned int x = 0;
@@ -44,7 +50,14 @@ void Scene::init()
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	lemming.update(deltaTime);
+	if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 10) {
+		lastLemming = currentTime;
+		++howmanyLem;
+		++allCreatedLemm;
+	}
+	for (int i = 0; i < howmanyLem; i++) {
+		listOflemmings[i].update(deltaTime);
+	}
 }
 
 void Scene::render()
@@ -63,7 +76,12 @@ void Scene::render()
 	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	modelview = glm::mat4(1.0f);
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
-	lemming.render();
+	
+
+	for (int i = 0; i < howmanyLem; i++) {
+		listOflemmings[i].render();
+	}
+
 }
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
@@ -74,11 +92,17 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 		applyMask(mouseX, mouseY);
 }
 
-bool Scene::lemArrived()
+int Scene::lemArrived()
 {
-	glm::ivec2 pos = lemming.getLemPos();
-	if (pos.x > 200) return true;
-	else return false;
+	for (int i = 0; i < howmanyLem; i++) {
+		glm::ivec2 pos = listOflemmings[i].getLemPos();
+		if (pos.x > 200) {
+			++lemmingsTotal;
+			listOflemmings.erase(listOflemmings.begin() + i);
+			howmanyLem--;
+		}
+	}
+	return lemmingsTotal;
 }
 
 void Scene::eraseMask(int mouseX, int mouseY)
