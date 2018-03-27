@@ -7,6 +7,8 @@ void Game::init()
 {
 	bPlay = true;
 	gstate = 0;
+	paused = false;
+	fastmode = false;
 	bLeftMouse = bRightMouse = false;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	//scene.init();
@@ -23,7 +25,10 @@ bool Game::update(int deltaTime)
 		break;
 	case 1:
 		if (hasWon()) gstate = 0;
-		scene.update(deltaTime);
+		if (!paused) {
+			if (fastmode) scene.update(deltaTime*2);
+			else scene.update(deltaTime);	
+		}
 		break;
 	}
 
@@ -60,6 +65,14 @@ void Game::keyPressed(int key)
 		initSc();
 	else if (key == '0')
 		gstate = 0;
+	else if (key == 112 && !paused)
+		paused = true;
+	else if (key == 112 && paused)
+		paused = false;
+	else if (key == 102 && !fastmode)
+		fastmode = true;
+	else if (key == 102 && fastmode)
+		fastmode = false;
 	keys[key] = true;
 }
 

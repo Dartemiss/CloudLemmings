@@ -47,6 +47,8 @@ public:
 private:
 	bool bPlay;                       // Continue to play game?
 	int gstate;
+	bool paused;
+	bool fastmode;
 	Scene scene;                      // Scene to render
 	SceneAux sceneaux;
 	bool keys[256], specialKeys[256]; // Store key states so that 
