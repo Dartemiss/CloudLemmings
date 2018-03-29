@@ -24,11 +24,12 @@ public:
 	void render();
 	
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton);
-
+	void digging(int lem);
 	int lemArrived();
 
 private:
 	void initShaders();
+	void give_skill(int mouseX, int mouseY);
 	void eraseMask(int mouseX, int mouseY);
 	void applyMask(int mouseX, int mouseY);
 

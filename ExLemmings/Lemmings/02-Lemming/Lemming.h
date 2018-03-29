@@ -19,7 +19,7 @@ public:
 	void render();
 	
 	void setMapMask(VariableTexture *mapMask);
-
+	void change_state(int state);
 	glm::ivec2 getLemPos();
 	
 private:

@@ -25,10 +25,10 @@ void Scene::init()
 	initShaders();
 
 	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
-	colorTexture.loadFromFile("images/fun1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	colorTexture.setMinFilter(GL_NEAREST);
 	colorTexture.setMagFilter(GL_NEAREST);
-	maskTexture.loadFromFile("images/fun1_mask.png", TEXTURE_PIXEL_FORMAT_L);
+	maskTexture.loadFromFile("images/fun2_mask.png", TEXTURE_PIXEL_FORMAT_L);
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
@@ -86,8 +86,10 @@ void Scene::render()
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
 {
-	if(bLeftButton)
-		eraseMask(mouseX, mouseY);
+	if (bLeftButton) {
+		//eraseMask(mouseX, mouseY);
+		give_skill(mouseX, mouseY);
+	}
 	else if(bRightButton)
 		applyMask(mouseX, mouseY);
 }
@@ -104,6 +106,34 @@ int Scene::lemArrived()
 	}
 	return lemmingsTotal;
 }
+
+void Scene::digging(int lem) {
+	glm::ivec2 pos = listOflemmings[lem].getLemPos();
+	if (pos.x > 100) {
+		
+	}
+}
+
+void Scene::give_skill(int mouseX, int mouseY) {
+	int posX, posY;
+
+	// Transform from mouse coordinates to map coordinates
+	//   The map is enlarged 3 times and displaced 120 pixels
+	posX = mouseX / 3;
+	posY = mouseY / 3;
+
+	glm::ivec2 posMouse = glm::ivec2(posX, posY);
+	for (int i = 0; i < howmanyLem; i++) {
+		glm::ivec2 pos = listOflemmings[i].getLemPos();
+		bool xx = (pos.x - 10 < posMouse.x) && (pos.x + 10 > posMouse.x);
+		bool yy = (pos.y - 10 < posMouse.y) && (pos.y + 10 > posMouse.y);
+		//xx = yy = true;
+		if(xx && yy) {
+			listOflemmings[i].change_state(0);
+		}
+	}
+}
+
 
 void Scene::eraseMask(int mouseX, int mouseY)
 {

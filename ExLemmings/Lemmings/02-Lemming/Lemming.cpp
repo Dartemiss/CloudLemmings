@@ -132,6 +132,11 @@ void Lemming::setMapMask(VariableTexture *mapMask)
 	mask = mapMask;
 }
 
+void Lemming::change_state(int nstate) {
+	if (nstate == 0)
+		state = OPEN_STATE;
+}
+
 glm::ivec2 Lemming::getLemPos()
 {
 	glm::ivec2 pos = sprite->position();
