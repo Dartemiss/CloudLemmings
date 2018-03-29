@@ -19,8 +19,8 @@ enum LemmingAnims
 
 void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram)
 {
-	state = FALLING_RIGHT_STATE;
-	//state = OPEN_UMBRELLA;
+	//state = FALLING_RIGHT_STATE;
+	state = OPEN_STATE;
 	spritesheet.loadFromFile("images/mirror_lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMinFilter(GL_NEAREST);
 	spritesheet.setMagFilter(GL_NEAREST);
@@ -36,16 +36,16 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		for(int i=15; i>8; i--)
 			sprite->addKeyframe(WALKING_LEFT, glm::vec2(float(i) / 16.0f, 0.5 + 0.07142857143f*0));
 
-		sprite->setAnimationSpeed(OPEN_UMBRELLA, 12);
+		sprite->setAnimationSpeed(OPEN_UMBRELLA, 6);
 		for(int i=0; i<8; i++)
 			sprite->addKeyframe(OPEN_UMBRELLA, glm::vec2(float(i) / 16.0f, 0.07142857143f * 2/2));
 		
-		sprite->setAnimationSpeed(UMBRELLA, 12);
+		sprite->setAnimationSpeed(UMBRELLA, 6);
 		for (int i = 8; i<12; i++)
 			sprite->addKeyframe(UMBRELLA, glm::vec2(float(i) / 16.0f, 0.07142857143f * 2 / 2));
 		
-	sprite->changeAnimation(WALKING_RIGHT);
-	//sprite->changeAnimation(OPEN_UMBRELLA);
+	//sprite->changeAnimation(WALKING_RIGHT);
+	sprite->changeAnimation(OPEN_UMBRELLA);
 	sprite->setPosition(initialPosition);
 }
 
@@ -67,11 +67,13 @@ void Lemming::update(int deltaTime)
 		break;
 	case FALLING_RIGHT_STATE:
 		fall = collisionFloor(2);
-		if(fall > 0)
+		if (fall > 0) {
 			sprite->position() += glm::vec2(0, fall);
-		else
-			//sprite->changeAnimation(WALKING_RIGHT);
+		}
+		else {
+			sprite->changeAnimation(WALKING_RIGHT);
 			state = WALKING_RIGHT_STATE;
+		}
 		break;
 	case WALKING_LEFT_STATE:
 		sprite->position() += glm::vec2(-1, -1);
@@ -109,26 +111,14 @@ void Lemming::update(int deltaTime)
 				state = FALLING_RIGHT_STATE;
 		}
 		break;
-	case OPEN_UMBRELLA:
+	case OPEN_STATE:
 		fall = collisionFloor(2);
 		if (fall > 0) {
 			sprite->position() += glm::vec2(0, fall);
-			sprite->changeAnimation(UMBRELLA);
-			state = UMBRELLA;
 		}
-		else {
-			sprite->changeAnimation(WALKING_RIGHT);
-			state = WALKING_RIGHT_STATE;
-		}
-		break;
-	case UMBRELLA:
-		fall = collisionFloor(2);
-		if (fall > 0)
-			sprite->position() += glm::vec2(0, fall);
-		else
-			sprite->changeAnimation(WALKING_RIGHT);
-		state = WALKING_RIGHT_STATE;
-		break;
+		sprite->changeAnimation(UMBRELLA);
+		state = FALLING_RIGHT_STATE;
+
 	}
 }
 
@@ -177,7 +167,16 @@ bool Lemming::collision()
 	return true;
 }
 
+bool Lemming::collisionY()
+{
+	glm::ivec2 posBase = sprite->position() + glm::vec2(120, 0); // Add the map displacement
 
+	posBase += glm::ivec2(7, 9);
+	if ((mask->pixel(posBase.x, posBase.y) == 0) && (mask->pixel(posBase.x, posBase.y+1) == 0))
+		return false;
+
+	return true;
+}
 
 
 

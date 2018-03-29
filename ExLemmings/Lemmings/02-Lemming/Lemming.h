@@ -25,11 +25,12 @@ public:
 private:
 	int collisionFloor(int maxFall);
 	bool collision();
+	bool collisionY();
 	
 private:
 	enum LemmingState
 	{
-		WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE,DIGGING,OPEN_UMBRELLA,UMBRELLA
+		WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE,DIGGING_STATE,OPEN_STATE
 	};
 
 	LemmingState state;
