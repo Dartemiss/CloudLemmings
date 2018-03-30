@@ -22,7 +22,7 @@ public:
 	void change_state(int state);
 	glm::ivec2 getLemPos();
 	bool hasDied();
-	
+	int getState();
 	
 private:
 	int collisionFloor(int maxFall);

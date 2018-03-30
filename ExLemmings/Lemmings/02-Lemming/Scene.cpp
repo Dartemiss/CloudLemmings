@@ -25,10 +25,10 @@ void Scene::init()
 	initShaders();
 
 	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
-	colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	colorTexture.loadFromFile("images/fun1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	colorTexture.setMinFilter(GL_NEAREST);
 	colorTexture.setMagFilter(GL_NEAREST);
-	maskTexture.loadFromFile("images/fun2_mask.png", TEXTURE_PIXEL_FORMAT_L);
+	maskTexture.loadFromFile("images/fun1_mask.png", TEXTURE_PIXEL_FORMAT_L);
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
@@ -58,12 +58,17 @@ void Scene::update(int deltaTime)
 		++allCreatedLemm;
 	}
 	for (int i = 0; i < howmanyLem; i++) {
+		if (listOflemmings[i].getState() == 1) {
+			glm::ivec2 pos = listOflemmings[i].getLemPos();
+			eraseMask(pos.x, pos.y);
+		}
 		if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
 			howmanyLem--;
 		}
 		else listOflemmings[i].update(deltaTime);
 	}
+
 }
 
 void Scene::render()
@@ -135,7 +140,7 @@ void Scene::give_skill(int mouseX, int mouseY) {
 		bool yy = (pos.y - 12 < posMouse.y) && (pos.y + 12 > posMouse.y);
 		//xx = yy = true;
 		if(xx && yy) {
-			listOflemmings[i].change_state(0);
+			listOflemmings[i].change_state(1);
 		}
 	}
 }
@@ -143,16 +148,20 @@ void Scene::give_skill(int mouseX, int mouseY) {
 
 void Scene::eraseMask(int mouseX, int mouseY)
 {
-	int posX, posY;
+	int posX = mouseX + 130; 
+	int posY = mouseY;
 	
 	// Transform from mouse coordinates to map coordinates
 	//   The map is enlarged 3 times and displaced 120 pixels
-	posX = mouseX/3 + 120;
-	posY = mouseY/3;
+	//posX = mouseX/3 + 120;
+	//posY = mouseY/3;
+	for (int i = 0; i < 7; ++i) {
+		for (int y = max(0, posY - 3); y <= min(maskTexture.height() - 1, posY + 3); y++)
+			for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
+				maskTexture.setPixel(x, y, 0);
 
-	for(int y=max(0, posY-3); y<=min(maskTexture.height()-1, posY+3); y++)
-		for(int x=max(0, posX-3); x<=min(maskTexture.width()-1, posX+3); x++)
-			maskTexture.setPixel(x, y, 0);
+		++posY;
+	}
 }
 
 void Scene::applyMask(int mouseX, int mouseY)
