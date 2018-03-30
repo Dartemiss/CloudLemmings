@@ -13,20 +13,19 @@
 
 enum LemmingAnims
 {
-	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA
+	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING
 };
 
 
-void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram)
+void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture &spritesheet)
 {
 	//state = FALLING_RIGHT_STATE;
 	state = OPEN_STATE;
-	spritesheet.loadFromFile("images/mirror_lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	spritesheet.setMinFilter(GL_NEAREST);
-	spritesheet.setMagFilter(GL_NEAREST);
+	lemFall = 0;
+
 	//sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 0.5), &spritesheet, &shaderProgram);
 	sprite = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143/2.0), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(4);
+	sprite->setNumberAnimations(5);
 	
 		sprite->setAnimationSpeed(WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -43,6 +42,10 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(UMBRELLA, 6);
 		for (int i = 8; i<12; i++)
 			sprite->addKeyframe(UMBRELLA, glm::vec2(float(i) / 16.0f, 0.07142857143f * 2 / 2));
+
+		sprite->setAnimationSpeed(BLOCKING, 12);
+		for (int i = 0; i<16; i++)
+			sprite->addKeyframe(BLOCKING, glm::vec2(float(i) / 16.0f, 0.07142857143f * 3 / 2));
 		
 	//sprite->changeAnimation(WALKING_RIGHT);
 	sprite->changeAnimation(OPEN_UMBRELLA);
@@ -60,19 +63,36 @@ void Lemming::update(int deltaTime)
 	{
 	case FALLING_LEFT_STATE:
 		fall = collisionFloor(2);
-		if(fall > 0)
+		if (fall > 0) {
+			lemFall += 2;
 			sprite->position() += glm::vec2(0, fall);
-		else
-			state = WALKING_LEFT_STATE;
+		}	
+		else {
+			if (lemFall > 50) {
+				sprite->changeAnimation(BLOCKING);
+			}
+			else {
+				lemFall = 0;
+				sprite->changeAnimation(WALKING_LEFT);
+				state = WALKING_LEFT_STATE;
+			}
+		}	
 		break;
 	case FALLING_RIGHT_STATE:
 		fall = collisionFloor(2);
 		if (fall > 0) {
+			lemFall += 2;
 			sprite->position() += glm::vec2(0, fall);
 		}
 		else {
-			sprite->changeAnimation(WALKING_RIGHT);
-			state = WALKING_RIGHT_STATE;
+			if (lemFall > 50) {
+				sprite->changeAnimation(BLOCKING);
+			}
+			else {
+				lemFall = 0;
+				sprite->changeAnimation(WALKING_RIGHT);
+				state = WALKING_RIGHT_STATE;
+			}
 		}
 		break;
 	case WALKING_LEFT_STATE:
@@ -112,6 +132,27 @@ void Lemming::update(int deltaTime)
 		}
 		break;
 	case OPEN_STATE:
+		fall = collisionFloor(2);
+		if (fall > 0) {
+			sprite->position() += glm::vec2(0, fall);
+		}
+		sprite->changeAnimation(UMBRELLA);
+		state = FALLING_UMB_RIGHT_STATE;
+		break;
+
+	case FALLING_UMB_RIGHT_STATE:
+		lemFall = 0;
+		fall = collisionFloor(4);
+		if (fall > 0) {
+			sprite->position() += glm::vec2(0, fall);
+		}
+		else {
+			sprite->changeAnimation(WALKING_RIGHT);
+			state = WALKING_RIGHT_STATE;
+		}
+		break;
+
+	case BLOCK_STATE:
 		fall = collisionFloor(2);
 		if (fall > 0) {
 			sprite->position() += glm::vec2(0, fall);

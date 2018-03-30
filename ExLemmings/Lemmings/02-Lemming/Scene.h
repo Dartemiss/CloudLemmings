@@ -46,6 +46,7 @@ private:
 	int lemmingsTotal;
 	int allCreatedLemm;
 	Lemming lemming;
+	Texture spritesheet;
 
 };
 

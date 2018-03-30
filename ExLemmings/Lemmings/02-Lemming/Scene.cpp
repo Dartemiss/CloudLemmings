@@ -34,9 +34,11 @@ void Scene::init()
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
-
+	spritesheet.loadFromFile("images/mirror_lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.setMinFilter(GL_NEAREST);
+	spritesheet.setMagFilter(GL_NEAREST);
 	for (int i = 0; i < 10; i++) {
-		lemming.init(glm::vec2(60, 30), simpleTexProgram);
+		lemming.init(glm::vec2(60, 30), simpleTexProgram, spritesheet);
 		lemming.setMapMask(&maskTexture);
 		listOflemmings.push_back(lemming);
 	}
@@ -125,8 +127,8 @@ void Scene::give_skill(int mouseX, int mouseY) {
 	glm::ivec2 posMouse = glm::ivec2(posX, posY);
 	for (int i = 0; i < howmanyLem; i++) {
 		glm::ivec2 pos = listOflemmings[i].getLemPos();
-		bool xx = (pos.x - 10 < posMouse.x) && (pos.x + 10 > posMouse.x);
-		bool yy = (pos.y - 10 < posMouse.y) && (pos.y + 10 > posMouse.y);
+		bool xx = (pos.x - 12 < posMouse.x) && (pos.x + 12 > posMouse.x);
+		bool yy = (pos.y - 12 < posMouse.y) && (pos.y + 12 > posMouse.y);
 		//xx = yy = true;
 		if(xx && yy) {
 			listOflemmings[i].change_state(0);

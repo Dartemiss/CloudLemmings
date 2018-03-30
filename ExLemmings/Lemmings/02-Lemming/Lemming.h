@@ -14,7 +14,7 @@ class Lemming
 {
 
 public:
-	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram);
+	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture &spritesheet);
 	void update(int deltaTime);
 	void render();
 	
@@ -26,15 +26,16 @@ private:
 	int collisionFloor(int maxFall);
 	bool collision();
 	bool collisionY();
+	int lemFall;
 	
 private:
 	enum LemmingState
 	{
-		WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE,DIGGING_STATE,OPEN_STATE
+		WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE, DIGGING_STATE, OPEN_STATE, 
+		FALLING_UMB_LEFT_STATE, FALLING_UMB_RIGHT_STATE, BLOCK_STATE
 	};
 
 	LemmingState state;
-	Texture spritesheet;
 	Sprite *sprite;
 	VariableTexture *mask;
 
