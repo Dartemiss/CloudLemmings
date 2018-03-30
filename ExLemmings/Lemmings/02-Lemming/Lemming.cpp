@@ -13,7 +13,7 @@
 
 enum LemmingAnims
 {
-	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING
+	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH
 };
 
 
@@ -22,10 +22,11 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	//state = FALLING_RIGHT_STATE;
 	state = OPEN_STATE;
 	lemFall = 0;
+	bDied = false;
 
 	//sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 0.5), &spritesheet, &shaderProgram);
 	sprite = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143/2.0), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(5);
+	sprite->setNumberAnimations(6);
 	
 		sprite->setAnimationSpeed(WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -42,6 +43,10 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(UMBRELLA, 6);
 		for (int i = 8; i<12; i++)
 			sprite->addKeyframe(UMBRELLA, glm::vec2(float(i) / 16.0f, 0.07142857143f * 2 / 2));
+
+		sprite->setAnimationSpeed(DEATH, 12);
+		for (int i = 0; i<16; i++)
+			sprite->addKeyframe(DEATH, glm::vec2(float(i) / 16.0f, 0.07142857143f * 11 / 2));
 
 		sprite->setAnimationSpeed(BLOCKING, 12);
 		for (int i = 0; i<16; i++)
@@ -69,7 +74,8 @@ void Lemming::update(int deltaTime)
 		}	
 		else {
 			if (lemFall > 50) {
-				sprite->changeAnimation(BLOCKING);
+				sprite->changeAnimation(DEATH);
+				state = DYING_STATE;
 			}
 			else {
 				lemFall = 0;
@@ -86,7 +92,8 @@ void Lemming::update(int deltaTime)
 		}
 		else {
 			if (lemFall > 50) {
-				sprite->changeAnimation(BLOCKING);
+				sprite->changeAnimation(DEATH);
+				state = DYING_STATE;
 			}
 			else {
 				lemFall = 0;
@@ -142,13 +149,21 @@ void Lemming::update(int deltaTime)
 
 	case FALLING_UMB_RIGHT_STATE:
 		lemFall = 0;
-		fall = collisionFloor(4);
+		fall = collisionFloor(2);
 		if (fall > 0) {
 			sprite->position() += glm::vec2(0, fall);
 		}
 		else {
 			sprite->changeAnimation(WALKING_RIGHT);
 			state = WALKING_RIGHT_STATE;
+		}
+		break;
+
+	case DYING_STATE:
+		//Destruir lemming un cop acaba l'animacio
+		//en principi no cal comprovar que estem a l'animacio DEATH
+		if (sprite->keyframe() == 15) {
+			bDied = true;
 		}
 		break;
 
@@ -222,6 +237,11 @@ bool Lemming::collisionY()
 		return false;
 
 	return true;
+}
+
+bool Lemming::hasDied()
+{
+	return bDied;
 }
 
 

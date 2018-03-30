@@ -21,18 +21,20 @@ public:
 	void setMapMask(VariableTexture *mapMask);
 	void change_state(int state);
 	glm::ivec2 getLemPos();
+	bool hasDied();
+	
 	
 private:
 	int collisionFloor(int maxFall);
 	bool collision();
 	bool collisionY();
 	int lemFall;
-	
+	bool bDied;
 private:
 	enum LemmingState
 	{
 		WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE, DIGGING_STATE, OPEN_STATE, 
-		FALLING_UMB_LEFT_STATE, FALLING_UMB_RIGHT_STATE, BLOCK_STATE
+		FALLING_UMB_LEFT_STATE, FALLING_UMB_RIGHT_STATE, DYING_STATE, BLOCK_STATE
 	};
 
 	LemmingState state;

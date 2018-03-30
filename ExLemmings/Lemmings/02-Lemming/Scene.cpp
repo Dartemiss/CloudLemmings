@@ -58,7 +58,11 @@ void Scene::update(int deltaTime)
 		++allCreatedLemm;
 	}
 	for (int i = 0; i < howmanyLem; i++) {
-		listOflemmings[i].update(deltaTime);
+		if (listOflemmings[i].hasDied()) {
+			listOflemmings.erase(listOflemmings.begin() + i);
+			howmanyLem--;
+		}
+		else listOflemmings[i].update(deltaTime);
 	}
 }
 
