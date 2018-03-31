@@ -189,8 +189,8 @@ void Scene::applyMask(int lemX, int lemY)
 			maskTexture.setPixel(x, y, 255);*/
 
 	for (int i = 0; i < 10; i++) {
-		maskTexture.setPixel(posX+5,posY+i,255);
-		maskTexture.setPixel(posX + 15, posY + i, 255);
+		maskTexture.setPixel(posX+5,posY+i,1);
+		maskTexture.setPixel(posX + 15, posY + i, 1);
 	}
 }
 
