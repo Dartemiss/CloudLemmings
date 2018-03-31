@@ -13,7 +13,7 @@
 
 enum LemmingAnims
 {
-	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING
+	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER
 };
 
 
@@ -26,7 +26,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 
 	//sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 0.5), &spritesheet, &shaderProgram);
 	sprite = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143/2.0), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(7);
+	sprite->setNumberAnimations(8);
 	
 		sprite->setAnimationSpeed(WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -55,6 +55,10 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(DIGGING, 6);
 		for (int i = 0; i<8; i++)
 			sprite->addKeyframe(DIGGING, glm::vec2(float(i) / 16.0f, 0.07142857143f * 8 / 2));
+
+		sprite->setAnimationSpeed(BASHER, 6);
+		for (int i = 0; i < 16; i++)
+			sprite->addKeyframe(BASHER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 9 / 2));
 		
 	//sprite->changeAnimation(WALKING_RIGHT);
 	sprite->changeAnimation(OPEN_UMBRELLA);
@@ -213,6 +217,10 @@ void Lemming::change_state(int nstate) {
 		sprite->changeAnimation(DIGGING);
 		state = DIGGING_STATE;
 	}
+	else if (nstate == 2) {
+		sprite->changeAnimation(BASHER);
+		state = BASHER_STATE;
+	}
 }
 
 glm::ivec2 Lemming::getLemPos()
@@ -224,6 +232,9 @@ glm::ivec2 Lemming::getLemPos()
 int Lemming::getState() {
 	if (state == DIGGING_STATE)
 		return 1;
+	else if (state == BASHER_STATE)
+		return 2;
+	else return 0;
 }
 
 int Lemming::collisionFloor(int maxFall)
