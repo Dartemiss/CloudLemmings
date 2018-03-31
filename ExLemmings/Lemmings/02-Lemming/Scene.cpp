@@ -58,15 +58,15 @@ void Scene::update(int deltaTime)
 		++allCreatedLemm;
 	}
 	for (int i = 0; i < howmanyLem; i++) {
+		if (listOflemmings[i].getState() == 1) {
+			glm::ivec2 pos = listOflemmings[i].getLemPos();
+			eraseMask(pos.x, pos.y);
+		}
 		if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
 			howmanyLem--;
 		}
-		else if (listOflemmings[i].getState() == 1) {
-			glm::ivec2 pos = listOflemmings[i].getLemPos();
-			eraseMask(pos.x, pos.y);
-		}
-		else if (listOflemmings[i].getState() == 3 && !listOflemmings[i].isBlocking()) {
+		if (listOflemmings[i].getState() == 3 && !listOflemmings[i].isBlocking()) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			applyMask(pos.x, pos.y);
 		}
