@@ -23,6 +23,7 @@ public:
 	glm::ivec2 getLemPos();
 	bool hasDied();
 	int getState();
+	bool isBlocking();
 	
 private:
 	int collisionFloor(int maxFall);
@@ -30,6 +31,8 @@ private:
 	bool collisionY();
 	int lemFall;
 	bool bDied;
+	bool bBlocking;
+
 private:
 	enum LemmingState
 	{

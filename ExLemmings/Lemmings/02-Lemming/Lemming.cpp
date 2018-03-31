@@ -23,6 +23,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	state = OPEN_STATE;
 	lemFall = 0;
 	bDied = false;
+	bBlocking = false;
 
 	//sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 0.5), &spritesheet, &shaderProgram);
 	sprite = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143/2.0), &spritesheet, &shaderProgram);
@@ -176,13 +177,8 @@ void Lemming::update(int deltaTime)
 		break;
 
 	case BLOCK_STATE:
-		fall = collisionFloor(2);
-		if (fall > 0) {
-			sprite->position() += glm::vec2(0, fall);
-		}
-		sprite->changeAnimation(UMBRELLA);
-		state = FALLING_RIGHT_STATE;
-
+		bBlocking = true;
+		break;
 	case DIGGING_STATE:
 		fall = collisionFloor(2);
 		if (fall <= 0) {
@@ -194,7 +190,7 @@ void Lemming::update(int deltaTime)
 			sprite->changeAnimation(WALKING_RIGHT);
 			state = FALLING_RIGHT_STATE;
 		}
-
+		break;
 	}
 }
 
@@ -221,6 +217,10 @@ void Lemming::change_state(int nstate) {
 		sprite->changeAnimation(BASHER);
 		state = BASHER_STATE;
 	}
+	else if (nstate == 3) {
+		sprite->changeAnimation(BLOCKING);
+		state = BLOCK_STATE;
+	}
 }
 
 glm::ivec2 Lemming::getLemPos()
@@ -234,6 +234,8 @@ int Lemming::getState() {
 		return 1;
 	else if (state == BASHER_STATE)
 		return 2;
+	else if (state == BLOCK_STATE)
+		return 3;
 	else return 0;
 }
 
@@ -280,6 +282,11 @@ bool Lemming::collisionY()
 bool Lemming::hasDied()
 {
 	return bDied;
+}
+
+bool Lemming::isBlocking()
+{
+	return bBlocking;
 }
 
 

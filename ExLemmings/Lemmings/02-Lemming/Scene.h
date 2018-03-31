@@ -23,13 +23,13 @@ public:
 	void update(int deltaTime);
 	void render();
 	
-	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton);
+	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton);
 	void digging(int lem);
 	int lemArrived();
 
 private:
 	void initShaders();
-	void give_skill(int mouseX, int mouseY);
+	void give_skill(int mouseX, int mouseY, int skill);
 	void eraseMask(int mouseX, int mouseY);
 	void applyMask(int mouseX, int mouseY);
 

@@ -58,13 +58,17 @@ void Scene::update(int deltaTime)
 		++allCreatedLemm;
 	}
 	for (int i = 0; i < howmanyLem; i++) {
-		if (listOflemmings[i].getState() == 1) {
-			glm::ivec2 pos = listOflemmings[i].getLemPos();
-			eraseMask(pos.x, pos.y);
-		}
 		if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
 			howmanyLem--;
+		}
+		else if (listOflemmings[i].getState() == 1) {
+			glm::ivec2 pos = listOflemmings[i].getLemPos();
+			eraseMask(pos.x, pos.y);
+		}
+		else if (listOflemmings[i].getState() == 3 && !listOflemmings[i].isBlocking()) {
+			glm::ivec2 pos = listOflemmings[i].getLemPos();
+			applyMask(pos.x, pos.y);
 		}
 		else listOflemmings[i].update(deltaTime);
 	}
@@ -95,14 +99,19 @@ void Scene::render()
 
 }
 
-void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
+void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton)
 {
 	if (bLeftButton) {
 		//eraseMask(mouseX, mouseY);
-		give_skill(mouseX, mouseY);
+		give_skill(mouseX, mouseY, 1);
 	}
-	else if(bRightButton)
-		applyMask(mouseX, mouseY);
+	else if (bRightButton) {
+		//applyMask(mouseX, mouseY); 
+		give_skill(mouseX, mouseY, 0);
+	}
+	else if (bMiddleButton) {
+		give_skill(mouseX, mouseY, 3);
+	}
 }
 
 int Scene::lemArrived()
@@ -125,7 +134,7 @@ void Scene::digging(int lem) {
 	}
 }
 
-void Scene::give_skill(int mouseX, int mouseY) {
+void Scene::give_skill(int mouseX, int mouseY, int skill) {
 	int posX, posY;
 
 	// Transform from mouse coordinates to map coordinates
@@ -140,16 +149,16 @@ void Scene::give_skill(int mouseX, int mouseY) {
 		bool yy = (pos.y - 12 < posMouse.y) && (pos.y + 12 > posMouse.y);
 		//xx = yy = true;
 		if(xx && yy) {
-			listOflemmings[i].change_state(1);
+			listOflemmings[i].change_state(skill);
 		}
 	}
 }
 
 
-void Scene::eraseMask(int mouseX, int mouseY)
+void Scene::eraseMask(int lemX, int lemY)
 {
-	int posX = mouseX + 130; 
-	int posY = mouseY;
+	int posX = lemX + 130;
+	int posY = lemY;
 	
 	// Transform from mouse coordinates to map coordinates
 	//   The map is enlarged 3 times and displaced 120 pixels
@@ -164,18 +173,25 @@ void Scene::eraseMask(int mouseX, int mouseY)
 	}
 }
 
-void Scene::applyMask(int mouseX, int mouseY)
+void Scene::applyMask(int lemX, int lemY)
 {
 	int posX, posY;
+	posX = lemX + 120;
+	posY = lemY;
 	
 	// Transform from mouse coordinates to map coordinates
 	//   The map is enlarged 3 times and displaced 120 pixels
-	posX = mouseX/3 + 120;
-	posY = mouseY/3;
+	//posX = mouseX/3 + 120;
+	//posY = mouseY/3;
 
-	for(int y=max(0, posY-3); y<=min(maskTexture.height()-1, posY+3); y++)
+	/*for(int y=max(0, posY-3); y<=min(maskTexture.height()-1, posY+3); y++)
 		for(int x=max(0, posX-3); x<=min(maskTexture.width()-1, posX+3); x++)
-			maskTexture.setPixel(x, y, 255);
+			maskTexture.setPixel(x, y, 255);*/
+
+	for (int i = 0; i < 10; i++) {
+		maskTexture.setPixel(posX+5,posY+i,255);
+		maskTexture.setPixel(posX + 15, posY + i, 255);
+	}
 }
 
 void Scene::initShaders()
