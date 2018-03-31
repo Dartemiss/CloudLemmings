@@ -9,7 +9,7 @@ void Game::init()
 	gstate = 0;
 	paused = false;
 	fastmode = false;
-	bLeftMouse = bRightMouse = false;
+	bLeftMouse = bRightMouse = bMiddleMouse = false;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	//scene.init();
 	sceneaux.init();
@@ -95,7 +95,7 @@ void Game::mouseMove(int x, int y)
 {
 	mouseX = x;
 	mouseY = y;
-	scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+	scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse, bMiddleMouse);
 }
 
 void Game::mousePress(int button)
@@ -103,12 +103,17 @@ void Game::mousePress(int button)
 	if(button == GLUT_LEFT_BUTTON)
 	{
 		bLeftMouse = true;
-		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse, bMiddleMouse);
 	}
 	else if(button == GLUT_RIGHT_BUTTON)
 	{
 		bRightMouse = true;
-		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse, bMiddleMouse);
+	}
+	else if (button == GLUT_MIDDLE_BUTTON)
+	{
+		bMiddleMouse = true;
+		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse, bMiddleMouse);
 	}
 }
 
@@ -118,6 +123,8 @@ void Game::mouseRelease(int button)
 		bLeftMouse = false;
 	else if(button == GLUT_RIGHT_BUTTON)
 		bRightMouse = false;
+	else if (button == GLUT_MIDDLE_BUTTON)
+		bMiddleMouse = false;
 }
 
 bool Game::getKey(int key) const
