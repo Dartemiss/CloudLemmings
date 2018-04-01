@@ -30,7 +30,8 @@ public:
 private:
 	void initShaders();
 	void give_skill(int mouseX, int mouseY, int skill);
-	void eraseMask(int mouseX, int mouseY);
+	void eraseMaskX(int mouseX, int mouseY);
+	void eraseMaskY(int mouseX, int mouseY);
 	void applyMask(int mouseX, int mouseY);
 
 private:

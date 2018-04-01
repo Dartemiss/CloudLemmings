@@ -27,6 +27,7 @@ public:
 	
 private:
 	int collisionFloor(int maxFall);
+	int collisionWall(int maxFall);
 	bool collision();
 	bool collisionY();
 	int lemFall;

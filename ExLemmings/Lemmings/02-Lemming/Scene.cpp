@@ -25,10 +25,10 @@ void Scene::init()
 	initShaders();
 
 	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
-	colorTexture.loadFromFile("images/fun9.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	colorTexture.loadFromFile("images/fun1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	colorTexture.setMinFilter(GL_NEAREST);
 	colorTexture.setMagFilter(GL_NEAREST);
-	maskTexture.loadFromFile("images/fun9_mask.png", TEXTURE_PIXEL_FORMAT_L);
+	maskTexture.loadFromFile("images/fun1_mask.png", TEXTURE_PIXEL_FORMAT_L);
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
@@ -60,7 +60,11 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < howmanyLem; i++) {
 		if (listOflemmings[i].getState() == 1) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
-			eraseMask(pos.x, pos.y);
+			eraseMaskY(pos.x, pos.y);
+		}
+		else if (listOflemmings[i].getState() == 2) {
+			glm::ivec2 pos = listOflemmings[i].getLemPos();
+			eraseMaskX(pos.x, pos.y);
 		}
 		else if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
@@ -103,7 +107,7 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 {
 	if (bLeftButton) {
 		//eraseMask(mouseX, mouseY);
-		give_skill(mouseX, mouseY, 1);
+		give_skill(mouseX, mouseY, 2);
 	}
 	else if (bRightButton) {
 		//applyMask(mouseX, mouseY); 
@@ -118,7 +122,7 @@ int Scene::lemArrived()
 {
 	for (int i = 0; i < howmanyLem; i++) {
 		glm::ivec2 pos = listOflemmings[i].getLemPos();
-		if (pos.x > 200) {
+		if (pos.x > 400) {
 			++lemmingsTotal;
 			listOflemmings.erase(listOflemmings.begin() + i);
 			howmanyLem--;
@@ -155,11 +159,29 @@ void Scene::give_skill(int mouseX, int mouseY, int skill) {
 }
 
 
-void Scene::eraseMask(int lemX, int lemY)
+void Scene::eraseMaskX(int lemX, int lemY)
 {
 	int posX = lemX + 130;
 	int posY = lemY;
 	
+	// Transform from mouse coordinates to map coordinates
+	//   The map is enlarged 3 times and displaced 120 pixels
+	//posX = mouseX/3 + 120;
+	//posY = mouseY/3;
+	for (int i = 0; i < 4; ++i) {
+		for (int y = max(0, posY - 3); y <= min(maskTexture.height() - 1, posY + 8); y++)
+			for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
+				maskTexture.setPixel(x, y, 0);
+
+		++posX;
+	}
+}
+
+void Scene::eraseMaskY(int lemX, int lemY)
+{
+	int posX = lemX + 130;
+	int posY = lemY;
+
 	// Transform from mouse coordinates to map coordinates
 	//   The map is enlarged 3 times and displaced 120 pixels
 	//posX = mouseX/3 + 120;
@@ -170,8 +192,10 @@ void Scene::eraseMask(int lemX, int lemY)
 				maskTexture.setPixel(x, y, 0);
 
 		++posY;
+
 	}
 }
+
 
 void Scene::applyMask(int lemX, int lemY)
 {

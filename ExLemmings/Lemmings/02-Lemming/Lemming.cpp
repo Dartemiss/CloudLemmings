@@ -13,7 +13,7 @@
 
 enum LemmingAnims
 {
-	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER
+	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER,CLIMBER
 };
 
 
@@ -37,7 +37,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		for(int i=15; i>8; i--)
 			sprite->addKeyframe(WALKING_LEFT, glm::vec2(float(i) / 16.0f, 0.5 + 0.07142857143f*0));
 
-		sprite->setAnimationSpeed(OPEN_UMBRELLA, 4);
+		sprite->setAnimationSpeed(OPEN_UMBRELLA, 6);
 		for(int i=0; i<8; i++)
 			sprite->addKeyframe(OPEN_UMBRELLA, glm::vec2(float(i) / 16.0f, 0.07142857143f * 2/2));
 		
@@ -57,9 +57,11 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		for (int i = 0; i<8; i++)
 			sprite->addKeyframe(DIGGING, glm::vec2(float(i) / 16.0f, 0.07142857143f * 8 / 2));
 
-		sprite->setAnimationSpeed(BASHER, 6);
+		sprite->setAnimationSpeed(BASHER, 8);
 		for (int i = 0; i < 16; i++)
-			sprite->addKeyframe(BASHER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 9 / 2));
+			sprite->addKeyframe(BASHER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 7 / 2));
+
+		
 		
 	//sprite->changeAnimation(WALKING_RIGHT);
 	sprite->changeAnimation(OPEN_UMBRELLA);
@@ -152,8 +154,10 @@ void Lemming::update(int deltaTime)
 		if (fall > 0) {
 			sprite->position() += glm::vec2(0, fall);
 		}
-		sprite->changeAnimation(UMBRELLA);
-		state = FALLING_UMB_RIGHT_STATE;
+		if (sprite->keyframe() == 7) {
+			sprite->changeAnimation(UMBRELLA);
+			state = FALLING_UMB_RIGHT_STATE;
+		}
 		break;
 
 	case FALLING_UMB_RIGHT_STATE:
@@ -189,6 +193,19 @@ void Lemming::update(int deltaTime)
 		else {
 			sprite->changeAnimation(WALKING_RIGHT);
 			state = FALLING_RIGHT_STATE;
+		}
+		break;
+
+	case BASHER_STATE:
+		fall = collisionWall(2);
+		if (fall <= 0) {
+			sprite->position() += glm::vec2(1, 0);
+		}
+		else {
+			if (sprite->keyframe() == 15) {
+				sprite->changeAnimation(WALKING_RIGHT);
+				state = WALKING_RIGHT_STATE;
+			}
 		}
 		break;
 	}
@@ -249,6 +266,24 @@ int Lemming::collisionFloor(int maxFall)
 	while((fall < maxFall) && !bContact)
 	{
 		if((mask->pixel(posBase.x, posBase.y+fall) == 0) && (mask->pixel(posBase.x+1, posBase.y+fall) == 0))
+			fall += 1;
+		else
+			bContact = true;
+	}
+
+	return fall;
+}
+
+int Lemming::collisionWall(int maxFall)
+{
+	bool bContact = false;
+	int fall = 0;
+	glm::ivec2 posBase = sprite->position() + glm::vec2(120, 0); // Add the map displacement
+
+	posBase += glm::ivec2(7, 10);
+	while ((fall < maxFall) && !bContact)
+	{
+		if ((mask->pixel(posBase.x + fall, posBase.y ) == 0) && (mask->pixel(posBase.x + fall, posBase.y + 1) == 0))
 			fall += 1;
 		else
 			bContact = true;
