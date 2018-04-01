@@ -181,7 +181,14 @@ void Lemming::update(int deltaTime)
 		break;
 
 	case BLOCK_STATE:
-		bBlocking = true;
+		fall = collisionFloor(2);
+		if (fall <= 0) {
+			bBlocking = true;
+		}
+		else {
+			sprite->changeAnimation(WALKING_RIGHT);
+			state = FALLING_RIGHT_STATE;
+		}
 		break;
 	case DIGGING_STATE:
 		fall = collisionFloor(2);
