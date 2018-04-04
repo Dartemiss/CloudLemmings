@@ -45,6 +45,7 @@ void Scene::init()
 	lastLemming = 0;
 	howmanyLem = 0;
 	allCreatedLemm = 0;
+	deathbybomb = false;
 }
 
 //unsigned int x = 0;
@@ -61,10 +62,12 @@ void Scene::update(int deltaTime)
 		if (listOflemmings[i].getState() == 1) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			eraseMaskY(pos.x, pos.y);
+			listOflemmings[i].update(deltaTime);
 		}
 		else if (listOflemmings[i].getState() == 2) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			eraseMaskX(pos.x, pos.y);
+			listOflemmings[i].update(deltaTime);
 		}
 		else if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
@@ -73,8 +76,13 @@ void Scene::update(int deltaTime)
 		else if (listOflemmings[i].getState() == 3 && !listOflemmings[i].isBlocking()) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			applyMask(pos.x, pos.y);
+			listOflemmings[i].update(deltaTime);
 		}
-		listOflemmings[i].update(deltaTime);
+		else if (deathbybomb) {
+			listOflemmings[i].change_state(5);
+			listOflemmings[i].update(deltaTime);
+		}
+		else listOflemmings[i].update(deltaTime);
 	}
 
 }
@@ -149,7 +157,7 @@ void Scene::give_skill(int mouseX, int mouseY, int skill) {
 	glm::ivec2 posMouse = glm::ivec2(posX, posY);
 	for (int i = 0; i < howmanyLem; i++) {
 		glm::ivec2 pos = listOflemmings[i].getLemPos();
-		bool xx = (pos.x - 12 < posMouse.x) && (pos.x + 12 > posMouse.x);
+		bool xx = (pos.x + 5 < posMouse.x) && (pos.x + 15 > posMouse.x);
 		bool yy = (pos.y - 12 < posMouse.y) && (pos.y + 12 > posMouse.y);
 		//xx = yy = true;
 		if(xx && yy) {
@@ -216,6 +224,11 @@ void Scene::applyMask(int lemX, int lemY)
 		maskTexture.setPixel(posX+5,posY+i,1);
 		maskTexture.setPixel(posX + 15, posY + i, 1);
 	}
+}
+
+void Scene::bombed()
+{
+	deathbybomb = true;
 }
 
 void Scene::initShaders()

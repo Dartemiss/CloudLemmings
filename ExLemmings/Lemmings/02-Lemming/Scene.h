@@ -26,6 +26,7 @@ public:
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton);
 	void digging(int lem);
 	int lemArrived();
+	void bombed();
 
 private:
 	void initShaders();
@@ -48,6 +49,7 @@ private:
 	int allCreatedLemm;
 	Lemming lemming;
 	Texture spritesheet;
+	bool deathbybomb;
 
 
 };

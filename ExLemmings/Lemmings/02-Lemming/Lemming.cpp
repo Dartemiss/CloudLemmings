@@ -13,7 +13,7 @@
 
 enum LemmingAnims
 {
-	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER,CLIMBER
+	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER,CLIMBER,DEATH_BY_MANHATTAN
 };
 
 
@@ -60,6 +60,10 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(BASHER, 8);
 		for (int i = 0; i < 16; i++)
 			sprite->addKeyframe(BASHER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 7 / 2));
+
+		sprite->setAnimationSpeed(DEATH_BY_MANHATTAN, 8);
+		for (int i = 0; i < 14; i++)
+			sprite->addKeyframe(DEATH_BY_MANHATTAN, glm::vec2(float(i) / 16.0f, 0.07142857143f * 13 / 2));
 
 		
 		
@@ -215,6 +219,12 @@ void Lemming::update(int deltaTime)
 			}
 		}
 		break;
+
+	case DYING_BOMB_STATE:
+		if (sprite->keyframe() == 13) {
+			bDied = true;
+		}
+		break;
 	}
 }
 
@@ -245,6 +255,10 @@ void Lemming::change_state(int nstate) {
 		sprite->changeAnimation(BLOCKING);
 		state = BLOCK_STATE;
 	}
+	else if (nstate == 5) {
+		sprite->changeAnimation(DEATH_BY_MANHATTAN);
+		state = DYING_BOMB_STATE;
+	}
 }
 
 glm::ivec2 Lemming::getLemPos()
@@ -260,6 +274,8 @@ int Lemming::getState() {
 		return 2;
 	else if (state == BLOCK_STATE)
 		return 3;
+	else if (state == DYING_BOMB_STATE)
+		return 5;
 	else return 0;
 }
 

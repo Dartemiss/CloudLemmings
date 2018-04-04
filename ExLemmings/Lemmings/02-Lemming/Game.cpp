@@ -10,7 +10,7 @@ void Game::init()
 	paused = false;
 	fastmode = false;
 	bLeftMouse = bRightMouse = bMiddleMouse = false;
-	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//scene.init();
 	sceneaux.init();
 }
@@ -73,6 +73,8 @@ void Game::keyPressed(int key)
 		fastmode = true;
 	else if (key == 102 && fastmode)
 		fastmode = false;
+	else if (key == 113)
+		scene.bombed();
 	keys[key] = true;
 }
 
