@@ -6,7 +6,7 @@
 #include "ShaderProgram.h"
 #include "MaskedTexturedQuad.h"
 #include "Lemming.h"
-
+#include "ParticleSystem.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -31,9 +31,10 @@ public:
 private:
 	void initShaders();
 	void give_skill(int mouseX, int mouseY, int skill);
-	void eraseMaskX(int mouseX, int mouseY);
-	void eraseMaskY(int mouseX, int mouseY);
-	void applyMask(int mouseX, int mouseY);
+	void eraseMaskX(int lemX, int lemY);
+	void eraseMaskY(int lemX, int lemY);
+	void applyMask(int lemX, int lemY);
+	bool isOnLemming(int mouseX, int mouseY);
 
 private:
 	Texture colorTexture;
@@ -50,7 +51,12 @@ private:
 	Lemming lemming;
 	Texture spritesheet;
 	bool deathbybomb;
-
+	ParticleSystem partSys;
+	vector<ParticleSystem> particlesystems;
+	float lastCurrentTime;
+	bool onesec;
+	Sprite *cursor;
+	bool scloaded = false;
 
 };
 

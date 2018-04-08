@@ -46,6 +46,19 @@ void Scene::init()
 	howmanyLem = 0;
 	allCreatedLemm = 0;
 	deathbybomb = false;
+
+	cursor = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &simpleTexProgram);
+	cursor->setNumberAnimations(2);
+	//cursor->setAnimationSpeed(0, 12);
+
+	cursor->addKeyframe(0, glm::vec2(13 / 16.0f, 0.07142857143f * 2 / 2));
+	cursor->addKeyframe(1, glm::vec2(12 / 16.0f, 0.07142857143f * 2 / 2));
+
+	cursor->changeAnimation(0);
+	
+	glm::ivec2 pos = glm::ivec2(-20, -20);
+	cursor->setPosition(pos);
+	scloaded = true;
 }
 
 //unsigned int x = 0;
@@ -53,10 +66,16 @@ void Scene::init()
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 10) {
-		lastLemming = currentTime;
-		++howmanyLem;
-		++allCreatedLemm;
+
+	//cursor->update(deltaTime);
+
+
+	if (!deathbybomb) { //No es creen mes lemmings un cop s'activa la bomba
+		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 10) {
+			lastLemming = currentTime;
+			++howmanyLem;
+			++allCreatedLemm;
+		}
 	}
 	for (int i = 0; i < howmanyLem; i++) {
 		if (listOflemmings[i].getState() == 1) {
@@ -78,10 +97,20 @@ void Scene::update(int deltaTime)
 			applyMask(pos.x, pos.y);
 			listOflemmings[i].update(deltaTime);
 		}
-		else if (deathbybomb) {
-			listOflemmings[i].change_state(5);
+		else if (deathbybomb && (particlesystems[i].get_time_living() < 4000)) {
+			//listOflemmings[i].change_state(2); ha de fer l'animacio del tembleque
+			//listOflemmings[i].update(deltaTime);
+			
+			particlesystems[i].update(deltaTime);
 			listOflemmings[i].update(deltaTime);
 		}
+		/*else if (deathbybomb) {
+			
+			for (int j = 0; j < howmanyLem; j++) {
+				int a = 3;
+				particlesystems.erase(particlesystems.begin() + j);
+			}
+		}*/
 		else listOflemmings[i].update(deltaTime);
 	}
 
@@ -107,12 +136,29 @@ void Scene::render()
 
 	for (int i = 0; i < howmanyLem; i++) {
 		listOflemmings[i].render();
+		if (deathbybomb && (particlesystems[i].get_time_living() < 4000)) {
+			particlesystems[i].render();
+		}
+		
 	}
 
+	cursor->render();
 }
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton)
 {
+	if (scloaded) {
+		glm::ivec2 pos = glm::ivec2(mouseX/3 -11, mouseY/3-7);
+		cursor->setPosition(pos);
+		if (isOnLemming(mouseX, mouseY)) {
+			cursor->changeAnimation(1);
+		}
+		else {
+			cursor->changeAnimation(0);
+		}
+	}
+
+
 	if (bLeftButton) {
 		//eraseMask(mouseX, mouseY);
 		give_skill(mouseX, mouseY, 2);
@@ -164,8 +210,26 @@ void Scene::give_skill(int mouseX, int mouseY, int skill) {
 			listOflemmings[i].change_state(skill);
 		}
 	}
+
 }
 
+bool Scene::isOnLemming(int mouseX, int mouseY) {
+	int posX, posY;
+
+	posX = mouseX / 3;
+	posY = mouseY / 3;
+
+	glm::ivec2 posMouse = glm::ivec2(posX, posY);
+	for (int i = 0; i < howmanyLem; i++) {
+		glm::ivec2 pos = listOflemmings[i].getLemPos();
+		bool xx = (pos.x + 5 < posMouse.x) && (pos.x + 16 > posMouse.x);
+		bool yy = (pos.y - 5 < posMouse.y) && (pos.y + 12 > posMouse.y);
+		if (xx && yy) {
+			return true;
+		}
+	}
+	return false;
+}
 
 void Scene::eraseMaskX(int lemX, int lemY)
 {
@@ -228,7 +292,17 @@ void Scene::applyMask(int lemX, int lemY)
 
 void Scene::bombed()
 {
-	deathbybomb = true;
+	if (!deathbybomb) {
+		//crear particle system
+		for (int i = 0; i < howmanyLem; i++) {
+			ParticleSystem aux;
+			partSys = aux;
+			glm::ivec2 pos = listOflemmings[i].getLemPos();
+			partSys.init(pos.x, pos.y, simpleTexProgram, spritesheet);
+			particlesystems.push_back(partSys);
+		}
+		deathbybomb = true;
+	}
 }
 
 void Scene::initShaders()
