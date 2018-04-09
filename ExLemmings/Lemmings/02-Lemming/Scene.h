@@ -7,6 +7,7 @@
 #include "MaskedTexturedQuad.h"
 #include "Lemming.h"
 #include "Ladder.h"
+#include "ParticleSystem.h"
 #include "Sprite.h"
 
 
@@ -37,6 +38,8 @@ private:
 	void eraseMaskY(int mouseX, int mouseY);
 	void applyMask(int mouseX, int mouseY);
 
+	bool isOnLemming(int mouseX, int mouseY);
+
 private:
 	Texture colorTexture;
 	VariableTexture maskTexture;
@@ -54,6 +57,12 @@ private:
 	Texture spritesheet,spritesheetLadder;
 	bool deathbybomb;
 	Sprite * sprite;
+	ParticleSystem partSys;
+	vector<ParticleSystem> particlesystems;
+	float lastCurrentTime;
+	bool onesec;
+	Sprite * cursor;
+	bool scloaded = false;
 
 
 };
