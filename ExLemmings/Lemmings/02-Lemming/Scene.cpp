@@ -25,18 +25,23 @@ void Scene::init()
 	initShaders();
 
 	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
-	colorTexture.loadFromFile("images/fun1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	colorTexture.setMinFilter(GL_NEAREST);
 	colorTexture.setMagFilter(GL_NEAREST);
-	maskTexture.loadFromFile("images/fun1_mask.png", TEXTURE_PIXEL_FORMAT_L);
+	maskTexture.loadFromFile("images/fun2_mask.png", TEXTURE_PIXEL_FORMAT_L);
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
-	spritesheet.loadFromFile("images/mirror_lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.loadFromFile("images/old/mirror_lemming_sayan.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMinFilter(GL_NEAREST);
 	spritesheet.setMagFilter(GL_NEAREST);
+
+	spritesheetLadder.loadFromFile("images/ladder.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheetLadder.setMinFilter(GL_NEAREST);
+	spritesheetLadder.setMagFilter(GL_NEAREST);
+
 	for (int i = 0; i < 10; i++) {
 		lemming.init(glm::vec2(60, 30), simpleTexProgram, spritesheet);
 		lemming.setMapMask(&maskTexture);
@@ -46,6 +51,8 @@ void Scene::init()
 	howmanyLem = 0;
 	allCreatedLemm = 0;
 	deathbybomb = false;
+	ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
+
 }
 
 //unsigned int x = 0;
@@ -67,6 +74,19 @@ void Scene::update(int deltaTime)
 		else if (listOflemmings[i].getState() == 2) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			eraseMaskX(pos.x, pos.y);
+			listOflemmings[i].update(deltaTime);
+		}
+		else if (listOflemmings[i].getState() == 6) {
+			int step = listOflemmings[i].getbuilderStep();
+			glm::vec2 pos = listOflemmings[i].pos;
+			glm::vec2 maskPos = listOflemmings[i].getactualPos();
+			maskTexture.setPixel(130 + maskPos.x, maskPos.y, 1);
+			maskTexture.setPixel(130 + maskPos.x+1, maskPos.y, 1);
+			maskTexture.setPixel(130 + maskPos.x+2, maskPos.y, 1);
+			maskTexture.setPixel(130 + maskPos.x+3, maskPos.y, 1);
+			maskTexture.setPixel(130 + maskPos.x+4, maskPos.y, 1);
+			ladder.changeSteps(step);
+			ladder.changePos(pos);
 			listOflemmings[i].update(deltaTime);
 		}
 		else if (listOflemmings[i].hasDied()) {
@@ -108,6 +128,8 @@ void Scene::render()
 	for (int i = 0; i < howmanyLem; i++) {
 		listOflemmings[i].render();
 	}
+
+	ladder.render();
 
 }
 

@@ -24,7 +24,11 @@ public:
 	bool hasDied();
 	int getState();
 	bool isBlocking();
-	
+	int getbuilderStep();
+	int builderStep;
+	glm::vec2 pos;
+	glm::vec2 getactualPos();
+
 private:
 	int collisionFloor(int maxFall);
 	int collisionWall(int maxFall);
@@ -33,12 +37,15 @@ private:
 	int lemFall;
 	bool bDied;
 	bool bBlocking;
+	bool bclimbing;
+	
 
 private:
 	enum LemmingState
 	{
 		WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE, DIGGING_STATE, OPEN_STATE, 
-		FALLING_UMB_LEFT_STATE, FALLING_UMB_RIGHT_STATE, DYING_STATE, BLOCK_STATE, BASHER_STATE, DYING_BOMB_STATE
+		FALLING_UMB_LEFT_STATE, FALLING_UMB_RIGHT_STATE, DYING_STATE, BLOCK_STATE, BASHER_STATE, DYING_BOMB_STATE, 
+		CLIMBING_STATE, ARRIVING_CLIMB_STATE, BUILDER_STATE
 	};
 
 	LemmingState state;

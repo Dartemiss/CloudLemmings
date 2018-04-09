@@ -13,7 +13,8 @@
 
 enum LemmingAnims
 {
-	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER,CLIMBER,DEATH_BY_MANHATTAN
+	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER,CLIMBER, ARRIVE_CLIMBER,DEATH_BY_MANHATTAN,
+	CLIMBER_LEFT,BUILDER
 };
 
 
@@ -22,12 +23,14 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	//state = FALLING_RIGHT_STATE;
 	state = OPEN_STATE;
 	lemFall = 0;
+	builderStep = 1;
 	bDied = false;
 	bBlocking = false;
-
+	bclimbing = false;
+	pos = glm::vec2(0,0);
 	//sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 0.5), &spritesheet, &shaderProgram);
 	sprite = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143/2.0), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(8);
+	sprite->setNumberAnimations(13);
 	
 		sprite->setAnimationSpeed(WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -59,16 +62,34 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 
 		sprite->setAnimationSpeed(BASHER, 8);
 		for (int i = 0; i < 16; i++)
+			sprite->addKeyframe(BASHER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 6 / 2));
+
+		for (int i = 0; i < 16; i++)
 			sprite->addKeyframe(BASHER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 7 / 2));
 
 		sprite->setAnimationSpeed(DEATH_BY_MANHATTAN, 8);
 		for (int i = 0; i < 14; i++)
 			sprite->addKeyframe(DEATH_BY_MANHATTAN, glm::vec2(float(i) / 16.0f, 0.07142857143f * 13 / 2));
 
+		sprite->setAnimationSpeed(CLIMBER, 8);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(CLIMBER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 4 / 2));
+
+		sprite->setAnimationSpeed(CLIMBER_LEFT, 8);
+		for (int i = 15; i > 8; i--)
+			sprite->addKeyframe(CLIMBER_LEFT, glm::vec2(float(i) / 16.0f, 0.5 + 0.07142857143f * 4 / 2));
+
+		sprite->setAnimationSpeed(ARRIVE_CLIMBER, 8);
+		for (int i = 8; i < 16; i++)
+			sprite->addKeyframe(ARRIVE_CLIMBER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 4 / 2));
 		
+		sprite->setAnimationSpeed(BUILDER, 8);
+		for (int i = 8; i < 16; i++)
+			sprite->addKeyframe(BUILDER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 5 / 2));
 		
 	//sprite->changeAnimation(WALKING_RIGHT);
 	sprite->changeAnimation(OPEN_UMBRELLA);
+	//sprite->changeAnimation(CLIMBER_LEFT);
 	sprite->setPosition(initialPosition);
 }
 
@@ -121,9 +142,16 @@ void Lemming::update(int deltaTime)
 		sprite->position() += glm::vec2(-1, -1);
 		if(collision())
 		{
-			sprite->position() -= glm::vec2(-1, -1);
-			sprite->changeAnimation(WALKING_RIGHT);
-			state = WALKING_RIGHT_STATE;
+			if (!bclimbing) {
+				sprite->position() -= glm::vec2(-1, -1);
+				sprite->changeAnimation(WALKING_RIGHT);
+				state = WALKING_RIGHT_STATE;
+			}
+			else {
+				sprite->position() += glm::vec2(1, 0);
+				sprite->changeAnimation(CLIMBER_LEFT);
+				state = CLIMBING_STATE;
+			}
 		}
 		else
 		{
@@ -140,9 +168,16 @@ void Lemming::update(int deltaTime)
 		sprite->position() += glm::vec2(1, -1);
 		if(collision())
 		{
-			sprite->position() -= glm::vec2(1, -1);
-			sprite->changeAnimation(WALKING_LEFT);
-			state = WALKING_LEFT_STATE;
+			if (!bclimbing) {
+				sprite->position() -= glm::vec2(1, -1);
+				sprite->changeAnimation(WALKING_LEFT);
+				state = WALKING_LEFT_STATE;
+			}
+			else {
+				sprite->position() += glm::vec2(-1, 0);
+				sprite->changeAnimation(CLIMBER);
+				state = CLIMBING_STATE;
+			}
 		}
 		else
 		{
@@ -225,7 +260,34 @@ void Lemming::update(int deltaTime)
 			bDied = true;
 		}
 		break;
+
+	case CLIMBING_STATE:
+		sprite->position() -= glm::vec2(0, 1);
+		if (collisionY()) {
+			bclimbing = false;
+			sprite->position() += glm::vec2(0, 2);
+			sprite->changeAnimation(WALKING_LEFT);
+			state = FALLING_LEFT_STATE;
+		}
+		break;
+
+	case BUILDER_STATE:
+		if(builderStep==14){
+			sprite->changeAnimation(WALKING_RIGHT);
+			state = WALKING_RIGHT_STATE;
+			builderStep = 1;
+			sprite->position() -= glm::vec2(-2, 0);
+		}
+		if (sprite->keyframe() == 7) {
+			sprite->position() -= glm::vec2(-1,1);
+			++builderStep;
+		}
+
 	}
+}
+
+glm::vec2 Lemming::getactualPos() {
+	return sprite->position();
 }
 
 void Lemming::render()
@@ -255,9 +317,17 @@ void Lemming::change_state(int nstate) {
 		sprite->changeAnimation(BLOCKING);
 		state = BLOCK_STATE;
 	}
+	else if (nstate == 4) {
+		bclimbing = true;
+	}
 	else if (nstate == 5) {
 		sprite->changeAnimation(DEATH_BY_MANHATTAN);
 		state = DYING_BOMB_STATE;
+	}
+	else if (nstate == 6) {
+		sprite->changeAnimation(BUILDER);
+		state = BUILDER_STATE;
+		pos = sprite->position();
 	}
 }
 
@@ -274,9 +344,17 @@ int Lemming::getState() {
 		return 2;
 	else if (state == BLOCK_STATE)
 		return 3;
+	else if (state == CLIMBING_STATE)
+		return 4;
 	else if (state == DYING_BOMB_STATE)
 		return 5;
+	else if (state == BUILDER_STATE)
+		return 6;
 	else return 0;
+}
+
+int Lemming::getbuilderStep() {
+	return builderStep;
 }
 
 int Lemming::collisionFloor(int maxFall)

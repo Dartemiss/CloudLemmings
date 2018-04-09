@@ -6,6 +6,8 @@
 #include "ShaderProgram.h"
 #include "MaskedTexturedQuad.h"
 #include "Lemming.h"
+#include "Ladder.h"
+#include "Sprite.h"
 
 
 // Scene contains all the entities of our game.
@@ -48,8 +50,10 @@ private:
 	int lemmingsTotal;
 	int allCreatedLemm;
 	Lemming lemming;
-	Texture spritesheet;
+	Ladder ladder;
+	Texture spritesheet,spritesheetLadder;
 	bool deathbybomb;
+	Sprite * sprite;
 
 
 };
