@@ -73,13 +73,6 @@ void Scene::init()
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 10) {
-		lastLemming = currentTime;
-		++howmanyLem;
-		++allCreatedLemm;
-	}
-
-	
 	//cursor->update(deltaTime);
 		
 		
@@ -125,9 +118,6 @@ void Scene::update(int deltaTime)
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			applyMask(pos.x, pos.y);
 			listOflemmings[i].update(deltaTime);
-		}
-		else if (deathbybomb) {
-			listOflemmings[i].change_state(5);
 		}
 		else if (deathbybomb && (particlesystems[i].get_time_living() < 4000)) {
 			//listOflemmings[i].change_state(2); ha de fer l'animacio del tembleque

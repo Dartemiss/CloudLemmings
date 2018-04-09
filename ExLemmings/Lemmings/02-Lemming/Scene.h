@@ -34,10 +34,9 @@ public:
 private:
 	void initShaders();
 	void give_skill(int mouseX, int mouseY, int skill);
-	void eraseMaskX(int mouseX, int mouseY);
-	void eraseMaskY(int mouseX, int mouseY);
-	void applyMask(int mouseX, int mouseY);
-
+	void eraseMaskX(int lemX, int lemY);
+	void eraseMaskY(int lemX, int lemY);
+	void applyMask(int lemX, int lemY);
 	bool isOnLemming(int mouseX, int mouseY);
 
 private:
