@@ -24,6 +24,7 @@ bool Game::update(int deltaTime)
 		sceneaux.update(deltaTime);
 		break;
 	case 1:
+		glutSetCursor(GLUT_CURSOR_NONE);
 		if (hasWon()) gstate = 0;
 		if (!paused) {
 			if (fastmode) scene.update(deltaTime*2);
