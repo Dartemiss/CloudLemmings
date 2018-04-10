@@ -56,6 +56,11 @@ private:
 	int mouseX, mouseY;               // Mouse position
 	bool bLeftMouse, bRightMouse, bMiddleMouse;     // Mouse button states
 
+	enum gameState
+	{
+		MENU_STATE, PLAYING_STATE, INSTRUCTIONS_STATE, CREDITS_STATE
+	};
+
 };
 
 

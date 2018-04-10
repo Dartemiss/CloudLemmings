@@ -25,7 +25,10 @@ bool Game::update(int deltaTime)
 		break;
 	case 1:
 		glutSetCursor(GLUT_CURSOR_NONE);
-		if (hasWon()) gstate = 0;
+		if (hasWon()) {
+			sceneaux.init();
+			gstate = 0;
+		}
 		if (!paused) {
 			if (fastmode) scene.update(deltaTime*2);
 			else scene.update(deltaTime);	
@@ -45,6 +48,8 @@ void Game::render()
 }
 
 void Game::initSc() {
+	Scene newSc;
+	scene = newSc;
 	scene.init();
 	gstate = 1;
 }
@@ -52,6 +57,7 @@ void Game::initSc() {
 void Game::newAction(int act) {
 	if (act == 0) {
 		sceneaux.init();
+		gstate = 0;
 	}
 	else if (act == 1) {
 		initSc();
