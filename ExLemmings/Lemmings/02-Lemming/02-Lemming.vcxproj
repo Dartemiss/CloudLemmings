@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimKeyframes.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="common_defs.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Ladder.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="VariableTexture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Ladder.cpp" />
     <ClCompile Include="Lemming.cpp" />

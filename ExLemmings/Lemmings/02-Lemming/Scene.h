@@ -9,6 +9,7 @@
 #include "Ladder.h"
 #include "ParticleSystem.h"
 #include "Sprite.h"
+#include "Button.h"
 
 
 // Scene contains all the entities of our game.
@@ -38,7 +39,7 @@ private:
 	void eraseMaskY(int lemX, int lemY);
 	void applyMask(int lemX, int lemY);
 	bool isOnLemming(int mouseX, int mouseY);
-
+	int loadSkill(int mouseX, int mouseY);
 private:
 	Texture colorTexture;
 	VariableTexture maskTexture;
@@ -54,14 +55,19 @@ private:
 	Lemming lemming;
 	Ladder ladder;
 	Texture spritesheet,spritesheetLadder;
-	bool deathbybomb;
 	Sprite * sprite;
+	int deathbybomb;
 	ParticleSystem partSys;
 	vector<ParticleSystem> particlesystems;
 	float lastCurrentTime;
 	bool onesec;
 	Sprite * cursor;
 	bool scloaded = false;
+	float startbombing;
+	int loadedSkill;
+	int howmanyButtons;
+	Button button;
+	vector<Button> listOfButtons;
 
 
 };
