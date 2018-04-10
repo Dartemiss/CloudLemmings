@@ -10,7 +10,7 @@
 #include "ParticleSystem.h"
 #include "Sprite.h"
 #include "Gate.h"
-
+#include "Button.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -40,6 +40,7 @@ private:
 	void applyMask(int lemX, int lemY);
 	void applyMaskLadder(int ladX, int ladY,int step);
 	bool isOnLemming(int mouseX, int mouseY);
+	int loadSkill(int mouseX, int mouseY);
 
 private:
 	Texture colorTexture;
@@ -60,7 +61,6 @@ private:
 	glm::vec2 posGate;
 	vector<Ladder> listOfLadders;
 	Texture spritesheet,spritesheetLadder,spritesheetGates,spritesheetGatesOut;
-	bool deathbybomb;
 	Sprite * sprite;
 	ParticleSystem partSys;
 	vector<ParticleSystem> particlesystems;
@@ -68,7 +68,12 @@ private:
 	bool onesec;
 	Sprite * cursor;
 	bool scloaded = false;
-
+	float startbombing;
+	int loadedSkill;
+	int howmanyButtons;
+	Button button;
+	vector<Button> listOfButtons;
+	int deathbybomb;
 };
 
 

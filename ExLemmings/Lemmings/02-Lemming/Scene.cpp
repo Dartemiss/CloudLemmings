@@ -51,7 +51,7 @@ void Scene::init()
 	spritesheetGatesOut.setMagFilter(GL_NEAREST);
 	
 
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 10; i++) {
 		lemming.init(glm::vec2(60, 30), simpleTexProgram, spritesheet);
 		lemming.setMapMask(&maskTexture);
 		listOflemmings.push_back(lemming);
@@ -59,7 +59,7 @@ void Scene::init()
 	lastLemming = 0;
 	howmanyLem = 0;
 	allCreatedLemm = 0;
-	deathbybomb = false;
+	deathbybomb = 0;
 	ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
 	gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut,true);
 	gateOut.init(glm::vec2(200, 122), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
@@ -80,6 +80,16 @@ void Scene::init()
 	cursor->setPosition(pos);
 	scloaded = true;
 
+	startbombing = 0.0f;
+
+	loadedSkill = -1;
+	howmanyButtons = 4;
+	
+		for (int i = 0; i < howmanyButtons; i++) {
+		button.init(i, 30 + i * 30, 130, simpleTexProgram, spritesheet);
+		listOfButtons.push_back(button);
+		
+	}
 }
 
 //unsigned int x = 0;
@@ -90,8 +100,8 @@ void Scene::update(int deltaTime)
 	//cursor->update(deltaTime);
 		
 		
-	if (!deathbybomb) { //No es creen mes lemmings un cop s'activa la bomba
-		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 1) {
+	if (deathbybomb == 0) { //No es creen mes lemmings un cop s'activa la bomba
+		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 10) {
 			lastLemming = currentTime;
 			++howmanyLem;
 			++allCreatedLemm;
@@ -139,7 +149,7 @@ void Scene::update(int deltaTime)
 			applyMask(pos.x, pos.y);
 			listOflemmings[i].update(deltaTime);
 		}
-		else if (deathbybomb && (particlesystems[i].get_time_living() < 4000)) {
+		else if (deathbybomb != 0 && (particlesystems[i].get_time_living() < 6000)) {
 			//listOflemmings[i].change_state(2); ha de fer l'animacio del tembleque
 			//listOflemmings[i].update(deltaTime);
 			particlesystems[i].update(deltaTime);
@@ -160,35 +170,6 @@ void Scene::update(int deltaTime)
 	gateOut.update(deltaTime);
 }
 
-void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton)
-{
-	if (scloaded) {
-		glm::ivec2 pos = glm::ivec2(mouseX / 3 - 11, mouseY / 3 - 7);
-		cursor->setPosition(pos);
-		if (isOnLemming(mouseX, mouseY)) {
-			cursor->changeAnimation(1);
-			
-		}
-		else {
-			cursor->changeAnimation(0);
-			
-		}
-		
-	}
-	
-		
-	if (bLeftButton) {
-		//eraseMask(mouseX, mouseY);
-		give_skill(mouseX, mouseY, 6);
-	}
-	else if (bRightButton) {
-		//applyMask(mouseX, mouseY); 
-		give_skill(mouseX, mouseY, 0);
-	}
-	else if (bMiddleButton) {
-		give_skill(mouseX, mouseY, 3);
-	}
-}
 
 void Scene::render()
 {
@@ -210,12 +191,18 @@ void Scene::render()
 	gateOut.render();
 	for (int i = 0; i < howmanyLem; i++) {
 		listOflemmings[i].render();
-		if (deathbybomb && (particlesystems[i].get_time_living() < 4000)) {
+		if (deathbybomb != 0 && (particlesystems[i].get_time_living() < 6000)) {
 			particlesystems[i].render();
 			
 		}
 		
 	}
+
+	for (int i = 0; i < howmanyButtons; i++) {
+		listOfButtons[i].render();
+		
+	}
+
 
 	cursor->render();
 	gate.render();
@@ -226,6 +213,62 @@ void Scene::render()
 
 }
 
+
+int Scene::loadSkill(int mouseX, int mouseY) {
+	int posX = mouseX / 3;
+	int posY = mouseY / 3;
+	for (int i = 0; i < howmanyButtons; i++) {
+		if (listOfButtons[i].isPressed(posX, posY)) {
+			return i;
+			
+		}
+		
+	}
+	return -1;
+	
+}
+
+void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton){
+	if (scloaded) {
+		glm::ivec2 pos = glm::ivec2(mouseX / 3 - 11, mouseY / 3 - 7);
+		cursor->setPosition(pos);
+		if (isOnLemming(mouseX, mouseY)) {
+			cursor->changeAnimation(1);
+			
+		}
+		else {
+			cursor->changeAnimation(0);
+			
+		}
+		
+			if (bLeftButton) {
+			if (loadedSkill != -1) {
+				give_skill(mouseX, mouseY, loadedSkill);
+				
+			}
+			int skill = loadSkill(mouseX, mouseY);
+			if (skill != -1) {
+				if (loadedSkill != -1 && loadedSkill != skill) {
+					listOfButtons[loadedSkill].unPress();
+					
+				}
+				loadedSkill = skill;
+				
+			}
+			
+		}
+		else if (bRightButton) {
+						//applyMask(mouseX, mouseY); 
+				give_skill(mouseX, mouseY, 0);
+			
+		}
+		else if (bMiddleButton) {
+			give_skill(mouseX, mouseY, 3);
+			
+		}
+		
+	}
+}
 
 int Scene::lemArrived()
 {
@@ -380,7 +423,7 @@ void Scene::bombed()
 				particlesystems.push_back(partSys);
 			
 		}
-		deathbybomb = true;
+		deathbybomb = 1;
 		
 	}
 }

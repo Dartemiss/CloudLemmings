@@ -41,6 +41,9 @@
     </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="Gate.h">
+      <Filter>Header Files</Filter>  
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
@@ -107,6 +110,9 @@
     <ClCompile Include="Ladder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+	<ClCompile Include="Gate.cpp">
+      <Filter>Source Files</Filter>
+	</ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
