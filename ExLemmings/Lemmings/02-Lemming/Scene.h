@@ -9,6 +9,7 @@
 #include "Ladder.h"
 #include "ParticleSystem.h"
 #include "Sprite.h"
+#include "Gate.h"
 
 
 // Scene contains all the entities of our game.
@@ -37,6 +38,7 @@ private:
 	void eraseMaskX(int lemX, int lemY);
 	void eraseMaskY(int lemX, int lemY);
 	void applyMask(int lemX, int lemY);
+	void applyMaskLadder(int ladX, int ladY,int step);
 	bool isOnLemming(int mouseX, int mouseY);
 
 private:
@@ -53,7 +55,11 @@ private:
 	int allCreatedLemm;
 	Lemming lemming;
 	Ladder ladder;
-	Texture spritesheet,spritesheetLadder;
+	Gate gate;
+	Gate gateOut;
+	glm::vec2 posGate;
+	vector<Ladder> listOfLadders;
+	Texture spritesheet,spritesheetLadder,spritesheetGates,spritesheetGatesOut;
 	bool deathbybomb;
 	Sprite * sprite;
 	ParticleSystem partSys;
@@ -62,7 +68,6 @@ private:
 	bool onesec;
 	Sprite * cursor;
 	bool scloaded = false;
-
 
 };
 

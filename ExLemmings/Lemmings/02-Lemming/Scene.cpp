@@ -41,8 +41,17 @@ void Scene::init()
 	spritesheetLadder.loadFromFile("images/ladder.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheetLadder.setMinFilter(GL_NEAREST);
 	spritesheetLadder.setMagFilter(GL_NEAREST);
+	
+	spritesheetGates.loadFromFile("images/enter_gate.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheetGates.setMinFilter(GL_NEAREST);
+	spritesheetGates.setMagFilter(GL_NEAREST);
 
-	for (int i = 0; i < 10; i++) {
+	spritesheetGatesOut.loadFromFile("images/out_gate.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheetGatesOut.setMinFilter(GL_NEAREST);
+	spritesheetGatesOut.setMagFilter(GL_NEAREST);
+	
+
+	for (int i = 0; i < 1; i++) {
 		lemming.init(glm::vec2(60, 30), simpleTexProgram, spritesheet);
 		lemming.setMapMask(&maskTexture);
 		listOflemmings.push_back(lemming);
@@ -52,6 +61,11 @@ void Scene::init()
 	allCreatedLemm = 0;
 	deathbybomb = false;
 	ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
+	gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut,true);
+	gateOut.init(glm::vec2(200, 122), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
+	posGate = glm::vec2(200, 122);
+
+	listOfLadders.push_back(ladder);
 
 	cursor = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &simpleTexProgram);
 	cursor->setNumberAnimations(2);
@@ -77,7 +91,7 @@ void Scene::update(int deltaTime)
 		
 		
 	if (!deathbybomb) { //No es creen mes lemmings un cop s'activa la bomba
-		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 10) {
+		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 1) {
 			lastLemming = currentTime;
 			++howmanyLem;
 			++allCreatedLemm;
@@ -87,6 +101,9 @@ void Scene::update(int deltaTime)
 
 
 	for (int i = 0; i < howmanyLem; i++) {
+		if (listOflemmings[i].getLemPos().x == posGate.x + 11 && !listOflemmings[i].isWinning()) {
+			listOflemmings[i].change_state(7);
+		}
 		if (listOflemmings[i].getState() == 1) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			eraseMaskY(pos.x, pos.y);
@@ -100,14 +117,17 @@ void Scene::update(int deltaTime)
 		else if (listOflemmings[i].getState() == 6) {
 			int step = listOflemmings[i].getbuilderStep();
 			glm::vec2 pos = listOflemmings[i].pos;
-			glm::vec2 maskPos = listOflemmings[i].getactualPos();
-			maskTexture.setPixel(130 + maskPos.x, maskPos.y, 1);
-			maskTexture.setPixel(130 + maskPos.x+1, maskPos.y, 1);
-			maskTexture.setPixel(130 + maskPos.x+2, maskPos.y, 1);
-			maskTexture.setPixel(130 + maskPos.x+3, maskPos.y, 1);
-			maskTexture.setPixel(130 + maskPos.x+4, maskPos.y, 1);
-			ladder.changeSteps(step);
-			ladder.changePos(pos);
+			applyMaskLadder(pos.x,pos.y,step);
+			if (listOflemmings[i].nLadder){
+				ladder.init(glm::vec2(120, 130), simpleTexProgram, spritesheetLadder);
+				listOfLadders.push_back(ladder);
+				int s = listOfLadders.size() - 1;
+				listOflemmings[i].setnumLadder(s);
+			}
+			listOflemmings[i].setnLadder(false);
+			int aux = listOflemmings[i].getnumLadder();
+			listOfLadders[aux].changeSteps(step);
+			listOfLadders[aux].changePos(pos);
 			listOflemmings[i].update(deltaTime);
 		}
 		else if (listOflemmings[i].hasDied()) {
@@ -133,8 +153,11 @@ void Scene::update(int deltaTime)
 				}
 			}*/
 		else listOflemmings[i].update(deltaTime);
+
 	}
 
+	gate.update(deltaTime);
+	gateOut.update(deltaTime);
 }
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton)
@@ -184,7 +207,7 @@ void Scene::render()
 	modelview = glm::mat4(1.0f);
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 	
-
+	gateOut.render();
 	for (int i = 0; i < howmanyLem; i++) {
 		listOflemmings[i].render();
 		if (deathbybomb && (particlesystems[i].get_time_living() < 4000)) {
@@ -195,7 +218,11 @@ void Scene::render()
 	}
 
 	cursor->render();
-	ladder.render();
+	gate.render();
+
+	for (int i = 0; i < listOfLadders.size(); i++) {
+		listOfLadders[i].render(); 
+	}
 
 }
 
@@ -318,6 +345,26 @@ void Scene::applyMask(int lemX, int lemY)
 	for (int i = 0; i < 10; i++) {
 		maskTexture.setPixel(posX+5,posY+i,1);
 		maskTexture.setPixel(posX + 15, posY + i, 1);
+	}
+}
+
+void Scene::applyMaskLadder(int ladX, int ladY,int step){
+	int posX, posY;
+	int offset = (step - 1) * 2;
+	posX = ladX + 120 + offset + 3;
+	posY = ladY - (step-1) + 11;
+
+	// Transform from mouse coordinates to map coordinates
+	//   The map is enlarged 3 times and displaced 120 pixels
+	//posX = mouseX/3 + 120;
+	//posY = mouseY/3;
+
+	/*for(int y=max(0, posY-3); y<=min(maskTexture.height()-1, posY+3); y++)
+	for(int x=max(0, posX-3); x<=min(maskTexture.width()-1, posX+3); x++)
+	maskTexture.setPixel(x, y, 255);*/
+
+	for (int i = 0; i < 1; i++) {
+		maskTexture.setPixel(posX + i, posY, 155);
 	}
 }
 

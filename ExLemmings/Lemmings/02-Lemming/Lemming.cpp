@@ -14,7 +14,7 @@
 enum LemmingAnims
 {
 	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER,CLIMBER, ARRIVE_CLIMBER,DEATH_BY_MANHATTAN,
-	CLIMBER_LEFT,BUILDER
+	CLIMBER_LEFT,BUILDER,WINNING
 };
 
 
@@ -27,10 +27,12 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	bDied = false;
 	bBlocking = false;
 	bclimbing = false;
+	nLadder = false;
+	won = false;
 	pos = glm::vec2(0,0);
 	//sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 0.5), &spritesheet, &shaderProgram);
 	sprite = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143/2.0), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(13);
+	sprite->setNumberAnimations(14);
 	
 		sprite->setAnimationSpeed(WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -86,6 +88,10 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(BUILDER, 8);
 		for (int i = 8; i < 16; i++)
 			sprite->addKeyframe(BUILDER, glm::vec2(float(i) / 16.0f, 0.07142857143f * 5 / 2));
+
+		sprite->setAnimationSpeed(WINNING, 4);
+		for (int i = 0; i < 9; i++)
+			sprite->addKeyframe(WINNING, glm::vec2(float(i) / 16.0f, 0.07142857143f * 1 / 2));
 		
 	//sprite->changeAnimation(WALKING_RIGHT);
 	sprite->changeAnimation(OPEN_UMBRELLA);
@@ -282,7 +288,14 @@ void Lemming::update(int deltaTime)
 			sprite->position() -= glm::vec2(-1,1);
 			++builderStep;
 		}
+		break;
 
+	case WINNING_STATE:
+		
+		if (sprite->keyframe() == 8) {
+			bDied = true;
+		}
+		break;
 	}
 }
 
@@ -298,6 +311,10 @@ void Lemming::render()
 void Lemming::setMapMask(VariableTexture *mapMask)
 {
 	mask = mapMask;
+}
+
+void Lemming::setnLadder(bool b){
+	nLadder = b;
 }
 
 void Lemming::change_state(int nstate) {
@@ -326,15 +343,34 @@ void Lemming::change_state(int nstate) {
 	}
 	else if (nstate == 6) {
 		sprite->changeAnimation(BUILDER);
+		//state = BUILD_LADDER_STATE;
+		nLadder = true;
 		state = BUILDER_STATE;
 		pos = sprite->position();
 	}
+	else if (nstate == 7) {
+		won = true;
+		sprite->changeAnimation(WINNING);
+		state = WINNING_STATE;
+	}
+}
+
+bool Lemming::isWinning() {
+	return won;
 }
 
 glm::ivec2 Lemming::getLemPos()
 {
 	glm::ivec2 pos = sprite->position();
 	return pos;
+}
+
+int Lemming::getnumLadder(){
+	return numLadder;
+}
+
+void Lemming::setnumLadder(int s){
+	numLadder = s;
 }
 
 int Lemming::getState() {
@@ -398,7 +434,12 @@ bool Lemming::collision()
 	glm::ivec2 posBase = sprite->position() + glm::vec2(120, 0); // Add the map displacement
 	
 	posBase += glm::ivec2(7, 9);
-	if((mask->pixel(posBase.x, posBase.y) == 0) && (mask->pixel(posBase.x+1, posBase.y) == 0))
+	if ((mask->pixel(posBase.x - 1, posBase.y) == 155) || (mask->pixel(posBase.x, posBase.y) == 155)){
+		return false;
+	}
+	if ((mask->pixel(posBase.x, posBase.y) == 0) && (mask->pixel(posBase.x + 1, posBase.y) == 0))
+		return false;
+	if ((mask->pixel(posBase.x, posBase.y) == 0) && (mask->pixel(posBase.x - 1, posBase.y) == 0))
 		return false;
 
 	return true;
