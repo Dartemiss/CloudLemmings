@@ -351,13 +351,15 @@ void Scene::give_skill(int mouseX, int mouseY, int skill) {
 	posY = mouseY / 3;
 
 	glm::ivec2 posMouse = glm::ivec2(posX, posY);
-	for (int i = 0; i < howmanyLem; i++) {
+	bool justOneLemming = false;
+	for (int i = 0; i < howmanyLem && !justOneLemming; i++) {
 		glm::ivec2 pos = listOflemmings[i].getLemPos();
 		bool xx = (pos.x + 5 < posMouse.x) && (pos.x + 15 > posMouse.x);
 		bool yy = (pos.y - 12 < posMouse.y) && (pos.y + 12 > posMouse.y);
 		//xx = yy = true;
 		if(xx && yy) {
 			listOflemmings[i].change_state(skill);
+			justOneLemming = true;
 		}
 	}
 }
