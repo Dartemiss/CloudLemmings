@@ -14,7 +14,7 @@
 enum LemmingAnims
 {
 	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER,CLIMBER, ARRIVE_CLIMBER,DEATH_BY_MANHATTAN,
-	CLIMBER_LEFT,BUILDER,WINNING
+	CLIMBER_LEFT,BUILDER,WINNING, PORTAL
 };
 
 
@@ -32,7 +32,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	pos = glm::vec2(0,0);
 	//sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 0.5), &spritesheet, &shaderProgram);
 	sprite = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143/2.0), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(14);
+	sprite->setNumberAnimations(16);
 	
 		sprite->setAnimationSpeed(WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -92,6 +92,10 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(WINNING, 4);
 		for (int i = 0; i < 9; i++)
 			sprite->addKeyframe(WINNING, glm::vec2(float(i) / 16.0f, 0.07142857143f * 1 / 2));
+
+		sprite->setAnimationSpeed(PORTAL, 8);
+		for (int i = 0; i < 16; i++)
+			sprite->addKeyframe(PORTAL, glm::vec2(float(i) / 16.0f, 0.07142857143f * 3 / 2));
 		
 	//sprite->changeAnimation(WALKING_RIGHT);
 	sprite->changeAnimation(OPEN_UMBRELLA);
@@ -289,7 +293,9 @@ void Lemming::update(int deltaTime)
 			++builderStep;
 		}
 		break;
+	case PORTAL_STATE:
 
+		break;
 	case WINNING_STATE:
 		
 		if (sprite->keyframe() == 8) {
@@ -338,9 +344,13 @@ void Lemming::change_state(int nstate) {
 		bclimbing = true;
 	}
 	else if (nstate == 5) {
+		sprite->changeAnimation(PORTAL);
+		state = PORTAL_STATE;
+	}
+	/*else if (nstate == 5) {
 		sprite->changeAnimation(DEATH_BY_MANHATTAN);
 		state = DYING_BOMB_STATE;
-	}
+	}*/
 	else if (nstate == 6) {
 		sprite->changeAnimation(BUILDER);
 		//state = BUILD_LADDER_STATE;
@@ -382,7 +392,7 @@ int Lemming::getState() {
 		return 3;
 	else if (state == CLIMBING_STATE)
 		return 4;
-	else if (state == DYING_BOMB_STATE)
+	else if (state == PORTAL_STATE)
 		return 5;
 	else if (state == BUILDER_STATE)
 		return 6;
@@ -466,6 +476,9 @@ bool Lemming::isBlocking()
 	return bBlocking;
 }
 
+void Lemming::setPos(glm::vec2 pos) {
+	sprite->setPosition(pos);
+}
 
 
 

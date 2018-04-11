@@ -68,12 +68,10 @@ void Scene::init()
 	listOfLadders.push_back(ladder);
 
 	cursor = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &simpleTexProgram);
-	cursor->setNumberAnimations(2);
-	//cursor->setAnimationSpeed(0, 12);
-		
+	cursor->setNumberAnimations(3);
 	cursor->addKeyframe(0, glm::vec2(13 / 16.0f, 0.07142857143f * 2 / 2));
 	cursor->addKeyframe(1, glm::vec2(12 / 16.0f, 0.07142857143f * 2 / 2));
-	
+	cursor->addKeyframe(2, glm::vec2(14 / 16.0f, 0.07142857143f * 2 / 2));
 	cursor->changeAnimation(0);
 	
 	glm::ivec2 pos = glm::ivec2(-20, -20);
@@ -90,6 +88,9 @@ void Scene::init()
 		listOfButtons.push_back(button);
 		
 	}
+
+	settingPortal = false;
+	first_portalOn = second_portalOn = false;
 }
 
 //unsigned int x = 0;
@@ -140,6 +141,15 @@ void Scene::update(int deltaTime)
 			listOfLadders[aux].changePos(pos);
 			listOflemmings[i].update(deltaTime);
 		}
+		else if (listOflemmings[i].getState() == 5 && !first_portalOn) {
+			if (!first_portalOn) {
+				glm::vec2 pos = listOflemmings[i].getLemPos();
+				portal_first.init(pos.x-20, pos.y-5, simpleTexProgram, spritesheet);
+				first_portalOn = true;
+			}
+			settingPortal = true;
+			cursor->changeAnimation(2);
+		}
 		else if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
 			howmanyLem--;
@@ -155,6 +165,14 @@ void Scene::update(int deltaTime)
 			particlesystems[i].update(deltaTime);
 			listOflemmings[i].update(deltaTime);
 		}
+		else if (first_portalOn && second_portalOn) {
+			glm::ivec2 pos = listOflemmings[i].getLemPos();
+			if (portal_first.contact(pos.x,pos.y)) {
+				glm::ivec2 newPos = portal_second.getPos();
+				listOflemmings[i].setPos(newPos);
+			}
+			listOflemmings[i].update(deltaTime);
+		}
 	 /*else if (deathbybomb) {
 				
 			for (int j = 0; j < howmanyLem; j++) {
@@ -168,6 +186,16 @@ void Scene::update(int deltaTime)
 
 	gate.update(deltaTime);
 	gateOut.update(deltaTime);
+	for (int i = 0; i < howmanyButtons; i++) {
+		listOfButtons[i].update();
+	}
+
+	if (first_portalOn) {
+		portal_first.update(deltaTime);
+	}
+	if (second_portalOn) {
+		portal_second.update(deltaTime);
+	}
 }
 
 
@@ -189,6 +217,12 @@ void Scene::render()
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 	
 	gateOut.render();
+	if (first_portalOn) {
+		portal_first.render();
+	}
+	if (second_portalOn) {
+		portal_second.render();
+	}
 	for (int i = 0; i < howmanyLem; i++) {
 		listOflemmings[i].render();
 		if (deathbybomb != 0 && (particlesystems[i].get_time_living() < 6000)) {
@@ -236,31 +270,40 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 			cursor->changeAnimation(1);
 			
 		}
-		else {
+		else if (!settingPortal) {
 			cursor->changeAnimation(0);
 			
 		}
-		
-			if (bLeftButton) {
-			if (loadedSkill != -1) {
-				give_skill(mouseX, mouseY, loadedSkill);
-				
-			}
-			int skill = loadSkill(mouseX, mouseY);
-			if (skill != -1) {
-				if (loadedSkill != -1 && loadedSkill != skill) {
-					listOfButtons[loadedSkill].unPress();
-					
+		else {
+			cursor->changeAnimation(2);
+		}
+
+		if (bLeftButton) {
+			if (!settingPortal) { //No portal
+				if (loadedSkill != -1) {
+					give_skill(mouseX, mouseY, loadedSkill);
 				}
-				loadedSkill = skill;
-				
+				int skill = loadSkill(mouseX, mouseY);
+				if (skill != -1) {
+					if (loadedSkill != -1 && loadedSkill != skill) {
+						listOfButtons[loadedSkill].unPress();
+					}
+					loadedSkill = skill;
+				}
 			}
-			
+			else {//Place portal
+				int posX = mouseX / 3 - 10;
+				int posY = mouseY / 3 - 8;
+				//if (maskTexture.pixel(posX, posY) != 255 && maskTexture.pixel(posX, posY + 15) == 255) {
+					portal_second.init(posX, posY, simpleTexProgram, spritesheet);
+					second_portalOn = true;
+					settingPortal = false;
+				//}
+			}
 		}
 		else if (bRightButton) {
-						//applyMask(mouseX, mouseY); 
-				give_skill(mouseX, mouseY, 0);
-			
+			//applyMask(mouseX, mouseY); 
+			give_skill(mouseX, mouseY, 5);
 		}
 		else if (bMiddleButton) {
 			give_skill(mouseX, mouseY, 3);

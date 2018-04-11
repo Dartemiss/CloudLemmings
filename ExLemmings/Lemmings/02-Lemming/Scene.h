@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include "Gate.h"
 #include "Button.h"
+#include "Portal.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -73,7 +74,11 @@ private:
 	int howmanyButtons;
 	Button button;
 	vector<Button> listOfButtons;
+	bool settingPortal;
+	Portal portal_first, portal_second;
+	bool first_portalOn, second_portalOn;
 	int deathbybomb;
+
 };
 
 

@@ -2,23 +2,19 @@
 
 
 void Button::init(int whichskill, int x, int y, ShaderProgram &shaderProgram, Texture &spritesheet) {
-	int frameY = 0;
+	int frameY = 12;
 	int frameX = 0;
 	
 	if (whichskill == 0) {//UMBRELLA
-		frameY = 12;
 		frameX = 0;
 	}
 	else if (whichskill == 1) {//DIGGER
-		frameY = 12;
 		frameX = 2;
 	}
 	else if (whichskill == 2) {//BASHER
-		frameY = 12;
 		frameX = 4;
 	}
 	else if (whichskill == 3) {//BLOCKER
-		frameY = 12;
 		frameX = 6;
 	}
 
