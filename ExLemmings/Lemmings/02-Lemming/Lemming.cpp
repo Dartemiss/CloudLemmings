@@ -94,8 +94,8 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 			sprite->addKeyframe(WINNING, glm::vec2(float(i) / 16.0f, 0.07142857143f * 1 / 2));
 
 		sprite->setAnimationSpeed(PORTAL, 8);
-		for (int i = 0; i < 16; i++)
-			sprite->addKeyframe(PORTAL, glm::vec2(float(i) / 16.0f, 0.07142857143f * 3 / 2));
+		for (int i = 0; i < 4; i++)
+			sprite->addKeyframe(PORTAL, glm::vec2(float(i) / 16.0f, 0.07142857143f * 16 / 2));
 		
 	//sprite->changeAnimation(WALKING_RIGHT);
 	sprite->changeAnimation(OPEN_UMBRELLA);
@@ -294,7 +294,6 @@ void Lemming::update(int deltaTime)
 		}
 		break;
 	case PORTAL_STATE:
-
 		break;
 	case WINNING_STATE:
 		

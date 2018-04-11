@@ -51,7 +51,9 @@ void Scene::init()
 	spritesheetGatesOut.setMagFilter(GL_NEAREST);
 	
 
-	for (int i = 0; i < 10; i++) {
+	lemmingsInGame = 10;
+
+	for (int i = 0; i < lemmingsInGame; i++) {
 		lemming.init(glm::vec2(60, 30), simpleTexProgram, spritesheet);
 		lemming.setMapMask(&maskTexture);
 		listOflemmings.push_back(lemming);
@@ -81,10 +83,10 @@ void Scene::init()
 	startbombing = 0.0f;
 
 	loadedSkill = -1;
-	howmanyButtons = 4;
+	howmanyButtons = 7;
 	
 		for (int i = 0; i < howmanyButtons; i++) {
-		button.init(i, 30 + i * 30, 130, simpleTexProgram, spritesheet);
+		button.init(i, 100 + i * 30, 15, simpleTexProgram, spritesheet);
 		listOfButtons.push_back(button);
 		
 	}
@@ -102,7 +104,7 @@ void Scene::update(int deltaTime)
 		
 		
 	if (deathbybomb == 0) { //No es creen mes lemmings un cop s'activa la bomba
-		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 10) {
+		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < lemmingsInGame) {
 			lastLemming = currentTime;
 			++howmanyLem;
 			++allCreatedLemm;
@@ -281,7 +283,14 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 		if (bLeftButton) {
 			if (!settingPortal) { //No portal
 				if (loadedSkill != -1) {
-					give_skill(mouseX, mouseY, loadedSkill);
+					if (loadedSkill == 5) {
+						if (!first_portalOn) {
+							give_skill(mouseX, mouseY, loadedSkill);
+						}
+					}
+					else {
+						give_skill(mouseX, mouseY, loadedSkill);
+					}
 				}
 				int skill = loadSkill(mouseX, mouseY);
 				if (skill != -1) {

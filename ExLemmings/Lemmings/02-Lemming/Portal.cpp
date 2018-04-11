@@ -25,7 +25,7 @@ void Portal::render() {
 
 bool Portal::contact(int lemX, int lemY) {
 	if ((pos.y - 2 < lemY) && (pos.y + 18 > lemY)) {
-		if ((pos.x + 5 < lemX) && (pos.x + 18 > lemX)) {
+		if ((pos.x - 3 < lemX) && (pos.x + 18 > lemX)) {
 			return true;
 		}
 	}

@@ -44,6 +44,7 @@ private:
 	int loadSkill(int mouseX, int mouseY);
 
 private:
+	int lemmingsInGame;
 	Texture colorTexture;
 	VariableTexture maskTexture;
 	MaskedTexturedQuad *map;
