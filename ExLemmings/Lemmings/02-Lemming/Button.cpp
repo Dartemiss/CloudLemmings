@@ -4,7 +4,7 @@
 void Button::init(int whichskill, int x, int y, ShaderProgram &shaderProgram, Texture &spritesheet) {
 	int frameY = 12;
 	int frameX = 0;
-	
+	id_skill = whichskill;
 	if (whichskill == 0) {//UMBRELLA
 		frameX = 0;
 	}
@@ -16,6 +16,15 @@ void Button::init(int whichskill, int x, int y, ShaderProgram &shaderProgram, Te
 	}
 	else if (whichskill == 3) {//BLOCKER
 		frameX = 6;
+	}
+	else if (whichskill == 4) {//CLIMBER
+		frameX = 8;
+	}
+	else if (whichskill == 5) {//PORTAL CASTER
+		frameX = 10;
+	}
+	else if (whichskill == 6) {//BUILDER
+		frameX = 12;
 	}
 
 	sprite = Sprite::createSprite(glm::ivec2(24, 24), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &shaderProgram);
@@ -38,7 +47,9 @@ void Button::update() {
 		sprite->changeAnimation(1);
 	}
 	else {
-		sprite->changeAnimation(0);
+		if (id_skill != 5) {
+			sprite->changeAnimation(0);
+		}
 	}
 }
 

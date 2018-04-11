@@ -14,6 +14,7 @@ private:
 	glm::ivec2 pos;
 	Sprite *sprite;
 	bool pressed;
+	int id_skill;
 };
 
 
