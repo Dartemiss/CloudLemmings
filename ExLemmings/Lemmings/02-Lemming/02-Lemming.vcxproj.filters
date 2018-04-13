@@ -41,9 +41,9 @@
     </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>Header Files</Filter>
-	</ClInclude>
-	<ClInclude Include="Gate.h">
-      <Filter>Header Files</Filter>  
+    </ClInclude>
+    <ClInclude Include="Gate.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
@@ -64,6 +64,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Proyectil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -110,10 +119,19 @@
     <ClCompile Include="Ladder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-	<ClCompile Include="Gate.cpp">
+    <ClCompile Include="Gate.cpp">
       <Filter>Source Files</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Proyectil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

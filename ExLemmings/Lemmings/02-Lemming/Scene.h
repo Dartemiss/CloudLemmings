@@ -10,6 +10,7 @@
 #include "ParticleSystem.h"
 #include "Sprite.h"
 #include "Gate.h"
+#include "Proyectil.h"
 #include "Button.h"
 
 // Scene contains all the entities of our game.
@@ -36,9 +37,12 @@ private:
 	void initShaders();
 	void give_skill(int mouseX, int mouseY, int skill);
 	void eraseMaskX(int lemX, int lemY);
+	void eraseMaskXLeft(int lemX, int lemY);
 	void eraseMaskY(int lemX, int lemY);
 	void applyMask(int lemX, int lemY);
 	void applyMaskLadder(int ladX, int ladY,int step);
+	void applyMaskLadderLeft(int ladX, int ladY, int step);
+	void eraseMaskBOOM(int lemX, int lemY);
 	bool isOnLemming(int mouseX, int mouseY);
 	int loadSkill(int mouseX, int mouseY);
 
@@ -56,10 +60,12 @@ private:
 	int allCreatedLemm;
 	Lemming lemming;
 	Ladder ladder;
+	Proyectil proyectil;
 	Gate gate;
 	Gate gateOut;
 	glm::vec2 posGate;
 	vector<Ladder> listOfLadders;
+	vector<Proyectil> listOfkames;
 	Texture spritesheet,spritesheetLadder,spritesheetGates,spritesheetGatesOut;
 	Sprite * sprite;
 	ParticleSystem partSys;

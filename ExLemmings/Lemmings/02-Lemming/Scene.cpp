@@ -20,7 +20,7 @@ Scene::~Scene()
 void Scene::init()
 {
 	glm::vec2 geom[2] = {glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT))};
-	glm::vec2 texCoords[2] = {glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f)};
+	glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f) };
 
 	initShaders();
 
@@ -34,7 +34,7 @@ void Scene::init()
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
-	spritesheet.loadFromFile("images/mirror_lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.loadFromFile("images/old/mirror_lemming_sayan.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMinFilter(GL_NEAREST);
 	spritesheet.setMagFilter(GL_NEAREST);
 
@@ -60,12 +60,14 @@ void Scene::init()
 	howmanyLem = 0;
 	allCreatedLemm = 0;
 	deathbybomb = 0;
-	ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
+	//ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
 	gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut,true);
 	gateOut.init(glm::vec2(200, 122), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
+	//proyectil.init(glm::vec2(100, 100), simpleTexProgram, spritesheet);
+
 	posGate = glm::vec2(200, 122);
 
-	listOfLadders.push_back(ladder);
+	//listOfLadders.push_back(ladder);
 
 	cursor = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &simpleTexProgram);
 	cursor->setNumberAnimations(2);
@@ -85,7 +87,7 @@ void Scene::init()
 	loadedSkill = -1;
 	howmanyButtons = 4;
 	
-		for (int i = 0; i < howmanyButtons; i++) {
+	for (int i = 0; i < howmanyButtons; i++) {
 		button.init(i, 30 + i * 30, 130, simpleTexProgram, spritesheet);
 		listOfButtons.push_back(button);
 		
@@ -111,7 +113,7 @@ void Scene::update(int deltaTime)
 
 
 	for (int i = 0; i < howmanyLem; i++) {
-		if (listOflemmings[i].getLemPos().x == posGate.x + 11 && !listOflemmings[i].isWinning()) {
+		if (listOflemmings[i].getLemPos().x == posGate.x + 11000 && !listOflemmings[i].isWinning()) {
 			listOflemmings[i].change_state(7);
 		}
 		if (listOflemmings[i].getState() == 1) {
@@ -121,24 +123,51 @@ void Scene::update(int deltaTime)
 		}
 		else if (listOflemmings[i].getState() == 2) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
-			eraseMaskX(pos.x, pos.y);
+			if (listOflemmings[i].right) {
+				eraseMaskX(pos.x, pos.y);
+			}
+			else {
+				eraseMaskXLeft(pos.x, pos.y);
+			}
 			listOflemmings[i].update(deltaTime);
 		}
 		else if (listOflemmings[i].getState() == 6) {
 			int step = listOflemmings[i].getbuilderStep();
+			bool right = listOflemmings[i].right;
 			glm::vec2 pos = listOflemmings[i].pos;
-			applyMaskLadder(pos.x,pos.y,step);
 			if (listOflemmings[i].nLadder){
 				ladder.init(glm::vec2(120, 130), simpleTexProgram, spritesheetLadder);
+				if (right)
+					ladder.changePos(pos);
+				else {
+					pos -= glm::vec2(25, 1);
+					ladder.changePos(pos);
+				}
 				listOfLadders.push_back(ladder);
 				int s = listOfLadders.size() - 1;
 				listOflemmings[i].setnumLadder(s);
+				
 			}
 			listOflemmings[i].setnLadder(false);
 			int aux = listOflemmings[i].getnumLadder();
-			listOfLadders[aux].changeSteps(step);
-			listOfLadders[aux].changePos(pos);
+			if (right) {
+				applyMaskLadder(pos.x, pos.y, step);
+				listOfLadders[aux].changeSteps(step -1);
+				
+			}
+			else {
+				applyMaskLadderLeft(pos.x, pos.y, step);
+				listOfLadders[aux].changeSteps(13 + step);
+			}
 			listOflemmings[i].update(deltaTime);
+		}
+		else if (listOflemmings[i].getState() == 9) { 
+			glm::vec2 auxpos = listOflemmings[i].getactualPos();
+			proyectil.init(glm::vec2(auxpos.x + 10,auxpos.y), simpleTexProgram, spritesheet);
+			listOfkames.push_back(proyectil);
+			int aux = listOfkames.size();
+			listOfkames[aux-1].setMapMask(&maskTexture);
+			listOflemmings[i].change_state(10);
 		}
 		else if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
@@ -168,6 +197,14 @@ void Scene::update(int deltaTime)
 
 	gate.update(deltaTime);
 	gateOut.update(deltaTime);
+	for (int j = 0; j < listOfkames.size();j++) {
+		if (listOfkames[j].getState()== 1) {
+			glm::vec2 aux = listOfkames[j].getPosition();
+			eraseMaskBOOM(aux.x, aux.y);
+			listOfkames.erase(listOfkames.begin() + j);
+		}
+		else listOfkames[j].update(deltaTime);
+	}
 }
 
 
@@ -178,7 +215,7 @@ void Scene::render()
 	maskedTexProgram.use();
 	maskedTexProgram.setUniformMatrix4f("projection", projection);
 	maskedTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	modelview = glm::mat4(1.0f);
+	modelview = glm::mat4(1.0f);	
 	maskedTexProgram.setUniformMatrix4f("modelview", modelview);
 	map->render(maskedTexProgram, colorTexture, maskTexture);
 	
@@ -206,8 +243,15 @@ void Scene::render()
 
 	cursor->render();
 	gate.render();
+	//proyectil.render();
+	
+	for (int i = 0; i < listOfkames.size(); i++) {
+		listOfkames[i].render();
+	}
+
 
 	for (int i = 0; i < listOfLadders.size(); i++) {
+
 		listOfLadders[i].render(); 
 	}
 
@@ -263,7 +307,7 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 			
 		}
 		else if (bMiddleButton) {
-			give_skill(mouseX, mouseY, 3);
+			give_skill(mouseX, mouseY, 8);
 			
 		}
 		
@@ -341,13 +385,113 @@ void Scene::eraseMaskX(int lemX, int lemY)
 	//   The map is enlarged 3 times and displaced 120 pixels
 	//posX = mouseX/3 + 120;
 	//posY = mouseY/3;
-	for (int i = 0; i < 4; ++i) {
-		for (int y = max(0, posY - 3); y <= min(maskTexture.height() - 1, posY + 8); y++)
-			for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
-				maskTexture.setPixel(x, y, 0);
-
-		++posX;
+		
+		
+	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
+		maskTexture.setPixel(x, posY - 1, 0);
 	}
+
+	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
+		maskTexture.setPixel(x, posY - 2, 0);
+	}
+	
+
+	maskTexture.setPixel(posX, posY - 3, 0);
+
+	for (int y = max(0, posY); y <= min(maskTexture.height() - 1, posY + 5); y++)
+		for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
+			maskTexture.setPixel(x, y, 0);
+
+	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
+		maskTexture.setPixel(x, posY + 6, 0);
+	}
+
+	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
+		maskTexture.setPixel(x, posY + 7, 0);
+	}
+
+
+	maskTexture.setPixel(posX, posY + 8, 0);
+
+}
+
+void Scene::eraseMaskXLeft(int lemX, int lemY)
+{
+	int posX = lemX + 125;
+	int posY = lemY;
+
+	// Transform from mouse coordinates to map coordinates
+	//   The map is enlarged 3 times and displaced 120 pixels
+	//posX = mouseX/3 + 120;
+	//posY = mouseY/3;
+
+
+	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
+		maskTexture.setPixel(x, posY - 1, 0);
+	}
+
+	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
+		maskTexture.setPixel(x, posY - 2, 0);
+	}
+
+
+	maskTexture.setPixel(posX, posY - 3, 0);
+
+	for (int y = max(0, posY); y <= min(maskTexture.height() - 1, posY + 5); y++)
+		for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
+			maskTexture.setPixel(x, y, 0);
+
+	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
+		maskTexture.setPixel(x, posY + 6, 0);
+	}
+
+	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
+		maskTexture.setPixel(x, posY + 7, 0);
+	}
+
+
+	maskTexture.setPixel(posX, posY + 8, 0);
+
+}
+
+
+void Scene::eraseMaskBOOM(int lemX, int lemY)
+{
+	int posX = lemX + 130;
+	int posY = lemY;
+
+	// Transform from mouse coordinates to map coordinates
+	//   The map is enlarged 3 times and displaced 120 pixels
+	//posX = mouseX/3 + 120;
+	//posY = mouseY/3;
+
+
+	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
+		maskTexture.setPixel(x, posY - 4, 0);
+	}
+
+	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
+		maskTexture.setPixel(x, posY - 5, 0);
+	}
+
+
+	maskTexture.setPixel(posX, posY - 3, 0);
+
+	for (int y = max(0, posY - 3); y <= min(maskTexture.height() - 1, posY + 8); y++)
+		for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
+			maskTexture.setPixel(x, y, 0);
+
+	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
+		maskTexture.setPixel(x, posY + 9, 0);
+	}
+
+	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
+		maskTexture.setPixel(x, posY + 10, 0);
+	}
+
+
+	maskTexture.setPixel(posX, posY + 11, 0);
+
 }
 
 void Scene::eraseMaskY(int lemX, int lemY)
@@ -359,14 +503,21 @@ void Scene::eraseMaskY(int lemX, int lemY)
 	//   The map is enlarged 3 times and displaced 120 pixels
 	//posX = mouseX/3 + 120;
 	//posY = mouseY/3;
-	for (int i = 0; i < 7; ++i) {
-		for (int y = max(0, posY - 3); y <= min(maskTexture.height() - 1, posY + 3); y++)
-			for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
-				maskTexture.setPixel(x, y, 0);
 
-		++posY;
+	for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
+		for (int y = max(0, posY - 3); y <= min(maskTexture.height() - 1, posY + 9); y++)
+			maskTexture.setPixel(x, y, 0);
 
+	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
+		maskTexture.setPixel(x, posY + 10, 0);
 	}
+
+	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
+		maskTexture.setPixel(x, posY + 11, 0);
+	}
+
+
+	maskTexture.setPixel(posX, posY + 12, 0);
 }
 
 
@@ -394,8 +545,28 @@ void Scene::applyMask(int lemX, int lemY)
 void Scene::applyMaskLadder(int ladX, int ladY,int step){
 	int posX, posY;
 	int offset = (step - 1) * 2;
-	posX = ladX + 120 + offset + 3;
+	posX = ladX + 120 + offset + 1;
 	posY = ladY - (step-1) + 11;
+
+	// Transform from mouse coordinates to map coordinates
+	//   The map is enlarged 3 times and displaced 120 pixels
+	//posX = mouseX/3 + 120;
+	//posY = mouseY/3;
+
+	/*for(int y=max(0, posY-3); y<=min(maskTexture.height()-1, posY+3); y++)
+	for(int x=max(0, posX-3); x<=min(maskTexture.width()-1, posX+3); x++)
+	maskTexture.setPixel(x, y, 255);*/
+
+	for (int i = 0; i < 1; i++) {
+		maskTexture.setPixel(posX + i, posY, 155);
+	}
+}
+
+void Scene::applyMaskLadderLeft(int ladX, int ladY, int step) {
+	int posX, posY;
+	int offset = (step - 1) * 2;
+	posX = ladX + 120 - offset + 6;
+	posY = ladY - (step - 1) + 11;
 
 	// Transform from mouse coordinates to map coordinates
 	//   The map is enlarged 3 times and displaced 120 pixels
