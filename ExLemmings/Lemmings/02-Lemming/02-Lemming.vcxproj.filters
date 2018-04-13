@@ -41,9 +41,9 @@
     </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Gate.h">
-      <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="Gate.h">
+      <Filter>Header Files</Filter>  
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
@@ -72,12 +72,10 @@
     <ClInclude Include="ParticleSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="Proyectil.h">
-=======
     <ClInclude Include="Portal.h">
->>>>>>> origin/master
       <Filter>Header Files</Filter>
+    <ClInclude Include="Proyectil.h">
+      <Filter>Header Files</Filter>	  	  
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,9 +121,9 @@
     <ClCompile Include="Ladder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Gate.cpp">
+	<ClCompile Include="Gate.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
+	</ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -135,12 +133,10 @@
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="Proyectil.cpp">
-=======
     <ClCompile Include="Portal.cpp">
->>>>>>> origin/master
       <Filter>Source Files</Filter>
+    <ClCompile Include="Proyectil.cpp">
+      <Filter>Source Files</Filter>	  	  
     </ClCompile>
   </ItemGroup>
 </Project>

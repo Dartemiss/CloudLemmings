@@ -10,9 +10,9 @@
 #include "ParticleSystem.h"
 #include "Sprite.h"
 #include "Gate.h"
-#include "Proyectil.h"
 #include "Button.h"
 #include "Portal.h"
+#include "Proyectil.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -58,16 +58,16 @@ private:
 	vector<Lemming> listOflemmings;
 	float lastLemming;
 	int howmanyLem;
+	Proyectil proyectil;
+	vector<Proyectil> listOfkames;
 	int lemmingsTotal;
 	int allCreatedLemm;
 	Lemming lemming;
 	Ladder ladder;
-	Proyectil proyectil;
 	Gate gate;
 	Gate gateOut;
 	glm::vec2 posGate;
 	vector<Ladder> listOfLadders;
-	vector<Proyectil> listOfkames;
 	Texture spritesheet,spritesheetLadder,spritesheetGates,spritesheetGatesOut;
 	Sprite * sprite;
 	ParticleSystem partSys;

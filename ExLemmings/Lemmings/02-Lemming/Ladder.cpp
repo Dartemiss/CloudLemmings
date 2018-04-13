@@ -7,7 +7,7 @@
 
 
 enum LadderAnims {
-	ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE,TEN,ELEVEN,TWUELVE,FULL,ZERO, 
+	ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE,TEN,ELEVEN,TWUELVE,FULL,ZERO,
 	L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11, L12, LF
 };
 
@@ -16,8 +16,7 @@ void Ladder::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram
 	sprite->setNumberAnimations(27);
 
 	sprite->setAnimationSpeed(FULL, 12);
-	sprite->addKeyframe(FULL, glm::vec2(float(5) / 8.0f, 2*0.03571428571* 1));
-
+	sprite->addKeyframe(FULL, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 1));
 	sprite->setAnimationSpeed(ONE, 12);
 	sprite->addKeyframe(ONE, glm::vec2(float(1) / 8.0f, 2*0.03571428571 * 0));
 
@@ -55,44 +54,47 @@ void Ladder::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram
 	sprite->addKeyframe(TWUELVE, glm::vec2(float(4) / 8.0f, 2*0.03571428571 * 1));
 
 	sprite->setAnimationSpeed(ZERO, 12);
-	sprite->addKeyframe(ZERO, glm::vec2(float(5) / 8.0f, 2*0.03571428571 * 6));
+	sprite->addKeyframe(ZERO, glm::vec2(float(5) / 8.0f, 2*0.03571428571 * 2));
 
+	sprite->addKeyframe(ZERO, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 2));
+	sprite->addKeyframe(ZERO, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 6));
+	
 	sprite->setAnimationSpeed(LF, 12);
 	sprite->addKeyframe(LF, glm::vec2(float(2) / 8.0f, 2 * 0.03571428571 * 3));
-
+	
 	sprite->setAnimationSpeed(L1, 12);
 	sprite->addKeyframe(L1, glm::vec2(float(6) / 8.0f, 2 * 0.03571428571 * 2));
-
+	
 	sprite->setAnimationSpeed(L2, 12);
 	sprite->addKeyframe(L2, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 2));
-
+	
 	sprite->setAnimationSpeed(L3, 12);
 	sprite->addKeyframe(L3, glm::vec2(float(4) / 8.0f, 2 * 0.03571428571 * 2));
-
+	
 	sprite->setAnimationSpeed(L4, 12);
 	sprite->addKeyframe(L4, glm::vec2(float(3) / 8.0f, 2 * 0.03571428571 * 2));
-
+	
 	sprite->setAnimationSpeed(L5, 12);
 	sprite->addKeyframe(L5, glm::vec2(float(2) / 8.0f, 2 * 0.03571428571 * 2));
-
+	
 	sprite->setAnimationSpeed(L6, 12);
 	sprite->addKeyframe(L6, glm::vec2(float(1) / 8.0f, 2 * 0.03571428571 * 2));
-
+	
 	sprite->setAnimationSpeed(L7, 12);
 	sprite->addKeyframe(L7, glm::vec2(float(0) / 8.0f, 2 * 0.03571428571 * 2));
-
+	
 	sprite->setAnimationSpeed(L8, 12);
 	sprite->addKeyframe(L8, glm::vec2(float(7) / 8.0f, 2 * 0.03571428571 * 3));
-
+	
 	sprite->setAnimationSpeed(L9, 12);
 	sprite->addKeyframe(L9, glm::vec2(float(6) / 8.0f, 2 * 0.03571428571 * 3));
-
+	
 	sprite->setAnimationSpeed(L10, 12);
 	sprite->addKeyframe(L10, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 3));
-
+	
 	sprite->setAnimationSpeed(L11, 12);
 	sprite->addKeyframe(L11, glm::vec2(float(4) / 8.0f, 2 * 0.03571428571 * 3));
-
+	
 	sprite->setAnimationSpeed(L12, 12);
 	sprite->addKeyframe(L12, glm::vec2(float(3) / 8.0f, 2 * 0.03571428571 * 3));
 
@@ -144,42 +146,55 @@ void Ladder::changeSteps(int numStep) {
 	}
 	if (numStep == 14) {
 		sprite->changeAnimation(L1);
+		
 	}
 	else if (numStep == 15) {
 		sprite->changeAnimation(L2);
+		
 	}
 	else if (numStep == 16) {
 		sprite->changeAnimation(L3);
+		
 	}
 	else if (numStep == 17) {
 		sprite->changeAnimation(L4);
+		
 	}
 	else if (numStep == 18) {
 		sprite->changeAnimation(L5);
+		
 	}
 	else if (numStep == 19) {
 		sprite->changeAnimation(L6);
+		
 	}
 	else if (numStep == 20) {
 		sprite->changeAnimation(L7);
+		
 	}
 	else if (numStep == 21) {
 		sprite->changeAnimation(L8);
+		
 	}
 	else if (numStep == 22) {
 		sprite->changeAnimation(L9);
+		
 	}
 	else if (numStep == 23) {
 		sprite->changeAnimation(L10);
+		
 	}
 	else if (numStep == 24) {
 		sprite->changeAnimation(L11);
+		
 	}
 	else if (numStep == 25) {
 		sprite->changeAnimation(L12);
+		
 	}
 	else if (numStep == 26) {
 		sprite->changeAnimation(LF);
+		
 	}
 	else if (numStep == 0) {
 		sprite->changeAnimation(ZERO);
