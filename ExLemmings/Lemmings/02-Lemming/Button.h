@@ -11,10 +11,10 @@ public:
 	void unPress();
 
 private:
-	glm::vec2 pos;
+	glm::ivec2 pos;
 	Sprite *sprite;
-	int color;
 	bool pressed;
+	int id_skill;
 };
 
 

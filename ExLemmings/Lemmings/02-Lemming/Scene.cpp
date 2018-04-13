@@ -51,7 +51,9 @@ void Scene::init()
 	spritesheetGatesOut.setMagFilter(GL_NEAREST);
 	
 
-	for (int i = 0; i < 10; i++) {
+	lemmingsInGame = 10;
+
+	for (int i = 0; i < lemmingsInGame; i++) {
 		lemming.init(glm::vec2(60, 30), simpleTexProgram, spritesheet);
 		lemming.setMapMask(&maskTexture);
 		listOflemmings.push_back(lemming);
@@ -70,12 +72,10 @@ void Scene::init()
 	//listOfLadders.push_back(ladder);
 
 	cursor = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &simpleTexProgram);
-	cursor->setNumberAnimations(2);
-	//cursor->setAnimationSpeed(0, 12);
-		
+	cursor->setNumberAnimations(3);
 	cursor->addKeyframe(0, glm::vec2(13 / 16.0f, 0.07142857143f * 2 / 2));
 	cursor->addKeyframe(1, glm::vec2(12 / 16.0f, 0.07142857143f * 2 / 2));
-	
+	cursor->addKeyframe(2, glm::vec2(14 / 16.0f, 0.07142857143f * 2 / 2));
 	cursor->changeAnimation(0);
 	
 	glm::ivec2 pos = glm::ivec2(-20, -20);
@@ -85,13 +85,21 @@ void Scene::init()
 	startbombing = 0.0f;
 
 	loadedSkill = -1;
-	howmanyButtons = 4;
+	howmanyButtons = 7;
 	
+<<<<<<< HEAD
 	for (int i = 0; i < howmanyButtons; i++) {
 		button.init(i, 30 + i * 30, 130, simpleTexProgram, spritesheet);
+=======
+		for (int i = 0; i < howmanyButtons; i++) {
+		button.init(i, 100 + i * 30, 15, simpleTexProgram, spritesheet);
+>>>>>>> origin/master
 		listOfButtons.push_back(button);
 		
 	}
+
+	settingPortal = false;
+	first_portalOn = second_portalOn = false;
 }
 
 //unsigned int x = 0;
@@ -103,7 +111,7 @@ void Scene::update(int deltaTime)
 		
 		
 	if (deathbybomb == 0) { //No es creen mes lemmings un cop s'activa la bomba
-		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < 10) {
+		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < lemmingsInGame) {
 			lastLemming = currentTime;
 			++howmanyLem;
 			++allCreatedLemm;
@@ -161,6 +169,7 @@ void Scene::update(int deltaTime)
 			}
 			listOflemmings[i].update(deltaTime);
 		}
+<<<<<<< HEAD
 		else if (listOflemmings[i].getState() == 9) { 
 			glm::vec2 auxpos = listOflemmings[i].getactualPos();
 			proyectil.init(glm::vec2(auxpos.x + 10,auxpos.y), simpleTexProgram, spritesheet);
@@ -168,6 +177,16 @@ void Scene::update(int deltaTime)
 			int aux = listOfkames.size();
 			listOfkames[aux-1].setMapMask(&maskTexture);
 			listOflemmings[i].change_state(10);
+=======
+		else if (listOflemmings[i].getState() == 5 && !first_portalOn) {
+			if (!first_portalOn) {
+				glm::vec2 pos = listOflemmings[i].getLemPos();
+				portal_first.init(pos.x-20, pos.y-5, simpleTexProgram, spritesheet);
+				first_portalOn = true;
+			}
+			settingPortal = true;
+			cursor->changeAnimation(2);
+>>>>>>> origin/master
 		}
 		else if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
@@ -184,6 +203,14 @@ void Scene::update(int deltaTime)
 			particlesystems[i].update(deltaTime);
 			listOflemmings[i].update(deltaTime);
 		}
+		else if (first_portalOn && second_portalOn) {
+			glm::ivec2 pos = listOflemmings[i].getLemPos();
+			if (portal_first.contact(pos.x,pos.y)) {
+				glm::ivec2 newPos = portal_second.getPos();
+				listOflemmings[i].setPos(newPos);
+			}
+			listOflemmings[i].update(deltaTime);
+		}
 	 /*else if (deathbybomb) {
 				
 			for (int j = 0; j < howmanyLem; j++) {
@@ -197,6 +224,7 @@ void Scene::update(int deltaTime)
 
 	gate.update(deltaTime);
 	gateOut.update(deltaTime);
+<<<<<<< HEAD
 	for (int j = 0; j < listOfkames.size();j++) {
 		if (listOfkames[j].getState()== 1) {
 			glm::vec2 aux = listOfkames[j].getPosition();
@@ -204,6 +232,17 @@ void Scene::update(int deltaTime)
 			listOfkames.erase(listOfkames.begin() + j);
 		}
 		else listOfkames[j].update(deltaTime);
+=======
+	for (int i = 0; i < howmanyButtons; i++) {
+		listOfButtons[i].update();
+	}
+
+	if (first_portalOn) {
+		portal_first.update(deltaTime);
+	}
+	if (second_portalOn) {
+		portal_second.update(deltaTime);
+>>>>>>> origin/master
 	}
 }
 
@@ -226,6 +265,12 @@ void Scene::render()
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 	
 	gateOut.render();
+	if (first_portalOn) {
+		portal_first.render();
+	}
+	if (second_portalOn) {
+		portal_second.render();
+	}
 	for (int i = 0; i < howmanyLem; i++) {
 		listOflemmings[i].render();
 		if (deathbybomb != 0 && (particlesystems[i].get_time_living() < 6000)) {
@@ -280,31 +325,47 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 			cursor->changeAnimation(1);
 			
 		}
-		else {
+		else if (!settingPortal) {
 			cursor->changeAnimation(0);
 			
 		}
-		
-			if (bLeftButton) {
-			if (loadedSkill != -1) {
-				give_skill(mouseX, mouseY, loadedSkill);
-				
-			}
-			int skill = loadSkill(mouseX, mouseY);
-			if (skill != -1) {
-				if (loadedSkill != -1 && loadedSkill != skill) {
-					listOfButtons[loadedSkill].unPress();
-					
+		else {
+			cursor->changeAnimation(2);
+		}
+
+		if (bLeftButton) {
+			if (!settingPortal) { //No portal
+				if (loadedSkill != -1) {
+					if (loadedSkill == 5) {
+						if (!first_portalOn) {
+							give_skill(mouseX, mouseY, loadedSkill);
+						}
+					}
+					else {
+						give_skill(mouseX, mouseY, loadedSkill);
+					}
 				}
-				loadedSkill = skill;
-				
+				int skill = loadSkill(mouseX, mouseY);
+				if (skill != -1) {
+					if (loadedSkill != -1 && loadedSkill != skill) {
+						listOfButtons[loadedSkill].unPress();
+					}
+					loadedSkill = skill;
+				}
 			}
-			
+			else {//Place portal
+				int posX = mouseX / 3 - 10;
+				int posY = mouseY / 3 - 8;
+				//if (maskTexture.pixel(posX, posY) != 255 && maskTexture.pixel(posX, posY + 15) == 255) {
+					portal_second.init(posX, posY, simpleTexProgram, spritesheet);
+					second_portalOn = true;
+					settingPortal = false;
+				//}
+			}
 		}
 		else if (bRightButton) {
-						//applyMask(mouseX, mouseY); 
-				give_skill(mouseX, mouseY, 0);
-			
+			//applyMask(mouseX, mouseY); 
+			give_skill(mouseX, mouseY, 5);
 		}
 		else if (bMiddleButton) {
 			give_skill(mouseX, mouseY, 8);
@@ -343,13 +404,15 @@ void Scene::give_skill(int mouseX, int mouseY, int skill) {
 	posY = mouseY / 3;
 
 	glm::ivec2 posMouse = glm::ivec2(posX, posY);
-	for (int i = 0; i < howmanyLem; i++) {
+	bool justOneLemming = false;
+	for (int i = 0; i < howmanyLem && !justOneLemming; i++) {
 		glm::ivec2 pos = listOflemmings[i].getLemPos();
 		bool xx = (pos.x + 5 < posMouse.x) && (pos.x + 15 > posMouse.x);
 		bool yy = (pos.y - 12 < posMouse.y) && (pos.y + 12 > posMouse.y);
 		//xx = yy = true;
 		if(xx && yy) {
 			listOflemmings[i].change_state(skill);
+			justOneLemming = true;
 		}
 	}
 }

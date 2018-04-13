@@ -33,7 +33,11 @@ public:
 	void setnumLadder(int s);
 	void setnLadder(bool b);
 	int getnumLadder();
+<<<<<<< HEAD
 	bool right;
+=======
+	void setPos(glm::vec2 pos);
+>>>>>>> origin/master
 
 private:
 	int collisionFloor(int maxFall);
@@ -52,9 +56,13 @@ private:
 	{
 		WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE, DIGGING_STATE, OPEN_STATE, 
 		FALLING_UMB_LEFT_STATE, FALLING_UMB_RIGHT_STATE, DYING_STATE, BLOCK_STATE, BASHER_STATE, DYING_BOMB_STATE, 
+<<<<<<< HEAD
 		CLIMBING_STATE, ARRIVING_CLIMB_STATE, BUILDER_STATE,BUILD_LADDER_STATE, WINNING_STATE,SUPER_STATE,TRANSFORM_STATE,
 		BUILDER_LEFT_STATE, BASHER_LEFT_STATE
 
+=======
+		CLIMBING_STATE, ARRIVING_CLIMB_STATE, BUILDER_STATE,BUILD_LADDER_STATE, WINNING_STATE, PORTAL_STATE
+>>>>>>> origin/master
 	};
 
 	LemmingState state;
