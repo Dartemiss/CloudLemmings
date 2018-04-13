@@ -21,11 +21,8 @@
     <ClInclude Include="MaskedTexturedQuad.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleSystem.h" />
-<<<<<<< HEAD
     <ClInclude Include="Proyectil.h" />
-=======
     <ClInclude Include="Portal.h" />
->>>>>>> origin/master
     <ClInclude Include="Quad.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneAux.h" />
@@ -46,11 +43,8 @@
     <ClCompile Include="MaskedTexturedQuad.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
-<<<<<<< HEAD
     <ClCompile Include="Proyectil.cpp" />
-=======
     <ClCompile Include="Portal.cpp" />
->>>>>>> origin/master
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneAux.cpp" />
