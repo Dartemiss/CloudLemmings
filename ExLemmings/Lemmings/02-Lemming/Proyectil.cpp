@@ -15,7 +15,7 @@ void Proyectil::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProg
 	sprite->setNumberAnimations(2);
 
 	sprite->setAnimationSpeed(MOVE_RIGHT, 8);
-	for (int i = 0; i<4; i++)
+	for (int i = 4; i<7; i++)
 		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(float(i) / 16.0f, 0.07142857143f * 15/2));
 
 	sprite->setAnimationSpeed(EXPLOTE, 8);

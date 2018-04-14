@@ -203,11 +203,13 @@ void Lemming::update(int deltaTime)
 			if (!bclimbing) {
 				sprite->position() -= glm::vec2(1, -1);
 				sprite->changeAnimation(WALKING_LEFT);
+				right = false;
 				state = WALKING_LEFT_STATE;
 			}
 			else {
 				sprite->position() += glm::vec2(-1, 0);
 				sprite->changeAnimation(CLIMBER);
+				right = true;
 				state = CLIMBING_STATE;
 			}
 		}
@@ -446,6 +448,7 @@ void Lemming::change_state(int nstate) {
 		
 	}
 	else if (nstate == 10) {
+		right = true;
 		sprite->changeAnimation(WALKING_RIGHT);
 		state = WALKING_RIGHT_STATE;
 		
