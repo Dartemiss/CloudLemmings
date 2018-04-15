@@ -31,7 +31,7 @@ public:
 	
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton);
 	void digging(int lem);
-	int lemArrived();
+	bool lemArrived();
 	void bombed();
 
 private:
@@ -58,6 +58,8 @@ private:
 	vector<Lemming> listOflemmings;
 	float lastLemming;
 	int howmanyLem;
+	int wonLem;
+	int deadLem;
 	Proyectil proyectil;
 	vector<Proyectil> listOfkames;
 	int lemmingsTotal;
@@ -86,6 +88,7 @@ private:
 	bool first_portalOn, second_portalOn;
 	int deathbybomb;
 
+	int requiredLemsToWin;
 };
 
 

@@ -21,6 +21,12 @@ void Scene::init()
 {
 	glm::vec2 geom[2] = {glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT))};
 	glm::vec2 texCoords[2] = {glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f)};
+	// taxing 1
+	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 1227.0, 0.f), glm::vec2((120.f + 320.f) / 1227.0f, 160.f / 256.0f) };
+	//tricky 1
+	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 924.0, 0.f), glm::vec2((120.f + 320.f) / 924.0f, 160.f / 256.0f) };
+	//mayhem8
+	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 668.0, 0.f), glm::vec2((120.f + 320.f) / 668.0f, 160.f / 256.0f) };
 
 	initShaders();
 
@@ -34,7 +40,7 @@ void Scene::init()
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
-	spritesheet.loadFromFile("images/mirror_lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.loadFromFile("images/old/mirror_lemming_sayan.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMinFilter(GL_NEAREST);
 	spritesheet.setMagFilter(GL_NEAREST);
 
@@ -62,6 +68,9 @@ void Scene::init()
 	howmanyLem = 0;
 	allCreatedLemm = 0;
 	deathbybomb = 0;
+	wonLem = 0;
+	deadLem = 0;
+	requiredLemsToWin = 10;
 	//ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
 	gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut,true);
 	gateOut.init(glm::vec2(200, 122), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
@@ -113,8 +122,9 @@ void Scene::update(int deltaTime)
 
 
 	for (int i = 0; i < howmanyLem; i++) {
-		if (listOflemmings[i].getLemPos().x == posGate.x + 1001 && !listOflemmings[i].isWinning()) {
+		if (listOflemmings[i].getLemPos().x == posGate.x + 4 && !listOflemmings[i].isWinning()) {
 			listOflemmings[i].change_state(7);
+			++wonLem;
 		}
 		if (listOflemmings[i].getState() == 1) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
@@ -187,6 +197,7 @@ void Scene::update(int deltaTime)
 		else if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
 			howmanyLem--;
+			++deadLem;
 		}
 		else if (listOflemmings[i].getState() == 3 && !listOflemmings[i].isBlocking()) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
@@ -374,17 +385,11 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 	}
 }
 
-int Scene::lemArrived()
+bool Scene::lemArrived()
 {
-	for (int i = 0; i < howmanyLem; i++) {
-		glm::ivec2 pos = listOflemmings[i].getLemPos();
-		if (pos.x > 400) {
-			++lemmingsTotal;
-			listOflemmings.erase(listOflemmings.begin() + i);
-			howmanyLem--;
-		}
-	}
-	return lemmingsTotal;
+	if (wonLem == requiredLemsToWin)
+		return true;
+	return false;
 }
 
 void Scene::digging(int lem) {

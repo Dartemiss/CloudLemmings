@@ -154,7 +154,7 @@ void Game::setSpecialKey(int key) {
 bool Game::hasWon()
 {
 	if (gstate == 1) {
-		if (scene.lemArrived() == 10) {
+		if (scene.lemArrived()) {
 			return true;
 		}
 		else return false;

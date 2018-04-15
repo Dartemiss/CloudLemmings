@@ -392,66 +392,68 @@ void Lemming::change_state(int nstate) {
 		sprite->changeAnimation(OPEN_UMBRELLA);
 		state = OPEN_STATE;
 	}
-	else if (nstate == 1) {
-		sprite->changeAnimation(DIGGING);
-		state = DIGGING_STATE;
-	}
-	else if (nstate == 2) {
-		if (!right) {
-			sprite->changeAnimation(BASHER_LEFT);
-			state = BASHER_LEFT_STATE;
-			
-		}
-		else {
-			sprite->changeAnimation(BASHER);
-			state = BASHER_STATE;
-			
-		}
-	}
-	else if (nstate == 3) {
-		sprite->changeAnimation(BLOCKING);
-		state = BLOCK_STATE;
-	}
-	else if (nstate == 4) {
-		bclimbing = true;
-	}
-	else if (nstate == 5) {
-		sprite->changeAnimation(PORTAL);
-		state = PORTAL_STATE;
-	}
-	/*else if (nstate == 5) {
-		sprite->changeAnimation(DEATH_BY_MANHATTAN);
-		state = DYING_BOMB_STATE;
-	}*/
-	else if (nstate == 6) {
-		if (!right) {
-			sprite->changeAnimation(BUILDER_LEFT);
-			state = BUILDER_LEFT_STATE;
-			
-		}
-		else {
-			sprite->changeAnimation(BUILDER);
-			state = BUILDER_STATE;
-			
-		}
-		nLadder = true;
-		pos = sprite->position();
-	}
-	else if (nstate == 7) {
-		won = true;
-		sprite->changeAnimation(WINNING);
-		state = WINNING_STATE;
-	}
 	else if (nstate == 8) {
 		sprite->changeAnimation(TRANSFORMATION);
 		state = TRANSFORM_STATE;
-		
+
 	}
-	else if (nstate == 10) {
-		right = true;
-		sprite->changeAnimation(WALKING_RIGHT);
-		state = WALKING_RIGHT_STATE;
+	if(state != FALLING_LEFT_STATE && state != FALLING_RIGHT_STATE){
+		if (nstate == 1) {
+			sprite->changeAnimation(DIGGING);
+			state = DIGGING_STATE;
+		}
+		else if (nstate == 2) {
+			if (!right) {
+				sprite->changeAnimation(BASHER_LEFT);
+				state = BASHER_LEFT_STATE;
+			
+			}
+			else {
+				sprite->changeAnimation(BASHER);
+				state = BASHER_STATE;
+			
+			}
+		}
+		else if (nstate == 3) {
+			sprite->changeAnimation(BLOCKING);
+			state = BLOCK_STATE;
+		}
+		else if (nstate == 4) {
+			bclimbing = true;
+		}
+		else if (nstate == 5) {
+			sprite->changeAnimation(PORTAL);
+			state = PORTAL_STATE;
+		}
+		/*else if (nstate == 5) {
+			sprite->changeAnimation(DEATH_BY_MANHATTAN);
+			state = DYING_BOMB_STATE;
+		}*/
+		else if (nstate == 6) {
+			if (!right) {
+				sprite->changeAnimation(BUILDER_LEFT);
+				state = BUILDER_LEFT_STATE;
+			
+			}
+			else {
+				sprite->changeAnimation(BUILDER);
+				state = BUILDER_STATE;
+			
+			}
+			nLadder = true;
+			pos = sprite->position();
+		}
+		else if (nstate == 7) {
+			won = true;
+			sprite->changeAnimation(WINNING);
+			state = WINNING_STATE;
+		}
+		else if (nstate == 10) {
+			right = true;
+			sprite->changeAnimation(WALKING_RIGHT);
+			state = WALKING_RIGHT_STATE;
 		
+		}
 	}
 }
 
