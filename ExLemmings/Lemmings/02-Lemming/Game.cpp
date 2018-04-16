@@ -7,6 +7,7 @@ void Game::init()
 {
 	bPlay = true;
 	gstate = 0;
+	numLvl = 3;
 	paused = false;
 	fastmode = false;
 	bLeftMouse = bRightMouse = bMiddleMouse = false;
@@ -26,14 +27,22 @@ bool Game::update(int deltaTime)
 	case 1:
 		glutSetCursor(GLUT_CURSOR_NONE);
 		if (hasWon()) {
-			sceneaux.init();
-			gstate = 0;
+			glm::vec2 aux = scene.getDeadsWins();
+			winSc.init(aux.y, aux.x, true);
+			gstate = 2;
+		}
+		else if (hasLost()) {
+			glm::vec2 aux = scene.getDeadsWins();
+			winSc.init(aux.y, aux.x, false);
+			gstate = 2;
 		}
 		if (!paused) {
 			if (fastmode) scene.update(deltaTime*2);
 			else scene.update(deltaTime);	
 		}
 		break;
+	case 2:
+		winSc.update(deltaTime);
 	}
 
 	return bPlay;
@@ -45,12 +54,17 @@ void Game::render()
 	//scene.render();
 	if(gstate == 0)sceneaux.render();
 	else if (gstate == 1)scene.render();
+	else if (gstate == 2)winSc.render();
+}
+
+void Game::setLevel(int lvl) {
+	numLvl = numLvl + lvl;
 }
 
 void Game::initSc() {
 	Scene newSc;
 	scene = newSc;
-	scene.init();
+	scene.init(numLvl);
 	gstate = 1;
 }
 
@@ -151,10 +165,22 @@ void Game::setSpecialKey(int key) {
 	specialKeyReleased(key);
 }
 
+
 bool Game::hasWon()
 {
 	if (gstate == 1) {
 		if (scene.lemArrived()) {
+			return true;
+		}
+		else return false;
+	}
+	else return false;
+}
+
+bool Game::hasLost()
+{
+	if (gstate == 1) {
+		if (scene.lemEnded()) {
 			return true;
 		}
 		else return false;

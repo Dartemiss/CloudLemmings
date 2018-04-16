@@ -25,13 +25,15 @@ public:
 	Scene();
 	~Scene();
 
-	void init();
+	void init(int numlvl);
 	void update(int deltaTime);
 	void render();
 	
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton);
 	void digging(int lem);
 	bool lemArrived();
+	bool lemEnded();
+	glm::vec2 getDeadsWins();
 	void bombed();
 
 private:

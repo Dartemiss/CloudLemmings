@@ -110,7 +110,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		for (int i = 0; i < 4; i++)
 			sprite->addKeyframe(PORTAL, glm::vec2(float(i) / 16.0f, 0.07142857143f * 16 / 2));
 		
-		sprite->setAnimationSpeed(TRANSFORMATION, 4);
+		sprite->setAnimationSpeed(TRANSFORMATION, 6);
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(TRANSFORMATION, glm::vec2(float(i) / 16.0f, 0.07142857143f * 10 / 2));
 		

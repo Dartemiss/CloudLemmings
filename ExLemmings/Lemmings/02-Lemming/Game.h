@@ -4,7 +4,7 @@
 
 #include "Scene.h"
 #include "SceneAux.h"
-
+#include "WinLose.h"
 
 // Game is a singleton (a class with a single instance) that represents our whole application
 
@@ -37,20 +37,25 @@ public:
 	void mouseRelease(int button);
 	void newAction(int act);
 	void initSc();
+	void setLevel(int lvl);
 
 	bool getKey(int key) const;
 	bool getSpecialKey(int key) const;
 	void setSpecialKey(int key);
 
 	bool hasWon();
+	bool hasLost();
+
 
 private:
 	bool bPlay;                       // Continue to play game?
 	int gstate;
+	int numLvl;
 	bool paused;
 	bool fastmode;
 	Scene scene;                      // Scene to render
 	SceneAux sceneaux;
+	WinLose winSc;
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
 	int mouseX, mouseY;               // Mouse position

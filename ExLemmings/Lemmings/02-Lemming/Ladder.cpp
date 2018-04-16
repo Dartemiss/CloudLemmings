@@ -15,87 +15,57 @@ void Ladder::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram
 	sprite = Sprite::createSprite(glm::ivec2(40, 20), glm::vec2(0.125, 2*0.03571428571), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(27);
 
-	sprite->setAnimationSpeed(FULL, 12);
 	sprite->addKeyframe(FULL, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 1));
-	sprite->setAnimationSpeed(ONE, 12);
 	sprite->addKeyframe(ONE, glm::vec2(float(1) / 8.0f, 2*0.03571428571 * 0));
 
-	sprite->setAnimationSpeed(TWO, 12);
 	sprite->addKeyframe(TWO, glm::vec2(float(2) / 8.0f, 2*0.03571428571 * 0));
 
-	sprite->setAnimationSpeed(THREE, 12);
 	sprite->addKeyframe(THREE, glm::vec2(float(3) / 8.0f, 2*0.03571428571 * 0));
 
-	sprite->setAnimationSpeed(FOUR, 12);
 	sprite->addKeyframe(FOUR, glm::vec2(float(4) / 8.0f, 2*0.03571428571 * 0));
 
-	sprite->setAnimationSpeed(FIVE, 12);
 	sprite->addKeyframe(FIVE, glm::vec2(float(5) / 8.0f, 2*0.03571428571 * 0));
 
-	sprite->setAnimationSpeed(SIX, 12);
 	sprite->addKeyframe(SIX, glm::vec2(float(6) / 8.0f, 2*0.03571428571 * 0));
 
-	sprite->setAnimationSpeed(SEVEN, 12);
 	sprite->addKeyframe(SEVEN, glm::vec2(float(7) / 8.0f, 2*0.03571428571 * 0));
 
-	sprite->setAnimationSpeed(EIGHT, 12);
 	sprite->addKeyframe(EIGHT, glm::vec2(float(0) / 8.0f, 2*0.03571428571 * 1));
 
-	sprite->setAnimationSpeed(NINE, 12);
 	sprite->addKeyframe(NINE, glm::vec2(float(1) / 8.0f, 2*0.03571428571 * 1));
 
-	sprite->setAnimationSpeed(TEN, 12);
 	sprite->addKeyframe(TEN, glm::vec2(float(2) / 8.0f, 2*0.03571428571 * 1));
 
-	sprite->setAnimationSpeed(ELEVEN, 12);
 	sprite->addKeyframe(ELEVEN, glm::vec2(float(3) / 8.0f, 2*0.03571428571 * 1));
 
-	sprite->setAnimationSpeed(TWUELVE, 12);
 	sprite->addKeyframe(TWUELVE, glm::vec2(float(4) / 8.0f, 2*0.03571428571 * 1));
 
-	sprite->setAnimationSpeed(ZERO, 12);
-	sprite->addKeyframe(ZERO, glm::vec2(float(5) / 8.0f, 2*0.03571428571 * 2));
-
-	sprite->addKeyframe(ZERO, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 2));
 	sprite->addKeyframe(ZERO, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 6));
 	
-	sprite->setAnimationSpeed(LF, 12);
 	sprite->addKeyframe(LF, glm::vec2(float(2) / 8.0f, 2 * 0.03571428571 * 3));
 	
-	sprite->setAnimationSpeed(L1, 12);
 	sprite->addKeyframe(L1, glm::vec2(float(6) / 8.0f, 2 * 0.03571428571 * 2));
 	
-	sprite->setAnimationSpeed(L2, 12);
 	sprite->addKeyframe(L2, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 2));
 	
-	sprite->setAnimationSpeed(L3, 12);
 	sprite->addKeyframe(L3, glm::vec2(float(4) / 8.0f, 2 * 0.03571428571 * 2));
 	
-	sprite->setAnimationSpeed(L4, 12);
 	sprite->addKeyframe(L4, glm::vec2(float(3) / 8.0f, 2 * 0.03571428571 * 2));
 	
-	sprite->setAnimationSpeed(L5, 12);
 	sprite->addKeyframe(L5, glm::vec2(float(2) / 8.0f, 2 * 0.03571428571 * 2));
 	
-	sprite->setAnimationSpeed(L6, 12);
 	sprite->addKeyframe(L6, glm::vec2(float(1) / 8.0f, 2 * 0.03571428571 * 2));
 	
-	sprite->setAnimationSpeed(L7, 12);
 	sprite->addKeyframe(L7, glm::vec2(float(0) / 8.0f, 2 * 0.03571428571 * 2));
 	
-	sprite->setAnimationSpeed(L8, 12);
 	sprite->addKeyframe(L8, glm::vec2(float(7) / 8.0f, 2 * 0.03571428571 * 3));
 	
-	sprite->setAnimationSpeed(L9, 12);
 	sprite->addKeyframe(L9, glm::vec2(float(6) / 8.0f, 2 * 0.03571428571 * 3));
 	
-	sprite->setAnimationSpeed(L10, 12);
 	sprite->addKeyframe(L10, glm::vec2(float(5) / 8.0f, 2 * 0.03571428571 * 3));
 	
-	sprite->setAnimationSpeed(L11, 12);
 	sprite->addKeyframe(L11, glm::vec2(float(4) / 8.0f, 2 * 0.03571428571 * 3));
 	
-	sprite->setAnimationSpeed(L12, 12);
 	sprite->addKeyframe(L12, glm::vec2(float(3) / 8.0f, 2 * 0.03571428571 * 3));
 
 	sprite->changeAnimation(ZERO);

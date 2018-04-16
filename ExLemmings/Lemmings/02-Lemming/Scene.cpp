@@ -17,10 +17,44 @@ Scene::~Scene()
 }
 
 
-void Scene::init()
+void Scene::init(int numlvl)
 {
-	glm::vec2 geom[2] = {glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT))};
-	glm::vec2 texCoords[2] = {glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f)};
+	initShaders();
+
+	if (numlvl == 1) {
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
+		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f) };
+		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
+		colorTexture.loadFromFile("images/fun1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		colorTexture.setMinFilter(GL_NEAREST);
+		colorTexture.setMagFilter(GL_NEAREST);
+		maskTexture.loadFromFile("images/fun1_mask.png", TEXTURE_PIXEL_FORMAT_L);
+		maskTexture.setMinFilter(GL_NEAREST);
+		maskTexture.setMagFilter(GL_NEAREST);
+	}
+	else if (numlvl == 2) {
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
+		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f) };
+		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
+		colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		colorTexture.setMinFilter(GL_NEAREST);
+		colorTexture.setMagFilter(GL_NEAREST);
+		maskTexture.loadFromFile("images/fun2_mask.png", TEXTURE_PIXEL_FORMAT_L);
+		maskTexture.setMinFilter(GL_NEAREST);
+		maskTexture.setMagFilter(GL_NEAREST);
+	}
+	else if (numlvl == 3) {
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
+		glm::vec2 texCoords[2] = { glm::vec2(120.f / 668.0, 0.f), glm::vec2((120.f + 320.f) / 668.0f, 160.f / 256.0f) };
+		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
+		colorTexture.loadFromFile("images/mayhem8.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		colorTexture.setMinFilter(GL_NEAREST);
+		colorTexture.setMagFilter(GL_NEAREST);
+		maskTexture.loadFromFile("images/mayhem8_mask.png", TEXTURE_PIXEL_FORMAT_L);
+		maskTexture.setMinFilter(GL_NEAREST);
+		maskTexture.setMagFilter(GL_NEAREST);
+
+	}
 	// taxing 1
 	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 1227.0, 0.f), glm::vec2((120.f + 320.f) / 1227.0f, 160.f / 256.0f) };
 	//tricky 1
@@ -28,15 +62,8 @@ void Scene::init()
 	//mayhem8
 	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 668.0, 0.f), glm::vec2((120.f + 320.f) / 668.0f, 160.f / 256.0f) };
 
-	initShaders();
 
-	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
-	colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	colorTexture.setMinFilter(GL_NEAREST);
-	colorTexture.setMagFilter(GL_NEAREST);
-	maskTexture.loadFromFile("images/fun2_mask.png", TEXTURE_PIXEL_FORMAT_L);
-	maskTexture.setMinFilter(GL_NEAREST);
-	maskTexture.setMagFilter(GL_NEAREST);
+
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
@@ -228,6 +255,8 @@ void Scene::update(int deltaTime)
 		else listOflemmings[i].update(deltaTime);
 
 
+		if (howmanyLem == 0)
+			howmanyLem = -1;
 
 	}
 
@@ -392,6 +421,13 @@ bool Scene::lemArrived()
 	return false;
 }
 
+bool Scene::lemEnded()
+{
+	if (howmanyLem == -1)
+		return true;
+	return false;
+}
+
 void Scene::digging(int lem) {
 	glm::ivec2 pos = listOflemmings[lem].getLemPos();
 	if (pos.x > 100) {
@@ -442,6 +478,9 @@ bool Scene::isOnLemming(int mouseX, int mouseY) {
 	
 }
 
+glm::vec2 Scene::getDeadsWins() {
+	return glm::vec2(wonLem, requiredLemsToWin);
+}
 
 void Scene::eraseMaskX(int lemX, int lemY)
 {
