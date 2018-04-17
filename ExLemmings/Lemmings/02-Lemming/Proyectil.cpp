@@ -75,7 +75,7 @@ int Proyectil::getState() {
 void Proyectil::render()
 {
 
-	sprite->render();
+	sprite->render(0);
 
 
 }

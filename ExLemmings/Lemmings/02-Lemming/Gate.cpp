@@ -51,13 +51,21 @@ void Gate::setPosition(glm::vec2 aux) {
 	pos = aux;
 }
 
+bool Gate::isColliding(glm::vec2 lemP){
+	if (lemP.x == pos.x + 12){
+		if ((lemP.y < pos.y + 20) && lemP.y > pos.y - 20){
+			return true;
+		}
+	}
+	return false;
+}
 
-void Gate::render()
+void Gate::render(int offsetX)
 {
 	if (inout) {
-		sprite->render();
+		sprite->render(offsetX);
 	}
 	else {
-		spriteOut->render();
+		spriteOut->render(offsetX);
 	}
 }

@@ -32,5 +32,5 @@ void Particle::update(int deltaTime) {
 }
 
 void Particle::render() {
-	sprite->render();
+	sprite->render(0);
 }

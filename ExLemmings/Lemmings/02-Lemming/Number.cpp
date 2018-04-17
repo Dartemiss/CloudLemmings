@@ -21,7 +21,7 @@ void Number::update() {
 }
 
 void Number::render() {
-	sprite->render();
+	sprite->render(0);
 }
 
 void Number::diminish() {

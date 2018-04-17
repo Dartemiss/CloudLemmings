@@ -22,7 +22,7 @@ void Scene::init(int numlvl)
 	initShaders();
 
 	if (numlvl == 1) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - 120/3)) };
 		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/fun1.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -33,7 +33,7 @@ void Scene::init(int numlvl)
 		maskTexture.setMagFilter(GL_NEAREST);
 	}
 	else if (numlvl == 2) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120 / 3))) };
 		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -44,7 +44,7 @@ void Scene::init(int numlvl)
 		maskTexture.setMagFilter(GL_NEAREST);
 	}
 	else if (numlvl == 3) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120/3))) };
 		glm::vec2 texCoords[2] = { glm::vec2(120.f / 668.0, 0.f), glm::vec2((120.f + 320.f) / 668.0f, 160.f / 256.0f) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/mayhem8.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -55,6 +55,9 @@ void Scene::init(int numlvl)
 		maskTexture.setMagFilter(GL_NEAREST);
 
 	}
+	else if (numlvl == 4) {
+
+	}
 	// taxing 1
 	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 1227.0, 0.f), glm::vec2((120.f + 320.f) / 1227.0f, 160.f / 256.0f) };
 	//tricky 1
@@ -63,7 +66,7 @@ void Scene::init(int numlvl)
 	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 668.0, 0.f), glm::vec2((120.f + 320.f) / 668.0f, 160.f / 256.0f) };
 
 
-
+	offsetX = 0;
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
@@ -121,7 +124,7 @@ void Scene::init(int numlvl)
 	howmanyButtons = 7;
 	
 	for (int i = 0; i < howmanyButtons; i++) {
-		button.init(i, 100 + i * 30, 15, simpleTexProgram, spritesheet);
+		button.init(i, 100 + i * 30, 175, simpleTexProgram, spritesheet);
 		listOfButtons.push_back(button);
 		
 	}
@@ -149,7 +152,7 @@ void Scene::update(int deltaTime)
 
 
 	for (int i = 0; i < howmanyLem; i++) {
-		if (listOflemmings[i].getLemPos().x == posGate.x + 4 && !listOflemmings[i].isWinning()) {
+		if (gateOut.isColliding(listOflemmings[i].getactualPos()) && !listOflemmings[i].isWinning()) {
 			listOflemmings[i].change_state(7);
 			++wonLem;
 		}
@@ -157,6 +160,7 @@ void Scene::update(int deltaTime)
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			eraseMaskY(pos.x, pos.y);
 			listOflemmings[i].update(deltaTime);
+			offsetX += 1;
 		}
 		else if (listOflemmings[i].getState() == 2) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
@@ -183,7 +187,7 @@ void Scene::update(int deltaTime)
 					ladder.changePos(pos);
 					
 				}
-				
+				ladder.changeSteps(0);
 				listOfLadders.push_back(ladder);
 				int s = listOfLadders.size() - 1;
 				listOflemmings[i].setnumLadder(s);
@@ -293,17 +297,19 @@ void Scene::render()
 	maskedTexProgram.use();
 	maskedTexProgram.setUniformMatrix4f("projection", projection);
 	maskedTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	modelview = glm::mat4(1.0f);
+	//modelview = glm::mat4(1.0f);
+	modelview = glm::translate(glm::mat4(1.0f), glm::vec3(-offsetX, 0.0f, 0.f));
 	maskedTexProgram.setUniformMatrix4f("modelview", modelview);
 	map->render(maskedTexProgram, colorTexture, maskTexture);
 	
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
 	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	modelview = glm::mat4(1.0f);
+	//modelview = glm::mat4(1.0f);
+	modelview = glm::translate(glm::mat4(1.0f), glm::vec3(-offsetX, 0.0f, 0.f));
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 	
-	gateOut.render();
+	gateOut.render(offsetX);
 	if (first_portalOn) {
 		portal_first.render();
 	}
@@ -311,7 +317,7 @@ void Scene::render()
 		portal_second.render();
 	}
 	for (int i = 0; i < howmanyLem; i++) {
-		listOflemmings[i].render();
+		listOflemmings[i].render(offsetX);
 		if (deathbybomb != 0 && (particlesystems[i].get_time_living() < 6000)) {
 			particlesystems[i].render();
 			
@@ -320,13 +326,13 @@ void Scene::render()
 	}
 
 	for (int i = 0; i < howmanyButtons; i++) {
-		listOfButtons[i].render();
+		listOfButtons[i].render(offsetX);
 		
 	}
 
 
-	cursor->render();
-	gate.render();
+	cursor->render(offsetX);
+	gate.render(offsetX);
 
 	for (int i = 0; i < listOfkames.size(); i++) {
 		listOfkames[i].render();
@@ -493,6 +499,7 @@ void Scene::eraseMaskX(int lemX, int lemY)
 	//posY = mouseY/3;
 
 	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
+		//cout << maskTexture.pixel << endl;
 		maskTexture.setPixel(x, posY - 1, 0);
 		
 	}

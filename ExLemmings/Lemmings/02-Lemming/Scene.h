@@ -89,7 +89,7 @@ private:
 	Portal portal_first, portal_second;
 	bool first_portalOn, second_portalOn;
 	int deathbybomb;
-
+	int offsetX;
 	int requiredLemsToWin;
 };
 

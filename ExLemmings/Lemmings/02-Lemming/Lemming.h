@@ -16,7 +16,7 @@ class Lemming
 public:
 	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture &spritesheet);
 	void update(int deltaTime);
-	void render();
+	void render(int offsetX);
 	
 	void setMapMask(VariableTexture *mapMask);
 	void change_state(int state);
@@ -39,6 +39,7 @@ public:
 private:
 	int collisionFloor(int maxFall);
 	int collisionWall(int maxFall);
+	int collisionWallLeft(int maxFall);
 	bool collision();
 	bool collisionY();
 	int lemFall;

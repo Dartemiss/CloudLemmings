@@ -20,7 +20,7 @@ void Portal::update(int deltaTime) {
 }
 
 void Portal::render() {
-	sprite->render();
+	sprite->render(0);
 }
 
 bool Portal::contact(int lemX, int lemY) {

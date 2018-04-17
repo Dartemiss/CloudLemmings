@@ -184,5 +184,5 @@ void Ladder::update(int deltaTime){
 
 void Ladder::render()
 {
-	sprite->render();
+	sprite->render(0);
 }
