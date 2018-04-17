@@ -23,6 +23,8 @@
     <ClCompile Include="TexturedQuad.cpp" />
     <ClCompile Include="VariableTexture.cpp" />
     <ClCompile Include="WinLose.cpp" />
+    <ClCompile Include="SkinScene.cpp" />
+    <ClCompile Include="SceneCredits.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimKeyframes.h" />
@@ -48,5 +50,7 @@
     <ClInclude Include="TexturedQuad.h" />
     <ClInclude Include="VariableTexture.h" />
     <ClInclude Include="WinLose.h" />
+    <ClInclude Include="SkinScene.h" />
+    <ClInclude Include="SceneCredits.h" />
   </ItemGroup>
 </Project>

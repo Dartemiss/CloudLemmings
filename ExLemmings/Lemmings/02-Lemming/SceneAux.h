@@ -32,8 +32,8 @@ private:
 private:
 	int accion;
 	Quad * quad;
-	Texture texs[2],imgFondo,imgCursor,imgPlay,imgPlaySelected;
-	TexturedQuad *texQuad[3],*fondo,*cursor,*play;
+	Texture texs[2],imgFondo,imgCursor,imgPlay,imgPlaySelected,imgSkin,imgSkinSelected,imgCredits,imgCreditsSelected;
+	TexturedQuad *texQuad[3],*fondo,*cursor,*play,*skin,*credits;
 	ShaderProgram simpleProgram, texProgram;
 	float currentTime;
 	glm::mat4 projection;

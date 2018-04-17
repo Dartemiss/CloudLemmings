@@ -27,8 +27,10 @@
     <ClInclude Include="Quad.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneAux.h" />
+    <ClInclude Include="SceneCredits.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SkinScene.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TexturedQuad.h" />
@@ -51,8 +53,10 @@
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneAux.cpp" />
+    <ClCompile Include="SceneCredits.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="SkinScene.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TexturedQuad.cpp" />

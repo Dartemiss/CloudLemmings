@@ -18,7 +18,7 @@ Scene::~Scene()
 }
 
 
-void Scene::init(int numlvl)
+void Scene::init(int numlvl,int skin)
 {
 	initShaders();
 
@@ -46,7 +46,7 @@ void Scene::init(int numlvl)
 	}
 	else if (numlvl == 4) {
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120 / 3))) };
-		glm::vec2 texCoords[2] = { glm::vec2(120.f / 924.0, 0.f), glm::vec2((120.f + 320.f) / 924.0f, 160.f / 256.0f) };
+		glm::vec2 texCoords[2] = { glm::vec2(120.f / 924.0, 0.f), glm::vec2((120.f+320.f) / 924.0f, 160.f / 256.0f) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/tricky1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 		maskTexture.loadFromFile("images/tricky1_mask.png", TEXTURE_PIXEL_FORMAT_L);
@@ -68,7 +68,12 @@ void Scene::init(int numlvl)
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
-	spritesheet.loadFromFile("images/old/mirror_lemming_sayan.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	if(skin == 1){
+		spritesheet.loadFromFile("images/old/mirror_lemming_sayan.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	}
+	else {
+		spritesheet.loadFromFile("images/mirror_lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	}
 	spritesheet.setMinFilter(GL_NEAREST);
 	spritesheet.setMagFilter(GL_NEAREST);
 
@@ -331,7 +336,7 @@ void Scene::render()
 	}
 
 
-	cursor->render(offsetX);
+	cursor->render(0);
 	gate.render(offsetX);
 
 	for (int i = 0; i < listOfkames.size(); i++) {
@@ -725,6 +730,9 @@ void Scene::bombed()
 
 void Scene::setXoffset(int offset) {
 	offsetX += 2*offset;
+	//glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120 / 3))) };
+	//glm::vec2 texCoords[2] = { glm::vec2((offsetX+120.f) / 924.0, 0.f), glm::vec2((offsetX+120.f + 320.f) / 924.0f, 160.f / 256.0f) };
+	//map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 }
 
 void Scene::initShaders()

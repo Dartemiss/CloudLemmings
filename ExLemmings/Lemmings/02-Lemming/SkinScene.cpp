@@ -1,18 +1,19 @@
+#include "SkinScene.h"
 #include <iostream>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
-#include "SceneAux.h"
 #include "Game.h"
 #include <GL/glew.h>
 #include <GL/glut.h>
 
 
-SceneAux::SceneAux()
+SkinScene::SkinScene()
 {
 	quad = NULL;
 }
 
-SceneAux::~SceneAux()
+
+SkinScene::~SkinScene()
 {
 	if (quad != NULL)
 		delete quad;
@@ -22,34 +23,17 @@ SceneAux::~SceneAux()
 }
 
 
-void SceneAux::init()
+void SkinScene::init()
 {
 
 	initShaders();
 	currentTime = 0.0f;
 	accion = 0;
-	glm::vec2 geom[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(640.0f, 240.f) };
-	glm::vec2 texCoords[2] = {glm::vec2(0.0f,0.0f),glm::vec2(1.0f,1.0f)};
+	glm::vec2 geom[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(640.0f, 480.f) };
+	glm::vec2 texCoords[2] = { glm::vec2(0.0f,0.0f),glm::vec2(1.0f,1.0f) };
 	fondo = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
-	imgFondo.loadFromFile("images/keepitcutre.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	imgFondo.loadFromFile("images/skinscene.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
-
-	glm::vec2 geom3[2] = { glm::vec2(300.f, 200.f), glm::vec2(300 + 160.f, 200 + 60.0f) };
-	play = TexturedQuad::createTexturedQuad(geom3,texCoords,texProgram);
-	imgPlay.loadFromFile("images/play.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	imgPlaySelected.loadFromFile("images/playselected.png", TEXTURE_PIXEL_FORMAT_RGBA);
-
-	glm::vec2 geom4[2] = { glm::vec2(300.f, 280.f), glm::vec2(300 + 160.f, 280 + 60.0f) };
-	skin = TexturedQuad::createTexturedQuad(geom4, texCoords, texProgram);
-	imgSkin.loadFromFile("images/skin.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	imgSkinSelected.loadFromFile("images/skinselected.png", TEXTURE_PIXEL_FORMAT_RGBA);
-
-	glm::vec2 geom5[2] = { glm::vec2(300.f, 360.f), glm::vec2(300 + 160.f, 360 + 60.0f) };
-	credits = TexturedQuad::createTexturedQuad(geom5, texCoords, texProgram);
-	imgCredits.loadFromFile("images/credits.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	imgCreditsSelected.loadFromFile("images/creditsselected.png", TEXTURE_PIXEL_FORMAT_RGBA);
-
-		
 	glm::vec2 geom2[2] = { glm::vec2(0.f, 0.f), glm::vec2(32.f, 32.f) };
 	glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
 	cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
@@ -59,23 +43,20 @@ void SceneAux::init()
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 }
 
-void SceneAux::update(int deltaTime)
-{
+void SkinScene::update(int deltaTime) {
 	currentTime += deltaTime;
-	//accion = 1;
-	if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)){
+	if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
 		Game::instance().setSpecialKey(GLUT_KEY_DOWN);
-		accion += 2;
-		accion = accion % 3;
-	}
-	else if (Game::instance().getSpecialKey(GLUT_KEY_UP)){
-		Game::instance().setSpecialKey(GLUT_KEY_UP);
 		accion += 1;
-		accion = accion % 3;
-
-
+		accion = accion % 2;
 	}
-	if (accion == 0){
+	else if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
+		Game::instance().setSpecialKey(GLUT_KEY_UP);
+		accion -= 1;
+		accion = accion % 2;
+	}
+
+	if (accion == 0) {
 
 
 		glm::vec2 geom2[2] = { glm::vec2(280.f, 200.f), glm::vec2(280 + 32.f, 200 + 32.f) };
@@ -83,7 +64,7 @@ void SceneAux::update(int deltaTime)
 		cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
 
 	}
-	else if (accion == 1){
+	else if (accion == 1) {
 
 		glm::vec2 geom2[2] = { glm::vec2(280.f, 360.f), glm::vec2(280 + 32.f, 360 + 32.f) };
 		glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
@@ -91,21 +72,14 @@ void SceneAux::update(int deltaTime)
 
 
 	}
-	else if (accion == 2){
 
-
-		glm::vec2 geom2[2] = { glm::vec2(280.f, 280.f), glm::vec2(280 + 32.f, 280 + 32.f) };
-		glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
-		cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
-
+	if (Game::instance().getKey(13)) {
+		Game::instance().setSkin(accion);
 	}
 
-	if(Game::instance().getKey(13)){
-		Game::instance().newAction(accion+1);
-	}
 }
 
-void SceneAux::render()
+void SkinScene::render()
 {
 
 
@@ -118,29 +92,6 @@ void SceneAux::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	fondo->render(imgFondo);
 
-	if (accion == 0){
-
-
-		play->render(imgPlaySelected);
-		skin->render(imgSkin);
-		credits->render(imgCredits);
-
-	}
-	else if (accion == 1){
-
-		play->render(imgPlay);
-		skin->render(imgSkin);
-		credits->render(imgCreditsSelected);
-	}
-	else if (accion == 2){
-
-		play->render(imgPlay);
-		skin->render(imgSkinSelected);
-		credits->render(imgCredits);
-
-
-	}
-
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -151,7 +102,8 @@ void SceneAux::render()
 
 }
 
-void SceneAux::initShaders()
+
+void SkinScene::initShaders()
 {
 	Shader vShader, fShader;
 

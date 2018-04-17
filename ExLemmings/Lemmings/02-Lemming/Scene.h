@@ -25,7 +25,7 @@ public:
 	Scene();
 	~Scene();
 
-	void init(int numlvl);
+	void init(int numlvl,int skin);
 	void update(int deltaTime);
 	void render();
 	

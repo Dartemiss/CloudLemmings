@@ -4,6 +4,8 @@
 
 #include "Scene.h"
 #include "SceneAux.h"
+#include "SkinScene.h"
+#include "SceneCredits.h"
 #include "WinLose.h"
 
 // Game is a singleton (a class with a single instance) that represents our whole application
@@ -46,6 +48,8 @@ public:
 	bool hasWon();
 	bool hasLost();
 
+	void setSkin(int skin);
+
 
 private:
 	bool bPlay;                       // Continue to play game?
@@ -55,12 +59,14 @@ private:
 	bool fastmode;
 	Scene scene;                      // Scene to render
 	SceneAux sceneaux;
+	SkinScene sceneskin;
+	SceneCredits scenecredits;
 	WinLose winSc;
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
 	int mouseX, mouseY;               // Mouse position
 	bool bLeftMouse, bRightMouse, bMiddleMouse;     // Mouse button states
-
+	int skin;
 	enum gameState
 	{
 		MENU_STATE, PLAYING_STATE, INSTRUCTIONS_STATE, CREDITS_STATE
