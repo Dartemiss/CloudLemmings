@@ -4,6 +4,7 @@
 void Button::init(int whichskill, int x, int y, ShaderProgram &shaderProgram, Texture &spritesheet) {
 	int frameY = 12;
 	int frameX = 0;
+	auxOffset = 0;
 	id_skill = whichskill;
 	if (whichskill == 0) {//UMBRELLA
 		frameX = 0;
@@ -38,6 +39,7 @@ void Button::init(int whichskill, int x, int y, ShaderProgram &shaderProgram, Te
 	sprite->changeAnimation(0);
 	pos = glm::ivec2(x, y);
 	sprite->setPosition(pos);
+	posxx = pos.x;
 	pressed = false;
 }
 
@@ -53,8 +55,12 @@ void Button::update() {
 	}
 }
 
-void Button::render() {
-	sprite->render();
+void Button::render(int offsetX) {
+	if (offsetX != auxOffset) {
+		pos.x = posxx + offsetX;
+		auxOffset = offsetX;
+	}
+	sprite->render(0);
 }
 
 bool Button::isPressed(int mouseX, int mouseY) {
