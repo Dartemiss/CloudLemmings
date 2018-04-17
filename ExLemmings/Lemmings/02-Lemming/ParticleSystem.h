@@ -6,7 +6,7 @@ class ParticleSystem
 public:
 	void init(int x, int y, ShaderProgram &shaderProgram, Texture &spritesheet);
 	void update(int deltaTime);
-	void render();
+	void render(int offsetX);
 	float get_time_living();
 
 private:

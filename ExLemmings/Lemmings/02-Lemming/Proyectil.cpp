@@ -72,10 +72,10 @@ int Proyectil::getState() {
 }
 
 
-void Proyectil::render()
+void Proyectil::render(int offsetX)
 {
 
-	sprite->render(0);
+	sprite->render(offsetX);
 
 
 }

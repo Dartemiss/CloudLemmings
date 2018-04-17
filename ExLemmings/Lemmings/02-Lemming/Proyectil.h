@@ -11,7 +11,7 @@ class Proyectil
 public:
 	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture &spritesheet);
 	void update(int deltaTime);
-	void render();
+	void render(int offsetX);
 	void setPosition(glm::vec2 pos);
 	glm::vec2 getPosition();
 	void change_state(int nstate);

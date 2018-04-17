@@ -5,6 +5,7 @@
 #include "Scene.h"
 
 
+
 Scene::Scene()
 {
 	map = NULL;
@@ -26,37 +27,29 @@ void Scene::init(int numlvl)
 		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/fun1.png", TEXTURE_PIXEL_FORMAT_RGBA);
-		colorTexture.setMinFilter(GL_NEAREST);
-		colorTexture.setMagFilter(GL_NEAREST);
 		maskTexture.loadFromFile("images/fun1_mask.png", TEXTURE_PIXEL_FORMAT_L);
-		maskTexture.setMinFilter(GL_NEAREST);
-		maskTexture.setMagFilter(GL_NEAREST);
 	}
 	else if (numlvl == 2) {
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120 / 3))) };
 		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
-		colorTexture.setMinFilter(GL_NEAREST);
-		colorTexture.setMagFilter(GL_NEAREST);
 		maskTexture.loadFromFile("images/fun2_mask.png", TEXTURE_PIXEL_FORMAT_L);
-		maskTexture.setMinFilter(GL_NEAREST);
-		maskTexture.setMagFilter(GL_NEAREST);
 	}
 	else if (numlvl == 3) {
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120/3))) };
 		glm::vec2 texCoords[2] = { glm::vec2(120.f / 668.0, 0.f), glm::vec2((120.f + 320.f) / 668.0f, 160.f / 256.0f) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/mayhem8.png", TEXTURE_PIXEL_FORMAT_RGBA);
-		colorTexture.setMinFilter(GL_NEAREST);
-		colorTexture.setMagFilter(GL_NEAREST);
 		maskTexture.loadFromFile("images/mayhem8_mask.png", TEXTURE_PIXEL_FORMAT_L);
-		maskTexture.setMinFilter(GL_NEAREST);
-		maskTexture.setMagFilter(GL_NEAREST);
 
 	}
 	else if (numlvl == 4) {
-
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120 / 3))) };
+		glm::vec2 texCoords[2] = { glm::vec2(120.f / 924.0, 0.f), glm::vec2((120.f + 320.f) / 924.0f, 160.f / 256.0f) };
+		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
+		colorTexture.loadFromFile("images/tricky1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		maskTexture.loadFromFile("images/tricky1_mask.png", TEXTURE_PIXEL_FORMAT_L);
 	}
 	// taxing 1
 	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 1227.0, 0.f), glm::vec2((120.f + 320.f) / 1227.0f, 160.f / 256.0f) };
@@ -65,6 +58,11 @@ void Scene::init(int numlvl)
 	//mayhem8
 	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 668.0, 0.f), glm::vec2((120.f + 320.f) / 668.0f, 160.f / 256.0f) };
 
+
+	colorTexture.setMinFilter(GL_NEAREST);
+	colorTexture.setMagFilter(GL_NEAREST);
+	maskTexture.setMinFilter(GL_NEAREST);
+	maskTexture.setMagFilter(GL_NEAREST);
 
 	offsetX = 0;
 
@@ -160,7 +158,7 @@ void Scene::update(int deltaTime)
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			eraseMaskY(pos.x, pos.y);
 			listOflemmings[i].update(deltaTime);
-			offsetX += 1;
+			//offsetX += 1;
 		}
 		else if (listOflemmings[i].getState() == 2) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
@@ -287,6 +285,8 @@ void Scene::update(int deltaTime)
 		else listOfkames[j].update(deltaTime);
 		
 	}
+
+
 }
 
 
@@ -311,15 +311,15 @@ void Scene::render()
 	
 	gateOut.render(offsetX);
 	if (first_portalOn) {
-		portal_first.render();
+		portal_first.render(offsetX);
 	}
 	if (second_portalOn) {
-		portal_second.render();
+		portal_second.render(offsetX);
 	}
 	for (int i = 0; i < howmanyLem; i++) {
 		listOflemmings[i].render(offsetX);
 		if (deathbybomb != 0 && (particlesystems[i].get_time_living() < 6000)) {
-			particlesystems[i].render();
+			particlesystems[i].render(offsetX);
 			
 		}
 		
@@ -335,12 +335,12 @@ void Scene::render()
 	gate.render(offsetX);
 
 	for (int i = 0; i < listOfkames.size(); i++) {
-		listOfkames[i].render();
+		listOfkames[i].render(offsetX);
 		
 	}
 
 	for (int i = 0; i < listOfLadders.size(); i++) {
-		listOfLadders[i].render(); 
+		listOfLadders[i].render(offsetX);
 	}
 
 
@@ -721,6 +721,10 @@ void Scene::bombed()
 		deathbybomb = 1;
 		
 	}
+}
+
+void Scene::setXoffset(int offset) {
+	offsetX += 2*offset;
 }
 
 void Scene::initShaders()

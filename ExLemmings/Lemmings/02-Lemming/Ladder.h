@@ -11,7 +11,7 @@ class Ladder
 public:
 	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture &spritesheet);
 	void update(int deltaTime);
-	void render();
+	void render(int offsetX);
 	void changeSteps(int numStep);
 	void changePos(glm::vec2 pos);
 

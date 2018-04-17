@@ -19,9 +19,9 @@ void ParticleSystem::update(int deltaTime) {
 	}
 }
 
-void ParticleSystem::render() {
+void ParticleSystem::render(int offsetX) {
 	for (int i = 0; i < howmanypart; i++) {
-		particles[i].render();
+		particles[i].render(offsetX);
 	}
 }
 

@@ -182,7 +182,7 @@ void Ladder::update(int deltaTime){
 }
 
 
-void Ladder::render()
+void Ladder::render(int offsetX)
 {
 	sprite->render(0);
 }

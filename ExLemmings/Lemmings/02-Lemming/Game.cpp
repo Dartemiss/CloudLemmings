@@ -7,7 +7,7 @@ void Game::init()
 {
 	bPlay = true;
 	gstate = 0;
-	numLvl = 3;
+	numLvl = 4;
 	paused = false;
 	fastmode = false;
 	bLeftMouse = bRightMouse = bMiddleMouse = false;
@@ -96,6 +96,11 @@ void Game::keyPressed(int key)
 		fastmode = false;
 	else if (key == 113)
 		scene.bombed();
+	else if (key == 'a' && gstate == 1)
+		scene.setXoffset(-1);
+	else if (key == 'd' && gstate == 1)
+		scene.setXoffset(1);
+		
 	keys[key] = true;
 }
 

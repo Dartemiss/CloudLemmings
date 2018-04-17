@@ -19,8 +19,8 @@ void Portal::update(int deltaTime) {
 	sprite->update(deltaTime);
 }
 
-void Portal::render() {
-	sprite->render(0);
+void Portal::render(int offsetX) {
+	sprite->render(offsetX);
 }
 
 bool Portal::contact(int lemX, int lemY) {

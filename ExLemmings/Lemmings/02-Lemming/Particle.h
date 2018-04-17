@@ -6,7 +6,7 @@ class Particle
 public:
 	void init(int x, int y, ShaderProgram &shaderProgram, Texture &spritesheet);
 	void update(int deltaTime);
-	void render();
+	void render(int offsetX);
 
 private:
 	glm::dvec2 pos;

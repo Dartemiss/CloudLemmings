@@ -35,6 +35,7 @@ public:
 	bool lemEnded();
 	glm::vec2 getDeadsWins();
 	void bombed();
+	void setXoffset(int x);
 
 private:
 	void initShaders();

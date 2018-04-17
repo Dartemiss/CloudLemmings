@@ -31,6 +31,6 @@ void Particle::update(int deltaTime) {
 	sprite->position() = glm::vec2(pos.x, pos.y);
 }
 
-void Particle::render() {
-	sprite->render(0);
+void Particle::render(int offsetX) {
+	sprite->render(offsetX);
 }
