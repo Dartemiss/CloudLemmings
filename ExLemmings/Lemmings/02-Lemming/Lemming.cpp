@@ -277,8 +277,8 @@ void Lemming::update(int deltaTime)
 		break;
 
 	case BASHER_STATE:
-		fall = collisionWall(20);
-		if (fall <= 10) {
+		fall = collisionWall(18);
+		if (fall <= 8) {
 			sprite->position() += glm::vec2(1, 0);
 		}
 		else {
@@ -291,8 +291,8 @@ void Lemming::update(int deltaTime)
 		break;
 
 	case BASHER_LEFT_STATE:
-		fall = collisionWall(20);
-		if (fall <= 10) {
+		fall = collisionWall(18);
+		if (fall <= 8) {
 			sprite->position() -= glm::vec2(1, 0);
 				
 		}

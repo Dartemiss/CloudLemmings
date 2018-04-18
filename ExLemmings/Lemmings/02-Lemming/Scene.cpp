@@ -103,7 +103,7 @@ void Scene::init(int numlvl,int skin)
 	deathbybomb = 0;
 	wonLem = 0;
 	deadLem = 0;
-	requiredLemsToWin = 10;
+	requiredLemsToWin = 2;
 	//ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
 	gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut,true);
 	gateOut.init(glm::vec2(200, 122), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
@@ -425,9 +425,13 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 	}
 }
 
+glm::vec2 Scene::getDeadsWins() {
+	return glm::vec2(wonLem, requiredLemsToWin);
+}
+
 bool Scene::lemArrived()
 {
-	if (wonLem == requiredLemsToWin)
+	if (wonLem >= requiredLemsToWin && howmanyLem == -1)
 		return true;
 	return false;
 }
@@ -489,49 +493,46 @@ bool Scene::isOnLemming(int mouseX, int mouseY) {
 	
 }
 
-glm::vec2 Scene::getDeadsWins() {
-	return glm::vec2(wonLem, requiredLemsToWin);
-}
 
 void Scene::eraseMaskX(int lemX, int lemY)
 {
 	int posX = lemX + 130;
 	int posY = lemY;
 	
-	// Transform from mouse coordinates to map coordinates
-	//   The map is enlarged 3 times and displaced 120 pixels
-	//posX = mouseX/3 + 120;
-	//posY = mouseY/3;
 
 	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
-		//cout << maskTexture.pixel << endl;
-		maskTexture.setPixel(x, posY - 1, 0);
+		if(maskTexture.pixel(x,posY-1) != 1)
+			maskTexture.setPixel(x, posY - 1, 0);
 		
 	}
 
 	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
-		maskTexture.setPixel(x, posY - 2, 0);
+		if (maskTexture.pixel(x, posY - 2) != 1)
+			maskTexture.setPixel(x, posY - 2, 0);
 	}
 	
-		
-	maskTexture.setPixel(posX, posY - 3, 0);
+	if (maskTexture.pixel(posX, posY - 3) != 1)
+		maskTexture.setPixel(posX, posY - 3, 0);
 	
 	for (int y = max(0, posY); y <= min(maskTexture.height() - 1, posY + 5); y++)
 		for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
-			maskTexture.setPixel(x, y, 0);
+			if (maskTexture.pixel(x, y) != 1)
+				maskTexture.setPixel(x, y, 0);
 	
 	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
-		maskTexture.setPixel(x, posY + 6, 0);
+		if (maskTexture.pixel(x, posY +6) != 1)
+			maskTexture.setPixel(x, posY + 6, 0);
 	
 	}
 	
 	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
-		maskTexture.setPixel(x, posY + 7, 0);
+		if (maskTexture.pixel(x, posY + 7) != 1)
+			maskTexture.setPixel(x, posY + 7, 0);
 		
 	}
 	
-		
-	maskTexture.setPixel(posX, posY + 8, 0);
+	if (maskTexture.pixel(posX, posY +8) != 1)
+		maskTexture.setPixel(posX, posY + 8, 0);
 	
 }
 
@@ -540,41 +541,42 @@ void Scene::eraseMaskXLeft(int lemX, int lemY)
 	int posX = lemX + 125;
 	int posY = lemY;
 	
-			// Transform from mouse coordinates to map coordinates
-			//   The map is enlarged 3 times and displaced 120 pixels
-			//posX = mouseX/3 + 120;
-			//posY = mouseY/3;
 		
 		
 	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
-		maskTexture.setPixel(x, posY - 1, 0);
+		if (maskTexture.pixel(x, posY - 1) != 1)
+			maskTexture.setPixel(x, posY - 1, 0);
 		
 	}
 	
 	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
-		maskTexture.setPixel(x, posY - 2, 0);
+		if (maskTexture.pixel(x, posY - 2) != 1)
+			maskTexture.setPixel(x, posY - 2, 0);
 		
 	}
 	
-		
-	maskTexture.setPixel(posX, posY - 3, 0);
+	if (maskTexture.pixel(posX, posY - 1) != 1)
+		maskTexture.setPixel(posX, posY - 3, 0);
 	
 	for (int y = max(0, posY); y <= min(maskTexture.height() - 1, posY + 5); y++)
 		for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
-			maskTexture.setPixel(x, y, 0);
+			if (maskTexture.pixel(x, y) != 1)
+				maskTexture.setPixel(x, y, 0);
 	
 	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
-		maskTexture.setPixel(x, posY + 6, 0);
+		if (maskTexture.pixel(x, posY + 6) != 1)
+			maskTexture.setPixel(x, posY + 6, 0);
 		
 	}
 	
 	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
-		maskTexture.setPixel(x, posY + 7, 0);
+		if (maskTexture.pixel(x, posY + 7) != 1)
+			maskTexture.setPixel(x, posY + 7, 0);
 		
 	}
 	
-		
-	maskTexture.setPixel(posX, posY + 8, 0);
+	if (maskTexture.pixel(posX, posY +8) != 1)
+		maskTexture.setPixel(posX, posY + 8, 0);
 	
 }
 
@@ -583,41 +585,42 @@ void Scene::eraseMaskBOOM(int lemX, int lemY)
 	int posX = lemX + 130;
 	int posY = lemY;
 	
-			// Transform from mouse coordinates to map coordinates
-			//   The map is enlarged 3 times and displaced 120 pixels
-			//posX = mouseX/3 + 120;
-			//posY = mouseY/3;
 		
 		
 	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
-		maskTexture.setPixel(x, posY - 4, 0);
+		if (maskTexture.pixel(x, posY - 4) != 1)
+			maskTexture.setPixel(x, posY - 4, 0);
 		
 	}
 	
 	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
-		maskTexture.setPixel(x, posY - 5, 0);
+		if (maskTexture.pixel(x, posY - 5) != 1)
+			maskTexture.setPixel(x, posY - 5, 0);
 		
 	}
 	
-	
-	maskTexture.setPixel(posX, posY - 3, 0);
+	if (maskTexture.pixel(posX, posY - 3) != 1)
+		maskTexture.setPixel(posX, posY - 3, 0);
 	
 	for (int y = max(0, posY - 3); y <= min(maskTexture.height() - 1, posY + 8); y++)
 		for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
-			maskTexture.setPixel(x, y, 0);
+			if (maskTexture.pixel(x, y) != 1)
+				maskTexture.setPixel(x, y, 0);
 	
 	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
-		maskTexture.setPixel(x, posY + 9, 0);
+		if (maskTexture.pixel(x, posY + 9) != 1)
+			maskTexture.setPixel(x, posY + 9, 0);
 		
 	}
 	
 	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
-		maskTexture.setPixel(x, posY + 10, 0);
+		if (maskTexture.pixel(x, posY + 10) != 1)
+			maskTexture.setPixel(x, posY + 10, 0);
 		
 	}
 	
-		
-	maskTexture.setPixel(posX, posY + 11, 0);
+	if (maskTexture.pixel(posX, posY + 11) != 1)
+		maskTexture.setPixel(posX, posY + 11, 0);
 	
 }
 
@@ -626,25 +629,24 @@ void Scene::eraseMaskY(int lemX, int lemY)
 	int posX = lemX + 130;
 	int posY = lemY;
 
-	// Transform from mouse coordinates to map coordinates
-	//   The map is enlarged 3 times and displaced 120 pixels
-	//posX = mouseX/3 + 120;
-	//posY = mouseY/3;
 	for (int x = max(0, posX - 3); x <= min(maskTexture.width() - 1, posX + 3); x++)
 		for (int y = max(0, posY - 3); y <= min(maskTexture.height() - 1, posY + 9); y++)
-			maskTexture.setPixel(x, y, 0);
+			if (maskTexture.pixel(x, y) != 1)
+				maskTexture.setPixel(x, y, 0);
 
 	for (int x = max(0, posX - 2); x <= min(maskTexture.width() - 1, posX + 2); x++) {
-		maskTexture.setPixel(x, posY + 10, 0);
+		if (maskTexture.pixel(x, posY + 10) != 1)
+			maskTexture.setPixel(x, posY + 10, 0);
 	}
 	
 	for (int x = max(0, posX - 1); x <= min(maskTexture.width() - 1, posX + 1); x++) {
-		maskTexture.setPixel(x, posY + 11, 0);
+		if (maskTexture.pixel(x, posY +11) != 1)
+			maskTexture.setPixel(x, posY + 11, 0);
 		
 	}
 	
-		
-	maskTexture.setPixel(posX, posY + 12, 0);
+	if (maskTexture.pixel(posX, posY + 12) != 1)
+		maskTexture.setPixel(posX, posY + 12, 0);
 }
 
 
@@ -653,15 +655,6 @@ void Scene::applyMask(int lemX, int lemY)
 	int posX, posY;
 	posX = lemX + 120;
 	posY = lemY;
-	
-	// Transform from mouse coordinates to map coordinates
-	//   The map is enlarged 3 times and displaced 120 pixels
-	//posX = mouseX/3 + 120;
-	//posY = mouseY/3;
-
-	/*for(int y=max(0, posY-3); y<=min(maskTexture.height()-1, posY+3); y++)
-		for(int x=max(0, posX-3); x<=min(maskTexture.width()-1, posX+3); x++)
-			maskTexture.setPixel(x, y, 255);*/
 
 	for (int i = 0; i < 10; i++) {
 		maskTexture.setPixel(posX+5,posY+i,1);
@@ -675,15 +668,6 @@ void Scene::applyMaskLadder(int ladX, int ladY,int step){
 	posX = ladX + 120 + offset + 1;
 	posY = ladY - (step-1) + 11;
 
-	// Transform from mouse coordinates to map coordinates
-	//   The map is enlarged 3 times and displaced 120 pixels
-	//posX = mouseX/3 + 120;
-	//posY = mouseY/3;
-
-	/*for(int y=max(0, posY-3); y<=min(maskTexture.height()-1, posY+3); y++)
-	for(int x=max(0, posX-3); x<=min(maskTexture.width()-1, posX+3); x++)
-	maskTexture.setPixel(x, y, 255);*/
-
 	for (int i = 0; i < 1; i++) {
 		maskTexture.setPixel(posX + i, posY, 155);
 	}
@@ -694,15 +678,6 @@ void Scene::applyMaskLadderLeft(int ladX, int ladY, int step) {
 	int offset = (step - 1) * 2;
 	posX = ladX + 120 - offset + 6;
 	posY = ladY - (step - 1) + 11;
-	
-			// Transform from mouse coordinates to map coordinates
-			//   The map is enlarged 3 times and displaced 120 pixels
-			//posX = mouseX/3 + 120;
-			//posY = mouseY/3;
-		
-			/*for(int y=max(0, posY-3); y<=min(maskTexture.height()-1, posY+3); y++)
-			+	for(int x=max(0, posX-3); x<=min(maskTexture.width()-1, posX+3); x++)
-			+	maskTexture.setPixel(x, y, 255);*/
 		
 	for (int i = 0; i < 1; i++) {
 		maskTexture.setPixel(posX + i, posY, 155);
