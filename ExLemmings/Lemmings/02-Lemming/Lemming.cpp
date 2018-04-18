@@ -325,7 +325,7 @@ void Lemming::update(int deltaTime)
 			
 
 	case DYING_BOMB_STATE:
-		fall = collisionWall(2);
+		fall = collisionFloor(2);
 		if (fall > 0) {
 			lemFall += 2;
 			sprite->position() += glm::vec2(0, fall);

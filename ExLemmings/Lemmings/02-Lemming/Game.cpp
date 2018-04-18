@@ -102,24 +102,28 @@ void Game::keyPressed(int key)
 		bPlay = false;
 	else if (key == '1') {
 		if (gstate == 0) {
+			sceneaux.silence();
 			numLvl = 1;
 			initSc();
 		}
 	}
 	else if (key == '2') {
 		if (gstate == 0) {
+			sceneaux.silence();
 			numLvl = 2;
 			initSc();
 		}
 	}
 	else if (key == '3') {
 		if (gstate == 0) {
+			sceneaux.silence();
 			numLvl = 3;
 			initSc();
 		}
 	}
 	else if (key == '4') {
 		if (gstate == 0) {
+			sceneaux.silence();
 			numLvl = 4;
 			initSc();
 		}

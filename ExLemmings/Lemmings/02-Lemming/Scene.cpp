@@ -24,7 +24,7 @@ void Scene::init(int numlvl,int skin)
 
 	//INIT CLOCK
 	for (int i = 0; i < 5; i++) {
-		number.init(250 + i * 10, 130, simpleTexProgram, spritesheet);
+		number.init(250 + i * 10, 157, simpleTexProgram, spritesheet);
 		clock.push_back(number);
 	}
 	clock[2].setValue(10);
@@ -33,20 +33,39 @@ void Scene::init(int numlvl,int skin)
 	clock[3].setValue(3);
 	clock[4].setValue(7);
 
+	//INIT GATES
+	spritesheetGates.loadFromFile("images/enter_gate.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheetGates.setMinFilter(GL_NEAREST);
+	spritesheetGates.setMagFilter(GL_NEAREST);
+
+	spritesheetGatesOut.loadFromFile("images/out_gate.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheetGatesOut.setMinFilter(GL_NEAREST);
+	spritesheetGatesOut.setMagFilter(GL_NEAREST);
+
+
+	//LEVELS
 	if (numlvl == 1) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH + 80), float(CAMERA_HEIGHT + 85 - 120/3)) }; //Mon
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH + 72), float(CAMERA_HEIGHT + 85 - 120/3)) }; //Mon
 		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2(1, 1) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/fun1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 		maskTexture.loadFromFile("images/fun1_mask.png", TEXTURE_PIXEL_FORMAT_L);
+
+		gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut, true);
+		gateOut.init(glm::vec2(200, 105), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
+
 		limitOffsetDreta = 0;
 	}
 	else if (numlvl == 2) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+80), float(CAMERA_HEIGHT +85 - (120 / 3))) };
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+72), float(CAMERA_HEIGHT +85 - (120 / 3))) };
 		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2(1, 1) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 		maskTexture.loadFromFile("images/fun2_mask.png", TEXTURE_PIXEL_FORMAT_L);
+
+		gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut, true);
+		gateOut.init(glm::vec2(245, 64), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
+
 		limitOffsetDreta = 0;
 	}
 	else if (numlvl == 3) {
@@ -55,15 +74,23 @@ void Scene::init(int numlvl,int skin)
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/mayhem8.png", TEXTURE_PIXEL_FORMAT_RGBA);
 		maskTexture.loadFromFile("images/mayhem8_mask.png", TEXTURE_PIXEL_FORMAT_L);
+
+		gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut, true);
+		gateOut.init(glm::vec2(365, 124), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
+
 		limitOffsetDreta = 150;
 
 	}
 	else if (numlvl == 4) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+510), float(CAMERA_HEIGHT +85 - (120 / 3))) };
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+487), float(CAMERA_HEIGHT +85 - (120 / 3))) };
 		glm::vec2 texCoords[2] = { glm::vec2(120.f / 924.0, 0.f), glm::vec2(1, 1) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/tricky1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 		maskTexture.loadFromFile("images/tricky1_mask.png", TEXTURE_PIXEL_FORMAT_L);
+
+		gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut, true);
+		gateOut.init(glm::vec2(617, 90), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
+
 		limitOffsetDreta = 470;
 	}
 	// taxing 1
@@ -104,13 +131,7 @@ void Scene::init(int numlvl,int skin)
 	spritesheetLadder.setMinFilter(GL_NEAREST);
 	spritesheetLadder.setMagFilter(GL_NEAREST);
 	
-	spritesheetGates.loadFromFile("images/enter_gate.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	spritesheetGates.setMinFilter(GL_NEAREST);
-	spritesheetGates.setMagFilter(GL_NEAREST);
 
-	spritesheetGatesOut.loadFromFile("images/out_gate.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	spritesheetGatesOut.setMinFilter(GL_NEAREST);
-	spritesheetGatesOut.setMagFilter(GL_NEAREST);
 	
 	lemmingsInGame = 10;
 	howmanyButtons = 7;
@@ -128,9 +149,8 @@ void Scene::init(int numlvl,int skin)
 	deadLem = 0;
 	requiredLemsToWin = 2;
 	//ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
-	gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut,true);
-	gateOut.init(glm::vec2(200, 105), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
-	posGate = glm::vec2(200, 122);
+
+	//posGate = glm::vec2(200, 122);
 
 
 	cursor = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &simpleTexProgram);
@@ -197,7 +217,7 @@ void Scene::update(int deltaTime)
 	}
 		
 	if (deathbybomb == 0) { //No es creen mes lemmings un cop s'activa la bomba
-		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < lemmingsInGame) {
+		if (currentTime - lastLemming > 1500.0f && allCreatedLemm < lemmingsInGame) {
 			lastLemming = currentTime;
 			++howmanyLem;
 			++allCreatedLemm;
@@ -252,7 +272,7 @@ void Scene::update(int deltaTime)
 			listOflemmings[i].setnLadder(false);
 			int aux = listOflemmings[i].getnumLadder();
 			if (right) {
-				applyMaskLadder(pos.x, pos.y, step);
+				applyMaskLadder(pos.x + 8, pos.y, step);
 				listOfLadders[aux].changeSteps(step - 1);
 				
 					
@@ -490,11 +510,12 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 			else {//Place portal
 				int posX = mouseOffX / 3 - 10;
 				int posY = mouseY / 3 - 8;
-				//if (maskTexture.pixel(posX, posY) != 255 && maskTexture.pixel(posX, posY + 15) == 255) {
+				glm::ivec2 pos_firstPortal = portal_first.getPos();
+				if (posX - pos_firstPortal.x < 150) {
 					portal_second.init(posX, posY, simpleTexProgram, spritesheet);
 					second_portalOn = true;
 					settingPortal = false;
-				//}
+				}
 			}
 		}
 		else if (bRightButton) {

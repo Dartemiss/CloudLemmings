@@ -25,6 +25,14 @@ SceneAux::~SceneAux()
 void SceneAux::init()
 {
 
+	//INIT SOUND SYSTEM
+	FMOD::System_Create(&system);// create an instance of the game engine
+	system->init(32, FMOD_INIT_NORMAL, 0);// initialise the game engine with 32 channels
+
+	system->createSound("Sounds/white_orchard.wav", FMOD_DEFAULT, 0, &sound1);
+	sound1->setMode(FMOD_LOOP_NORMAL);
+	system->playSound(sound1, FMOD_DEFAULT, false, 0);
+
 	initShaders();
 	currentTime = 0.0f;
 	accion = 0;
@@ -203,4 +211,9 @@ void SceneAux::initShaders()
 	}
 	texProgram.bindFragmentOutput("outColor");
 }
+
+void SceneAux::silence() {
+	system->release();
+}
+
 
