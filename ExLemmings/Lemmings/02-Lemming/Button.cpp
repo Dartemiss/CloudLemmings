@@ -49,9 +49,7 @@ void Button::update() {
 		sprite->changeAnimation(1);
 	}
 	else {
-		if (id_skill != 5) {
-			sprite->changeAnimation(0);
-		}
+		sprite->changeAnimation(0);
 	}
 }
 

@@ -4,7 +4,7 @@
 
 #include "Sprite.h"
 #include "VariableTexture.h"
-
+#include "fmod.hpp"
 
 // Lemming is basically a Sprite that represents one lemming. As such it has
 // all properties it needs to track its movement and collisions.
@@ -14,7 +14,7 @@ class Lemming
 {
 
 public:
-	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture &spritesheet);
+	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture &spritesheet, FMOD::System  &soundsystem);
 	void update(int deltaTime);
 	void render(int offsetX);
 	
@@ -24,7 +24,6 @@ public:
 	bool hasDied();
 	int getState();
 	bool isBlocking();
-	bool isWinning();
 	int getbuilderStep();
 	int builderStep;
 	glm::vec2 pos;
@@ -35,6 +34,8 @@ public:
 	int getnumLadder();
 	bool right;
 	void setPos(glm::vec2 pos);
+	bool diedByBomb();
+	void silence();
 
 private:
 	int collisionFloor(int maxFall);
@@ -47,7 +48,7 @@ private:
 	bool bBlocking;
 	bool bclimbing;
 	int numLadder;
-	bool won;
+	bool bDiedBomb;
 
 private:
 	enum LemmingState
@@ -61,6 +62,10 @@ private:
 	LemmingState state;
 	Sprite *sprite;
 	VariableTexture *mask;
+
+	//FMod Stuff
+	FMOD::System     *system; //handle to FMOD engine
+	FMOD::Sound      *sound1, *sound2, *sound3; //sound that will be loaded and played
 
 };
 

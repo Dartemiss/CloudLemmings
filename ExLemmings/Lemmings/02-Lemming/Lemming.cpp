@@ -18,17 +18,17 @@ enum LemmingAnims
 };
 
 
-void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture &spritesheet)
+void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture &spritesheet, FMOD::System  &soundsystem)
 {
 	//state = FALLING_RIGHT_STATE;
 	state = OPEN_STATE;
 	lemFall = 0;
 	builderStep = 1;
 	bDied = false;
+	bDiedBomb = false;
 	bBlocking = false;
 	bclimbing = false;
 	nLadder = false;
-	won = false;
 	right = true;
 	pos = glm::vec2(0,0);
 	//sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 0.5), &spritesheet, &shaderProgram);
@@ -51,7 +51,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		for (int i = 8; i<12; i++)
 			sprite->addKeyframe(UMBRELLA, glm::vec2(float(i) / 16.0f, 0.07142857143f * 2 / 2));
 
-		sprite->setAnimationSpeed(DEATH, 6);
+		sprite->setAnimationSpeed(DEATH, 12);
 		for (int i = 0; i<16; i++)
 			sprite->addKeyframe(DEATH, glm::vec2(float(i) / 16.0f, 0.07142857143f * 11 / 2));
 
@@ -79,8 +79,8 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 
 
 		sprite->setAnimationSpeed(DEATH_BY_MANHATTAN, 8);
-		for (int i = 0; i < 14; i++)
-			sprite->addKeyframe(DEATH_BY_MANHATTAN, glm::vec2(float(i) / 16.0f, 0.07142857143f * 13 / 2));
+		for (int i = 0; i < 16; i++)
+			sprite->addKeyframe(DEATH_BY_MANHATTAN, glm::vec2(float(i) / 16.0f, 0.07142857143f * 10 / 2));
 
 		sprite->setAnimationSpeed(CLIMBER, 8);
 		for (int i = 0; i < 8; i++)
@@ -121,6 +121,17 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	sprite->changeAnimation(OPEN_UMBRELLA);
 	//sprite->changeAnimation(CLIMBER_LEFT);
 	sprite->setPosition(initialPosition);
+
+
+	//INIT SOUND SYSTEM
+	//FMOD_RESULT p = FMOD::System_Create(&system);;
+	system = &soundsystem;
+	// create an instance of the game engine
+	system->init(32, FMOD_DEFAULT, 0);//No sé si caldrà treure aixo o no, CUIDAO
+										  //Level Music
+	system->createSound("Sounds/5123.wav", FMOD_DEFAULT, 0, &sound1);
+	system->createSound("Sounds/5309.wav", FMOD_DEFAULT, 0, &sound2);
+
 }
 
 void Lemming::update(int deltaTime)
@@ -248,6 +259,9 @@ void Lemming::update(int deltaTime)
 	case DYING_STATE:
 		//Destruir lemming un cop acaba l'animacio
 		//en principi no cal comprovar que estem a l'animacio DEATH
+		if (sprite->keyframe() == 1) {
+			system->playSound(sound2, NULL, false, 0);
+		}
 		if (sprite->keyframe() == 15) {
 			bDied = true;
 		}
@@ -267,6 +281,9 @@ void Lemming::update(int deltaTime)
 		fall = collisionFloor(2);
 		if (fall <= 0) {
 			sprite->position() += glm::vec2(0, 1);
+			if (sprite->keyframe() == 1) {
+				system->playSound(sound1, NULL, false, 0);
+			}
 			//glm::vec2 aux = sprite->position();
 			//mask->setPixel(aux,0);
 		}
@@ -308,8 +325,13 @@ void Lemming::update(int deltaTime)
 			
 
 	case DYING_BOMB_STATE:
-		if (sprite->keyframe() == 13) {
-			bDied = true;
+		fall = collisionWall(2);
+		if (fall > 0) {
+			lemFall += 2;
+			sprite->position() += glm::vec2(0, fall);
+		}
+		if (sprite->keyframe() == 15) {
+			bDiedBomb = true;
 		}
 		break;
 
@@ -368,6 +390,12 @@ void Lemming::update(int deltaTime)
 		}
 		break;
 	}
+
+	FMOD_RESULT a = system->update();
+	if (a != FMOD_OK) {
+		int x = 3;
+	}
+	
 }
 
 glm::vec2 Lemming::getactualPos() {
@@ -397,6 +425,10 @@ void Lemming::change_state(int nstate) {
 		sprite->changeAnimation(TRANSFORMATION);
 		state = TRANSFORM_STATE;
 
+	}
+	else if (nstate == 52) {
+		sprite->changeAnimation(DEATH_BY_MANHATTAN);
+		state = DYING_BOMB_STATE;
 	}
 	if(state != FALLING_LEFT_STATE && state != FALLING_RIGHT_STATE){
 		if (nstate == 1) {
@@ -446,7 +478,6 @@ void Lemming::change_state(int nstate) {
 			pos = sprite->position();
 		}
 		else if (nstate == 7) {
-			won = true;
 			sprite->changeAnimation(WINNING);
 			state = WINNING_STATE;
 		}
@@ -457,11 +488,9 @@ void Lemming::change_state(int nstate) {
 		
 		}
 	}
+
 }
 
-bool Lemming::isWinning() {
-	return won;
-}
 
 glm::ivec2 Lemming::getLemPos()
 {
@@ -492,6 +521,10 @@ int Lemming::getState() {
 		return 5;
 	else if (state == BUILDER_STATE)
 		return 6;
+	else if (state == WINNING_STATE)
+		return 7;
+	else if (state == DYING_BOMB_STATE)
+		return 52;
 	else if (state == BUILDER_LEFT_STATE)
 		 return 6;
 	else if (state == SUPER_STATE)
@@ -602,6 +635,14 @@ void Lemming::setPos(glm::vec2 pos) {
 	sprite->setPosition(pos);
 }
 
+
+bool Lemming::diedByBomb() {
+	return bDiedBomb;
+}
+
+void Lemming::silence() {
+	system->release();
+}
 
 
 

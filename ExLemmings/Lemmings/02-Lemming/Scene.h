@@ -13,6 +13,11 @@
 #include "Button.h"
 #include "Portal.h"
 #include "Proyectil.h"
+#include "Number.h"
+
+
+#include "fmod.hpp" //fmod c++ header
+#pragma comment( lib, "fmod_vc.lib" ) // fmod library
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -37,6 +42,7 @@ public:
 	void bombed();
 	void setXoffset(int x);
 
+	void silence();
 private:
 	void initShaders();
 	void give_skill(int mouseX, int mouseY, int skill);
@@ -44,6 +50,7 @@ private:
 	void eraseMaskXLeft(int lemX, int lemY);
 	void eraseMaskY(int lemX, int lemY);
 	void applyMask(int lemX, int lemY);
+	void unApplyMask(int lemX, int lemY);
 	void applyMaskLadder(int ladX, int ladY,int step);
 	void applyMaskLadderLeft(int ladX, int ladY, int step);
 	void eraseMaskBOOM(int lemX, int lemY);
@@ -91,7 +98,16 @@ private:
 	bool first_portalOn, second_portalOn;
 	int deathbybomb;
 	int offsetX;
+	float timeBombStarted;
+	Number number;
+	vector<Number> clock;
+	float lastSecond;
+	int limitOffsetDreta;
 	int requiredLemsToWin;
+
+	//FMod Stuff
+	FMOD::System     *system; //handle to FMOD engine
+	FMOD::Sound      *sound1, *sound2, *sound3, *sound4; //sound that will be loaded and played
 };
 
 

@@ -57,7 +57,7 @@ int Sprite::update(int deltaTime)
 void Sprite::render(int offsetX) const
 {
 	//offsetX = 0;
-	glm::mat4 modelview = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.76f, 1.0f));
+	glm::mat4 modelview = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.8f, 1.0f));
 	modelview = glm::translate(modelview, glm::vec3(pos.x, pos.y, 0.f));
 	modelview = glm::translate(modelview,glm::vec3(-offsetX,0.f, 0.f));
 	shaderProgram->setUniformMatrix4f("modelview", modelview);

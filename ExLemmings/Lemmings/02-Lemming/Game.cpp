@@ -12,7 +12,7 @@ void Game::init()
 	paused = false;
 	fastmode = false;
 	bLeftMouse = bRightMouse = bMiddleMouse = false;
-	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	//scene.init();
 	sceneaux.init();
 	sceneskin.init();
@@ -25,6 +25,7 @@ bool Game::update(int deltaTime)
 	{
 		//Menu
 	case 0:
+		glutSetCursor(GLUT_CURSOR_INHERIT);
 		sceneaux.update(deltaTime);
 		break;
 	case 1:
@@ -99,10 +100,37 @@ void Game::keyPressed(int key)
 {
 	if (key == 27) // Escape code
 		bPlay = false;
-	else if (key == '1')
-		initSc();
-	else if (key == '0')
-		gstate = 0;
+	else if (key == '1') {
+		if (gstate == 0) {
+			numLvl = 1;
+			initSc();
+		}
+	}
+	else if (key == '2') {
+		if (gstate == 0) {
+			numLvl = 2;
+			initSc();
+		}
+	}
+	else if (key == '3') {
+		if (gstate == 0) {
+			numLvl = 3;
+			initSc();
+		}
+	}
+	else if (key == '4') {
+		if (gstate == 0) {
+			numLvl = 4;
+			initSc();
+		}
+	}
+	else if (key == '0') {
+		if (gstate != 0){
+			scene.silence();
+			sceneaux.init();
+			gstate = 0;
+		}
+	}
 	else if (key == 112 && !paused)
 		paused = true;
 	else if (key == 112 && paused)

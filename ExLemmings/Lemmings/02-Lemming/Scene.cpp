@@ -22,34 +22,49 @@ void Scene::init(int numlvl,int skin)
 {
 	initShaders();
 
+	//INIT CLOCK
+	for (int i = 0; i < 5; i++) {
+		number.init(250 + i * 10, 130, simpleTexProgram, spritesheet);
+		clock.push_back(number);
+	}
+	clock[2].setValue(10);
+	clock[0].setValue(0);
+	clock[1].setValue(3);
+	clock[3].setValue(3);
+	clock[4].setValue(7);
+
 	if (numlvl == 1) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - 120/3)) };
-		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f) };
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH + 80), float(CAMERA_HEIGHT + 85 - 120/3)) }; //Mon
+		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2(1, 1) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/fun1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 		maskTexture.loadFromFile("images/fun1_mask.png", TEXTURE_PIXEL_FORMAT_L);
+		limitOffsetDreta = 0;
 	}
 	else if (numlvl == 2) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120 / 3))) };
-		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f) };
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+80), float(CAMERA_HEIGHT +85 - (120 / 3))) };
+		glm::vec2 texCoords[2] = { glm::vec2(120.f / 512.0, 0.f), glm::vec2(1, 1) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 		maskTexture.loadFromFile("images/fun2_mask.png", TEXTURE_PIXEL_FORMAT_L);
+		limitOffsetDreta = 0;
 	}
 	else if (numlvl == 3) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120/3))) };
-		glm::vec2 texCoords[2] = { glm::vec2(120.f / 668.0, 0.f), glm::vec2((120.f + 320.f) / 668.0f, 160.f / 256.0f) };
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+230), float(CAMERA_HEIGHT +85 - (120/3))) };
+		glm::vec2 texCoords[2] = { glm::vec2(120.f / 668.0, 0.f), glm::vec2(1, 1) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/mayhem8.png", TEXTURE_PIXEL_FORMAT_RGBA);
 		maskTexture.loadFromFile("images/mayhem8_mask.png", TEXTURE_PIXEL_FORMAT_L);
+		limitOffsetDreta = 150;
 
 	}
 	else if (numlvl == 4) {
-		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120 / 3))) };
-		glm::vec2 texCoords[2] = { glm::vec2(120.f / 924.0, 0.f), glm::vec2((120.f+320.f) / 924.0f, 160.f / 256.0f) };
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+510), float(CAMERA_HEIGHT +85 - (120 / 3))) };
+		glm::vec2 texCoords[2] = { glm::vec2(120.f / 924.0, 0.f), glm::vec2(1, 1) };
 		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 		colorTexture.loadFromFile("images/tricky1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 		maskTexture.loadFromFile("images/tricky1_mask.png", TEXTURE_PIXEL_FORMAT_L);
+		limitOffsetDreta = 470;
 	}
 	// taxing 1
 	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 1227.0, 0.f), glm::vec2((120.f + 320.f) / 1227.0f, 160.f / 256.0f) };
@@ -65,6 +80,14 @@ void Scene::init(int numlvl,int skin)
 	maskTexture.setMagFilter(GL_NEAREST);
 
 	offsetX = 0;
+
+	//INIT SOUND SYSTEM
+	FMOD::System_Create(&system);// create an instance of the game engine
+	system->init(32, FMOD_INIT_NORMAL, 0);// initialise the game engine with 32 channels
+
+	system->createSound("Sounds/song.wav", FMOD_DEFAULT, 0, &sound1);
+	sound1->setMode(FMOD_LOOP_NORMAL);
+
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
@@ -89,11 +112,11 @@ void Scene::init(int numlvl,int skin)
 	spritesheetGatesOut.setMinFilter(GL_NEAREST);
 	spritesheetGatesOut.setMagFilter(GL_NEAREST);
 	
-
 	lemmingsInGame = 10;
+	howmanyButtons = 7;
 
 	for (int i = 0; i < lemmingsInGame; i++) {
-		lemming.init(glm::vec2(60, 30), simpleTexProgram, spritesheet);
+		lemming.init(glm::vec2(60, 30), simpleTexProgram, spritesheet, *system);
 		lemming.setMapMask(&maskTexture);
 		listOflemmings.push_back(lemming);
 	}
@@ -106,7 +129,7 @@ void Scene::init(int numlvl,int skin)
 	requiredLemsToWin = 2;
 	//ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
 	gate.init(glm::vec2(40, 10), simpleTexProgram, spritesheetGates, spritesheetGatesOut,true);
-	gateOut.init(glm::vec2(200, 122), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
+	gateOut.init(glm::vec2(200, 105), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
 	posGate = glm::vec2(200, 122);
 
 
@@ -120,11 +143,10 @@ void Scene::init(int numlvl,int skin)
 	glm::ivec2 pos = glm::ivec2(-20, -20);
 	cursor->setPosition(pos);
 	scloaded = true;
-
 	startbombing = 0.0f;
 
 	loadedSkill = -1;
-	howmanyButtons = 7;
+
 	
 	for (int i = 0; i < howmanyButtons; i++) {
 		button.init(i, 100 + i * 30, 175, simpleTexProgram, spritesheet);
@@ -132,8 +154,16 @@ void Scene::init(int numlvl,int skin)
 		
 	}
 
+	lastSecond = 0.0f;
+
 	settingPortal = false;
-	first_portalOn = second_portalOn = false;
+	first_portalOn = second_portalOn = false;	
+	
+
+	system->playSound(sound1, FMOD_DEFAULT, false, 0);
+	system->createSound("Sounds/0477.wav", FMOD_DEFAULT, 0, &sound2);
+	system->createSound("Sounds/5463.wav", FMOD_DEFAULT, 0, &sound3);
+	system->createSound("Sounds/5301.wav", FMOD_DEFAULT, 0, &sound4);
 }
 
 //unsigned int x = 0;
@@ -142,22 +172,46 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	//cursor->update(deltaTime);
-		
+	clock[2].update();
+	if (currentTime - lastSecond > 1000.0f) {
+		lastSecond = currentTime;
+		clock[4].diminish();
+		clock[4].update();
+		if (clock[4].getValue() == 9) {
+			clock[3].diminish();
+			clock[3].update();
+			if (clock[3].getValue() == 9) {
+				clock[3].setValue(5);
+				clock[1].diminish();
+				clock[1].update();
+				if (clock[1].getValue() == 9) {
+					clock[0].diminish();
+					clock[0].update();
+					if (clock[0].getValue() == 9) {
+						//GAME LOST
+						
+					}
+				}
+			}
+		}
+	}
 		
 	if (deathbybomb == 0) { //No es creen mes lemmings un cop s'activa la bomba
 		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < lemmingsInGame) {
 			lastLemming = currentTime;
 			++howmanyLem;
 			++allCreatedLemm;
+			system->playSound(sound3, NULL, false, 0);
 
 		}
 	}
 
 
 	for (int i = 0; i < howmanyLem; i++) {
-		if (gateOut.isColliding(listOflemmings[i].getactualPos()) && !listOflemmings[i].isWinning()) {
+		if (gateOut.isColliding(listOflemmings[i].getactualPos()) && listOflemmings[i].getState() != 7) {
 			listOflemmings[i].change_state(7);
 			++wonLem;
+			listOflemmings[i].update(deltaTime);
 		}
 		if (listOflemmings[i].getState() == 1) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
@@ -184,7 +238,7 @@ void Scene::update(int deltaTime)
 			if (listOflemmings[i].nLadder){
 				ladder.init(glm::vec2(120, 130), simpleTexProgram, spritesheetLadder);
 				if (right)
-					ladder.changePos(pos);
+					ladder.changePos(pos + glm::vec2(8,0));
 				else {
 					pos -= glm::vec2(25, 1);
 					ladder.changePos(pos);
@@ -230,19 +284,44 @@ void Scene::update(int deltaTime)
 		}
 		else if (listOflemmings[i].hasDied()) {
 			listOflemmings.erase(listOflemmings.begin() + i);
+			//particlesystems.erase(particlesystems.begin() + i); Necessari?
 			howmanyLem--;
 			++deadLem;
+		}
+		else if (deathbybomb == 1 && listOflemmings[i].diedByBomb()) {
+			//crear particle systems
+			system->playSound(sound2, FMOD_DEFAULT, false, 0);
+			for (int i = 0; i < howmanyLem; i++) {
+				ParticleSystem aux;
+				partSys = aux;
+				glm::ivec2 pos = listOflemmings[i].getLemPos();
+				partSys.init(pos.x, pos.y, simpleTexProgram, spritesheet);
+				particlesystems.push_back(partSys);
+
+			}
+			deathbybomb = 2;
 		}
 		else if (listOflemmings[i].getState() == 3 && !listOflemmings[i].isBlocking()) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			applyMask(pos.x, pos.y);
 			listOflemmings[i].update(deltaTime);
 		}
-		else if (deathbybomb != 0 && (particlesystems[i].get_time_living() < 6000)) {
-			//listOflemmings[i].change_state(2); ha de fer l'animacio del tembleque
-			//listOflemmings[i].update(deltaTime);
-			particlesystems[i].update(deltaTime);
+		else if (deathbybomb == 1){
+			//Actualitzar compte enrere:
+
+			//Un cop passat compte enrere:
+			if (listOflemmings[i].getState() != 52 && currentTime - timeBombStarted > 5000) {
+				listOflemmings[i].change_state(52);
+			}
 			listOflemmings[i].update(deltaTime);
+		}
+		else if (deathbybomb == 2 && (particlesystems[i].get_time_living() < 6000)) {
+			particlesystems[i].update(deltaTime);
+		}
+		else if (deathbybomb == 2 && (particlesystems[i].get_time_living() >= 6000)){
+			listOflemmings.erase(listOflemmings.begin() + i);
+			particlesystems.erase(particlesystems.begin() + i);
+			howmanyLem--;
 		}
 		else if (first_portalOn && second_portalOn) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
@@ -252,13 +331,6 @@ void Scene::update(int deltaTime)
 			}
 			listOflemmings[i].update(deltaTime);
 		}
-	 /*else if (deathbybomb) {
-				
-			for (int j = 0; j < howmanyLem; j++) {
-				int a = 3;
-				particlesystems.erase(particlesystems.begin() + j);
-				}
-			}*/
 		else listOflemmings[i].update(deltaTime);
 
 
@@ -292,6 +364,12 @@ void Scene::update(int deltaTime)
 	}
 
 
+
+	FMOD_RESULT a = system->update(); //update FMOD, need to call this once per frame to keep the sound engine running
+	if (a != FMOD_OK) {
+		int x = 3;
+	}
+
 }
 
 
@@ -322,12 +400,14 @@ void Scene::render()
 		portal_second.render(offsetX);
 	}
 	for (int i = 0; i < howmanyLem; i++) {
-		listOflemmings[i].render(offsetX);
-		if (deathbybomb != 0 && (particlesystems[i].get_time_living() < 6000)) {
-			particlesystems[i].render(offsetX);
-			
+		//listOflemmings[i].render(offsetX);
+		if (deathbybomb != 2) {
+			listOflemmings[i].render(offsetX);
 		}
 		
+		if (deathbybomb == 2 && (particlesystems[i].get_time_living() < 6000)) {
+			particlesystems[i].render(offsetX);
+		}	
 	}
 
 	for (int i = 0; i < howmanyButtons; i++) {
@@ -348,7 +428,9 @@ void Scene::render()
 		listOfLadders[i].render(offsetX);
 	}
 
-
+	for (int i = 0; i < 5; i++) {
+		clock[i].render();
+	}
 
 }
 
@@ -358,6 +440,7 @@ int Scene::loadSkill(int mouseX, int mouseY) {
 	int posY = mouseY / 3;
 	for (int i = 0; i < howmanyButtons; i++) {
 		if (listOfButtons[i].isPressed(posX, posY)) {
+			system->playSound(sound4, FMOD_DEFAULT, false, 0);
 			return i;
 			
 		}
@@ -370,8 +453,9 @@ int Scene::loadSkill(int mouseX, int mouseY) {
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton, bool bMiddleButton){
 	if (scloaded) {
 		glm::ivec2 pos = glm::ivec2(mouseX / 3 - 11, mouseY / 3 - 7);
+		int mouseOffX = mouseX + offsetX*3;
 		cursor->setPosition(pos);
-		if (isOnLemming(mouseX, mouseY)) {
+		if (isOnLemming(mouseOffX, mouseY)) {
 			cursor->changeAnimation(1);
 			
 		}
@@ -388,14 +472,14 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 				if (loadedSkill != -1) {
 					if (loadedSkill == 5) {
 						if (!first_portalOn) {
-							give_skill(mouseX, mouseY, loadedSkill);
+							give_skill(mouseOffX, mouseY, loadedSkill);
 						}
 					}
 					else {
-						give_skill(mouseX, mouseY, loadedSkill);
+						give_skill(mouseOffX, mouseY, loadedSkill);
 					}
 				}
-				int skill = loadSkill(mouseX, mouseY);
+				int skill = loadSkill(mouseOffX, mouseY);
 				if (skill != -1) {
 					if (loadedSkill != -1 && loadedSkill != skill) {
 						listOfButtons[loadedSkill].unPress();
@@ -404,7 +488,7 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 				}
 			}
 			else {//Place portal
-				int posX = mouseX / 3 - 10;
+				int posX = mouseOffX / 3 - 10;
 				int posY = mouseY / 3 - 8;
 				//if (maskTexture.pixel(posX, posY) != 255 && maskTexture.pixel(posX, posY + 15) == 255) {
 					portal_second.init(posX, posY, simpleTexProgram, spritesheet);
@@ -415,10 +499,10 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 		}
 		else if (bRightButton) {
 			//applyMask(mouseX, mouseY); 
-			give_skill(mouseX, mouseY, 5);
+			give_skill(mouseOffX, mouseY, 5);
 		}
 		else if (bMiddleButton) {
-			give_skill(mouseX, mouseY, 8);
+			give_skill(mouseOffX, mouseY, 8);
 			
 		}
 		
@@ -466,6 +550,9 @@ void Scene::give_skill(int mouseX, int mouseY, int skill) {
 		bool yy = (pos.y - 12 < posMouse.y) && (pos.y + 12 > posMouse.y);
 		//xx = yy = true;
 		if(xx && yy) {
+			if (listOflemmings[i].getState() == 3) { //If it was blocking, erase shield
+				unApplyMask(pos.x, pos.y);
+			}
 			listOflemmings[i].change_state(skill);
 			justOneLemming = true;
 		}
@@ -660,6 +747,24 @@ void Scene::applyMask(int lemX, int lemY)
 		maskTexture.setPixel(posX+5,posY+i,1);
 		maskTexture.setPixel(posX + 15, posY + i, 1);
 	}
+	for (int i = 0; i < 27; i++) {
+		maskTexture.setPixel(posX-10 + i, posY - 2, 1);
+	}
+}
+
+void Scene::unApplyMask(int lemX, int lemY)
+{
+	int posX, posY;
+	posX = lemX + 120;
+	posY = lemY;
+
+	for (int i = 0; i < 10; i++) {
+		maskTexture.setPixel(posX + 5, posY + i, 0);
+		maskTexture.setPixel(posX + 15, posY + i, 0);
+	}
+	for (int i = 0; i < 27; i++) {
+		maskTexture.setPixel(posX - 10 + i, posY - 2, 0);
+	}
 }
 
 void Scene::applyMaskLadder(int ladX, int ladY,int step){
@@ -689,25 +794,27 @@ void Scene::applyMaskLadderLeft(int ladX, int ladY, int step) {
 void Scene::bombed()
 {
 	if (!deathbybomb) {
-			//crear particle system
-			for (int i = 0; i < howmanyLem; i++) {
-				ParticleSystem aux;
-				partSys = aux;
-				glm::ivec2 pos = listOflemmings[i].getLemPos();
-				partSys.init(pos.x, pos.y, simpleTexProgram, spritesheet);
-				particlesystems.push_back(partSys);
-			
-		}
+		timeBombStarted = currentTime;
+		
 		deathbybomb = 1;
 		
 	}
 }
 
 void Scene::setXoffset(int offset) {
-	offsetX += 2*offset;
+	if ((offsetX + 4 * offset) >= 0 && (offsetX + 4 * offset) <= limitOffsetDreta) {
+		offsetX += 4 * offset;
+	}
 	//glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT - (120 / 3))) };
 	//glm::vec2 texCoords[2] = { glm::vec2((offsetX+120.f) / 924.0, 0.f), glm::vec2((offsetX+120.f + 320.f) / 924.0f, 160.f / 256.0f) };
 	//map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
+}
+
+void Scene::silence() {
+	for (int i = 0; i < howmanyLem; i++) {
+		listOflemmings[i].silence();
+	}
+	system->release();
 }
 
 void Scene::initShaders()
