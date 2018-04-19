@@ -8,6 +8,8 @@
 #include "Lemming.h"
 #include "Ladder.h"
 #include "ParticleSystem.h"
+#include "Quad.h"
+#include "TexturedQuad.h"
 #include "Sprite.h"
 #include "Gate.h"
 #include "Button.h"
@@ -62,7 +64,7 @@ private:
 	Texture colorTexture;
 	VariableTexture maskTexture;
 	MaskedTexturedQuad *map;
-	ShaderProgram simpleTexProgram, maskedTexProgram;
+	ShaderProgram simpleTexProgram, maskedTexProgram,texProgram;
 	float currentTime;
 	glm::mat4 projection;
 	vector<Lemming> listOflemmings;
@@ -80,13 +82,12 @@ private:
 	Gate gateOut;
 	glm::vec2 posGate;
 	vector<Ladder> listOfLadders;
-	Texture spritesheet,spritesheetLadder,spritesheetGates,spritesheetGatesOut;
-	Sprite * sprite;
+	Texture spritesheet,spritesheetLadder,spritesheetGates,spritesheetGatesOut,buttonBase;
+	Sprite * sprite,* cursor,* gui;
 	ParticleSystem partSys;
 	vector<ParticleSystem> particlesystems;
 	float lastCurrentTime;
 	bool onesec;
-	Sprite * cursor;
 	bool scloaded = false;
 	float startbombing;
 	int loadedSkill;

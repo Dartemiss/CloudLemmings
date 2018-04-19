@@ -93,6 +93,7 @@ void Scene::init(int numlvl,int skin)
 
 		limitOffsetDreta = 470;
 	}
+
 	// taxing 1
 	//glm::vec2 texCoords[2] = { glm::vec2(120.f / 1227.0, 0.f), glm::vec2((120.f + 320.f) / 1227.0f, 160.f / 256.0f) };
 	//tricky 1
@@ -105,6 +106,16 @@ void Scene::init(int numlvl,int skin)
 	colorTexture.setMagFilter(GL_NEAREST);
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
+
+	
+	buttonBase.loadFromFile("images/button_base.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	buttonBase.setMinFilter(GL_NEAREST);
+	buttonBase.setMagFilter(GL_NEAREST);
+	gui = Sprite::createSprite(glm::ivec2(440, 220), glm::vec2(1.0f, 1.0f), &buttonBase, &simpleTexProgram);
+	gui->setNumberAnimations(1);
+	gui->addKeyframe(0, glm::vec2(0.0f, 0.0f));
+	gui->changeAnimation(0);
+	gui->setPosition(glm::vec2(-60, 70));
 
 	offsetX = 0;
 
@@ -147,7 +158,7 @@ void Scene::init(int numlvl,int skin)
 	deathbybomb = 0;
 	wonLem = 0;
 	deadLem = 0;
-	requiredLemsToWin = 2;
+	requiredLemsToWin = 55;
 	//ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
 
 	//posGate = glm::vec2(200, 122);
@@ -169,7 +180,7 @@ void Scene::init(int numlvl,int skin)
 
 	
 	for (int i = 0; i < howmanyButtons; i++) {
-		button.init(i, 100 + i * 30, 175, simpleTexProgram, spritesheet);
+		button.init(i, 50 + i * 30, 171, simpleTexProgram, spritesheet);
 		listOfButtons.push_back(button);
 		
 	}
@@ -354,7 +365,7 @@ void Scene::update(int deltaTime)
 		else listOflemmings[i].update(deltaTime);
 
 
-		if (howmanyLem == 0)
+		if (howmanyLem == 0 && !first_portalOn)
 			howmanyLem = -1;
 
 	}
@@ -411,6 +422,8 @@ void Scene::render()
 	//modelview = glm::mat4(1.0f);
 	modelview = glm::translate(glm::mat4(1.0f), glm::vec3(-offsetX, 0.0f, 0.f));
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
+
+	
 	
 	gateOut.render(offsetX);
 	if (first_portalOn) {
@@ -429,12 +442,12 @@ void Scene::render()
 			particlesystems[i].render(offsetX);
 		}	
 	}
-
+	gui->render(0);
 	for (int i = 0; i < howmanyButtons; i++) {
 		listOfButtons[i].render(offsetX);
 		
 	}
-
+	
 
 	cursor->render(0);
 	gate.render(offsetX);
@@ -536,15 +549,29 @@ glm::vec2 Scene::getDeadsWins() {
 
 bool Scene::lemArrived()
 {
-	if (wonLem >= requiredLemsToWin && howmanyLem == -1)
-		return true;
-	return false;
+	if(!first_portalOn){
+		if (wonLem >= requiredLemsToWin && howmanyLem == -1)
+			return true;
+		return false;
+	}
+	else {
+		if (wonLem >= requiredLemsToWin && howmanyLem == 0)
+			return true;
+		return false;
+	}
+
 }
 
 bool Scene::lemEnded()
 {
-	if (howmanyLem == -1)
-		return true;
+	if (!first_portalOn) {
+		if (howmanyLem == -1)
+			return true;
+	}
+	else {
+		if (howmanyLem == 1)
+			return true;
+	}
 	return false;
 }
 

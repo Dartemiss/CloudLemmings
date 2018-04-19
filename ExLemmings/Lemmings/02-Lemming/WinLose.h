@@ -33,9 +33,9 @@ private:
 private:
 	int accion;
 	Quad * quad;
-	Texture imgFondo,lemSpritesheet;
+	Texture imgFondo,lemSpritesheet, imgCursor;
 	Number lemN1, lemN0, lemS1, lemS0;
-	TexturedQuad *fondo;
+	TexturedQuad *fondo, *cursor;
 	ShaderProgram simpleProgram, texProgram;
 	float currentTime;
 	glm::mat4 projection;

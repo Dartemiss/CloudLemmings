@@ -25,6 +25,7 @@
     <ClCompile Include="WinLose.cpp" />
     <ClCompile Include="SkinScene.cpp" />
     <ClCompile Include="SceneCredits.cpp" />
+    <ClCompile Include="SceneHelp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimKeyframes.h" />
@@ -52,5 +53,6 @@
     <ClInclude Include="WinLose.h" />
     <ClInclude Include="SkinScene.h" />
     <ClInclude Include="SceneCredits.h" />
+    <ClInclude Include="SceneHelp.h" />
   </ItemGroup>
 </Project>

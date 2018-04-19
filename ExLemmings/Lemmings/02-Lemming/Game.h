@@ -6,6 +6,7 @@
 #include "SceneAux.h"
 #include "SkinScene.h"
 #include "SceneCredits.h"
+#include "SceneHelp.h"
 #include "WinLose.h"
 
 // Game is a singleton (a class with a single instance) that represents our whole application
@@ -61,6 +62,7 @@ private:
 	SceneAux sceneaux;
 	SkinScene sceneskin;
 	SceneCredits scenecredits;
+	SceneHelp scenehelp;
 	WinLose winSc;
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time

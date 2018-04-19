@@ -1,4 +1,4 @@
-#include "SkinScene.h"
+#include "SceneHelp.h"
 #include <iostream>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
@@ -7,13 +7,13 @@
 #include <GL/glut.h>
 
 
-SkinScene::SkinScene()
+SceneHelp::SceneHelp()
 {
 	quad = NULL;
 }
 
 
-SkinScene::~SkinScene()
+SceneHelp::~SceneHelp()
 {
 	if (quad != NULL)
 		delete quad;
@@ -22,65 +22,33 @@ SkinScene::~SkinScene()
 			delete texQuad[i];
 }
 
-
-void SkinScene::init()
+void SceneHelp::init()
 {
 
 	initShaders();
 	currentTime = 0.0f;
 	accion = 0;
-	glm::vec2 geom[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(640.0f, 480.f) };
+	glm::vec2 geom[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(640.0f, 480.0f) };
 	glm::vec2 texCoords[2] = { glm::vec2(0.0f,0.0f),glm::vec2(1.0f,1.0f) };
 	fondo = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
-	imgFondo.loadFromFile("images/skinscene.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	imgFondo.loadFromFile("images/helpscene.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
-	glm::vec2 geom2[2] = { glm::vec2(0.f, 0.f), glm::vec2(32.f, 32.f) };
+
+	glm::vec2 geom2[2] = { glm::vec2(550.f, 430.f), glm::vec2(550 + 32.f, 430 + 32.f) };
 	glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
 	cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
 	imgCursor.loadFromFile("images/auxcursor.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
-
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 }
 
-void SkinScene::update(int deltaTime) {
+void SceneHelp::update(int deltaTime) {
 	currentTime += deltaTime;
-	if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
-		Game::instance().setSpecialKey(GLUT_KEY_LEFT);
-		accion += 1;
-		accion = accion % 2;
-	}
-	else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
-		Game::instance().setSpecialKey(GLUT_KEY_RIGHT);
-		accion += 1;
-		accion = accion % 2;
-	}
-
-	if (accion == 0) {
-
-
-		glm::vec2 geom2[2] = { glm::vec2(210.f, 360.f), glm::vec2(210 + 32.f, 360 + 32.f) };
-		glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
-		cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
-
-	}
-	else if (accion == 1) {
-
-		glm::vec2 geom2[2] = { glm::vec2(450.f, 360.f), glm::vec2(450 + 32.f, 360 + 32.f) };
-		glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
-		cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
-
-
-	}
 
 
 }
 
-int SkinScene::getAction() {
-	return accion;
-}
-
-void SkinScene::render()
+void SceneHelp::render()
 {
 
 
@@ -99,13 +67,12 @@ void SkinScene::render()
 	modelview = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
-	cursor->render(imgCursor);
 
+	cursor->render(imgCursor);
 }
 
 
-
-void SkinScene::initShaders()
+void SceneHelp::initShaders()
 {
 	Shader vShader, fShader;
 
@@ -157,4 +124,3 @@ void SkinScene::initShaders()
 	}
 	texProgram.bindFragmentOutput("outColor");
 }
-

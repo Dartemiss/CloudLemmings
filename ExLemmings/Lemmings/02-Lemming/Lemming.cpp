@@ -13,7 +13,7 @@
 
 enum LemmingAnims
 {
-	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,BLOCKING,DEATH,DIGGING,BASHER, BASHER_LEFT,CLIMBER, ARRIVE_CLIMBER,DEATH_BY_MANHATTAN,
+	WALKING_LEFT, WALKING_RIGHT,OPEN_UMBRELLA,UMBRELLA,OPEN_UMBRELLA_LEFT,UMBRELLA_LEFT,BLOCKING,DEATH,DIGGING,BASHER, BASHER_LEFT,CLIMBER, ARRIVE_CLIMBER,DEATH_BY_MANHATTAN,
 	CLIMBER_LEFT,BUILDER, BUILDER_LEFT,WINNING, PORTAL, SUPER, TRANSFORMATION
 };
 
@@ -50,6 +50,14 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(UMBRELLA, 6);
 		for (int i = 8; i<12; i++)
 			sprite->addKeyframe(UMBRELLA, glm::vec2(float(i) / 16.0f, 0.07142857143f * 2 / 2));
+
+		sprite->setAnimationSpeed(OPEN_UMBRELLA_LEFT, 6);
+		for (int i = 15; i>7; i--)
+			sprite->addKeyframe(OPEN_UMBRELLA_LEFT, glm::vec2(float(i) / 16.0f, 0.5f +  0.07142857143f * 2 / 2));
+
+		sprite->setAnimationSpeed(UMBRELLA_LEFT, 6);
+		for (int i = 7; i>3; i--)
+			sprite->addKeyframe(UMBRELLA_LEFT, glm::vec2(float(i) / 16.0f, 0.5f +  0.07142857143f * 2 / 2));
 
 		sprite->setAnimationSpeed(DEATH, 12);
 		for (int i = 0; i<16; i++)
@@ -112,10 +120,10 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		
 		sprite->setAnimationSpeed(TRANSFORMATION, 6);
 		for (int i = 0; i < 8; i++)
-			sprite->addKeyframe(TRANSFORMATION, glm::vec2(float(i) / 16.0f, 0.07142857143f * 10 / 2));
+			sprite->addKeyframe(TRANSFORMATION, glm::vec2(float(i) / 16.0f, 0.07142857143f * 9 / 2));
 		
 		sprite->setAnimationSpeed(SUPER, 4);
-		sprite->addKeyframe(SUPER, glm::vec2(float(8) / 16.0f, 0.07142857143f * 10 / 2));
+		sprite->addKeyframe(SUPER, glm::vec2(float(8) / 16.0f, 0.07142857143f * 9 / 2));
 
 	//sprite->changeAnimation(WALKING_RIGHT);
 	sprite->changeAnimation(OPEN_UMBRELLA);
@@ -256,6 +264,29 @@ void Lemming::update(int deltaTime)
 		}
 		break;
 
+	case OPEN_STATE_LEFT:
+		fall = collisionFloor(2);
+		if (fall > 0) {
+			sprite->position() += glm::vec2(0, fall);
+		}
+		if (sprite->keyframe() == 7) {
+			sprite->changeAnimation(UMBRELLA_LEFT);
+			state = FALLING_UMB_LEFT_STATE;
+		}
+		break;
+
+	case FALLING_UMB_LEFT_STATE:
+		lemFall = 0;
+		fall = collisionFloor(2);
+		if (fall > 0) {
+			sprite->position() += glm::vec2(0, fall);
+		}
+		else {
+			sprite->changeAnimation(WALKING_LEFT);
+			state = WALKING_LEFT_STATE;
+		}
+		break;
+
 	case DYING_STATE:
 		//Destruir lemming un cop acaba l'animacio
 		//en principi no cal comprovar que estem a l'animacio DEATH
@@ -346,30 +377,43 @@ void Lemming::update(int deltaTime)
 		break;
 
 	case BUILDER_STATE:
-		if(builderStep==14){
-			sprite->changeAnimation(WALKING_RIGHT);
-			state = WALKING_RIGHT_STATE;
-			builderStep = 1;
-			sprite->position() -= glm::vec2(-2, 0);
+		if (!collision()) {
+			if (builderStep == 14) {
+				sprite->changeAnimation(WALKING_RIGHT);
+				state = WALKING_RIGHT_STATE;
+				builderStep = 1;
+				sprite->position() -= glm::vec2(-2, 0);
+			}
+			if (sprite->keyframe() == 7) {
+				sprite->position() -= glm::vec2(-1, 1);
+				++builderStep;
+			}
 		}
-		if (sprite->keyframe() == 7) {
-			sprite->position() -= glm::vec2(-1,1);
-			++builderStep;
+		else {
+			builderStep = 1;
+			sprite->changeAnimation(WALKING_LEFT);
+			state = WALKING_LEFT_STATE;
 		}
 		break;
 
 	case BUILDER_LEFT_STATE:
-		if (builderStep == 14) {
-			sprite->changeAnimation(WALKING_LEFT);
-			state = WALKING_LEFT_STATE;
+		if (!collision()) {
+			if (builderStep == 14) {
+				sprite->changeAnimation(WALKING_LEFT);
+				state = WALKING_LEFT_STATE;
+				builderStep = 1;
+				sprite->position() += glm::vec2(-2, 0);
+
+			}
+			if (sprite->keyframe() == 7) {
+				sprite->position() += glm::vec2(-2, -1);
+				++builderStep;
+
+			}
+		}else {
 			builderStep = 1;
-			sprite->position() += glm::vec2(-2, 0);
-				
-		}
-		if (sprite->keyframe() == 7) {
-			sprite->position() += glm::vec2(-2, -1);
-			++builderStep;
-				
+			sprite->changeAnimation(WALKING_RIGHT);
+			state = WALKING_RIGHT_STATE;
 		}
 		break;
 
@@ -418,8 +462,14 @@ void Lemming::setnLadder(bool b){
 
 void Lemming::change_state(int nstate) {
 	if (nstate == 0) {
-		sprite->changeAnimation(OPEN_UMBRELLA);
-		state = OPEN_STATE;
+		if (right) {
+			sprite->changeAnimation(OPEN_UMBRELLA);
+			state = OPEN_STATE;
+		}
+		else {
+			sprite->changeAnimation(OPEN_UMBRELLA_LEFT);
+			state = OPEN_STATE_LEFT;
+		}
 	}
 	else if (nstate == 8) {
 		sprite->changeAnimation(TRANSFORMATION);

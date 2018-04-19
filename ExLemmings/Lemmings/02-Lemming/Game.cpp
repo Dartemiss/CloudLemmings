@@ -7,7 +7,7 @@ void Game::init()
 {
 	bPlay = true;
 	gstate = 0;
-	numLvl = 4;
+	numLvl = 1;
 	skin = 0;
 	paused = false;
 	fastmode = false;
@@ -17,6 +17,7 @@ void Game::init()
 	sceneaux.init();
 	sceneskin.init();
 	scenecredits.init();
+	scenehelp.init();
 }
 
 bool Game::update(int deltaTime)
@@ -53,20 +54,23 @@ bool Game::update(int deltaTime)
 		break;
 	case 4:
 		scenecredits.update(deltaTime);
+		break;
+	case 5:
+		scenehelp.update(deltaTime);
+		break;
 	}
-
 	return bPlay;
 }
 
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//scene.render();
 	if(gstate == 0)sceneaux.render();
 	else if (gstate == 1)scene.render();
 	else if (gstate == 2)winSc.render();
 	else if (gstate == 3)sceneskin.render();
 	else if (gstate == 4)scenecredits.render();
+	else if (gstate == 5)scenehelp.render();
 }
 
 void Game::setLevel(int lvl) {
@@ -88,11 +92,14 @@ void Game::newAction(int act) {
 	else if (act == 1) {
 		initSc();
 	}
-	else if (act == 3) {
+	else if (act == 2) {
 		gstate = 3;
 	}
-	else if (act == 2) {
+	else if (act == 3) {
 		gstate = 4;
+	}
+	else if (act == 4) {
+		gstate = 5;
 	}
 }
 
@@ -129,7 +136,7 @@ void Game::keyPressed(int key)
 		}
 	}
 	else if (key == '0') {
-		if (gstate != 0){
+		if (gstate != 0) {
 			scene.silence();
 			sceneaux.init();
 			gstate = 0;
@@ -149,7 +156,14 @@ void Game::keyPressed(int key)
 		scene.setXoffset(-1);
 	else if (key == 'd' && gstate == 1)
 		scene.setXoffset(1);
-		
+	else if (key == 13 && gstate == 3) {
+		int act = sceneskin.getAction();
+		setSkin(act);
+		newAction(0);
+	}
+	else if (key == 13 && gstate == 5) {
+		newAction(0);
+	}
 	keys[key] = true;
 }
 

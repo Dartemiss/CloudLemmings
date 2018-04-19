@@ -28,6 +28,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneAux.h" />
     <ClInclude Include="SceneCredits.h" />
+    <ClInclude Include="SceneHelp.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SkinScene.h" />
@@ -54,6 +55,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneAux.cpp" />
     <ClCompile Include="SceneCredits.cpp" />
+    <ClCompile Include="SceneHelp.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SkinScene.cpp" />

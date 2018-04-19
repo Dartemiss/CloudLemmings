@@ -1,18 +1,17 @@
 #pragma once
-
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
 #include "Quad.h"
 #include "TexturedQuad.h"
-class SkinScene
+class SceneHelp
 {
 public:
-	SkinScene();
-	~SkinScene();
+	SceneHelp();
+	~SceneHelp();
+
 	void init();
 	void update(int deltaTime);
 	void render();
-	int getAction();
 
 private:
 	void initShaders();
@@ -24,4 +23,3 @@ private:
 	float currentTime;
 	glm::mat4 projection;
 };
-

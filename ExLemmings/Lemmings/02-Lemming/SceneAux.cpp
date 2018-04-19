@@ -36,10 +36,10 @@ void SceneAux::init()
 	initShaders();
 	currentTime = 0.0f;
 	accion = 0;
-	glm::vec2 geom[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(640.0f, 240.f) };
+	glm::vec2 geom[2] = { glm::vec2(0.0f, 0.0f), glm::vec2(640.0f, 480.f) };
 	glm::vec2 texCoords[2] = {glm::vec2(0.0f,0.0f),glm::vec2(1.0f,1.0f)};
 	fondo = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
-	imgFondo.loadFromFile("images/keepitcutre.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	imgFondo.loadFromFile("images/menureal.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
 
 	glm::vec2 geom3[2] = { glm::vec2(300.f, 200.f), glm::vec2(300 + 160.f, 200 + 60.0f) };
@@ -73,27 +73,27 @@ void SceneAux::update(int deltaTime)
 	//accion = 1;
 	if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)){
 		Game::instance().setSpecialKey(GLUT_KEY_DOWN);
-		accion += 2;
-		accion = accion % 3;
+		accion += 1;
+		accion = accion % 4;
 	}
 	else if (Game::instance().getSpecialKey(GLUT_KEY_UP)){
 		Game::instance().setSpecialKey(GLUT_KEY_UP);
-		accion += 1;
-		accion = accion % 3;
+		accion += 3;
+		accion = accion % 4;
 
 
 	}
 	if (accion == 0){
 
 
-		glm::vec2 geom2[2] = { glm::vec2(280.f, 200.f), glm::vec2(280 + 32.f, 200 + 32.f) };
+		glm::vec2 geom2[2] = { glm::vec2(420.f, 230.f), glm::vec2(420 + 32.f, 230 + 32.f) };
 		glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
 		cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
 
 	}
 	else if (accion == 1){
 
-		glm::vec2 geom2[2] = { glm::vec2(280.f, 360.f), glm::vec2(280 + 32.f, 360 + 32.f) };
+		glm::vec2 geom2[2] = { glm::vec2(420.f, 290.f), glm::vec2(420 + 32.f, 290 + 32.f) };
 		glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
 		cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
 
@@ -101,11 +101,16 @@ void SceneAux::update(int deltaTime)
 	}
 	else if (accion == 2){
 
-
-		glm::vec2 geom2[2] = { glm::vec2(280.f, 280.f), glm::vec2(280 + 32.f, 280 + 32.f) };
+		glm::vec2 geom2[2] = { glm::vec2(420.f, 360.f), glm::vec2(420 + 32.f, 360 + 32.f) };
 		glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
 		cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
 
+
+	}
+	else if (accion == 3) {
+		glm::vec2 geom2[2] = { glm::vec2(420.f, 430.f), glm::vec2(420 + 32.f, 430 + 32.f) };
+		glm::vec2 texCoords2[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
+		cursor = TexturedQuad::createTexturedQuad(geom2, texCoords2, texProgram);
 	}
 
 	if(Game::instance().getKey(13)){
@@ -126,28 +131,7 @@ void SceneAux::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	fondo->render(imgFondo);
 
-	if (accion == 0){
 
-
-		play->render(imgPlaySelected);
-		skin->render(imgSkin);
-		credits->render(imgCredits);
-
-	}
-	else if (accion == 1){
-
-		play->render(imgPlay);
-		skin->render(imgSkin);
-		credits->render(imgCreditsSelected);
-	}
-	else if (accion == 2){
-
-		play->render(imgPlay);
-		skin->render(imgSkinSelected);
-		credits->render(imgCredits);
-
-
-	}
 
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
