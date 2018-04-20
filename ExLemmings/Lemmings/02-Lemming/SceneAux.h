@@ -43,7 +43,7 @@ private:
 
 	//FMod Stuff
 	FMOD::System     *system; //handle to FMOD engine
-	FMOD::Sound      *sound1; //sound that will be loaded and played
+	FMOD::Sound      *sound1, *sound2; //sound that will be loaded and played
 
 };
 

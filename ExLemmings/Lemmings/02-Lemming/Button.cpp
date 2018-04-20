@@ -27,6 +27,9 @@ void Button::init(int whichskill, int x, int y, ShaderProgram &shaderProgram, Te
 	else if (whichskill == 6) {//BUILDER
 		frameX = 12;
 	}
+	else if (whichskill == 7) {//BUILDER
+		frameX = 14;
+	}
 
 	sprite = Sprite::createSprite(glm::ivec2(24, 24), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(2);

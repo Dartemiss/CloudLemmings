@@ -59,7 +59,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		for (int i = 7; i>3; i--)
 			sprite->addKeyframe(UMBRELLA_LEFT, glm::vec2(float(i) / 16.0f, 0.5f +  0.07142857143f * 2 / 2));
 
-		sprite->setAnimationSpeed(DEATH, 12);
+		sprite->setAnimationSpeed(DEATH, 16);
 		for (int i = 0; i<16; i++)
 			sprite->addKeyframe(DEATH, glm::vec2(float(i) / 16.0f, 0.07142857143f * 11 / 2));
 
@@ -135,11 +135,11 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	//FMOD_RESULT p = FMOD::System_Create(&system);;
 	system = &soundsystem;
 	// create an instance of the game engine
-	system->init(32, FMOD_DEFAULT, 0);//No sé si caldrà treure aixo o no, CUIDAO
+	system->init(32, FMOD_DEFAULT, 0);//No sï¿½ si caldrï¿½ treure aixo o no, CUIDAO
 										  //Level Music
 	system->createSound("Sounds/5123.wav", FMOD_DEFAULT, 0, &sound1);
 	system->createSound("Sounds/5309.wav", FMOD_DEFAULT, 0, &sound2);
-
+	system->createSound("Sounds/fireball.wav", FMOD_DEFAULT, 0, &sound3);
 }
 
 void Lemming::update(int deltaTime)
@@ -326,7 +326,7 @@ void Lemming::update(int deltaTime)
 
 	case BASHER_STATE:
 		fall = collisionWall(18);
-		if (fall <= 8) {
+		if (fall <= 10) {
 			sprite->position() += glm::vec2(1, 0);
 		}
 		else {
@@ -334,7 +334,7 @@ void Lemming::update(int deltaTime)
 				sprite->changeAnimation(WALKING_RIGHT);
 				state = WALKING_RIGHT_STATE;
 			}
-			sprite->position() += glm::vec2(1, 0);
+			//sprite->position() += glm::vec2(1, 0);
 		}
 		break;
 
@@ -428,6 +428,7 @@ void Lemming::update(int deltaTime)
 
 	case TRANSFORM_STATE:
 		if (sprite->keyframe() == 7) {
+			system->playSound(sound3, NULL, false, 0);
 			sprite->changeAnimation(SUPER);
 			state = SUPER_STATE;
 				
@@ -435,11 +436,7 @@ void Lemming::update(int deltaTime)
 		break;
 	}
 
-	FMOD_RESULT a = system->update();
-	if (a != FMOD_OK) {
-		int x = 3;
-	}
-	
+	system->update();
 }
 
 glm::vec2 Lemming::getactualPos() {

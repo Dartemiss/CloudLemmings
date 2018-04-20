@@ -24,14 +24,12 @@ void Scene::init(int numlvl,int skin)
 
 	//INIT CLOCK
 	for (int i = 0; i < 5; i++) {
-		number.init(250 + i * 10, 157, simpleTexProgram, spritesheet);
+		number.init(245 + i * 12, 170, simpleTexProgram, spritesheet, 30);
 		clock.push_back(number);
 	}
+	outOfTime = false;
 	clock[2].setValue(10);
-	clock[0].setValue(0);
-	clock[1].setValue(3);
-	clock[3].setValue(3);
-	clock[4].setValue(7);
+
 
 	//INIT GATES
 	spritesheetGates.loadFromFile("images/enter_gate.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -42,6 +40,8 @@ void Scene::init(int numlvl,int skin)
 	spritesheetGatesOut.setMinFilter(GL_NEAREST);
 	spritesheetGatesOut.setMagFilter(GL_NEAREST);
 
+
+	howmanyButtons = 8;
 
 	//LEVELS
 	if (numlvl == 1) {
@@ -55,6 +55,11 @@ void Scene::init(int numlvl,int skin)
 		gateOut.init(glm::vec2(200, 105), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
 
 		limitOffsetDreta = 0;
+
+		clock[0].setValue(0);
+		clock[1].setValue(0);
+		clock[3].setValue(5);
+		clock[4].setValue(0);
 	}
 	else if (numlvl == 2) {
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+72), float(CAMERA_HEIGHT +85 - (120 / 3))) };
@@ -67,6 +72,11 @@ void Scene::init(int numlvl,int skin)
 		gateOut.init(glm::vec2(245, 64), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
 
 		limitOffsetDreta = 0;
+
+		clock[0].setValue(0);
+		clock[1].setValue(0);
+		clock[3].setValue(5);
+		clock[4].setValue(0);
 	}
 	else if (numlvl == 3) {
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+230), float(CAMERA_HEIGHT +85 - (120/3))) };
@@ -80,6 +90,11 @@ void Scene::init(int numlvl,int skin)
 
 		limitOffsetDreta = 150;
 
+		clock[0].setValue(0);
+		clock[1].setValue(1);
+		clock[3].setValue(3);
+		clock[4].setValue(0);
+
 	}
 	else if (numlvl == 4) {
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+487), float(CAMERA_HEIGHT +85 - (120 / 3))) };
@@ -92,6 +107,11 @@ void Scene::init(int numlvl,int skin)
 		gateOut.init(glm::vec2(617, 90), simpleTexProgram, spritesheetGates, spritesheetGatesOut, false);
 
 		limitOffsetDreta = 470;
+
+		clock[0].setValue(0);
+		clock[1].setValue(2);
+		clock[3].setValue(0);
+		clock[4].setValue(0);
 	}
 
 	// taxing 1
@@ -111,11 +131,11 @@ void Scene::init(int numlvl,int skin)
 	buttonBase.loadFromFile("images/button_base.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	buttonBase.setMinFilter(GL_NEAREST);
 	buttonBase.setMagFilter(GL_NEAREST);
-	gui = Sprite::createSprite(glm::ivec2(440, 220), glm::vec2(1.0f, 1.0f), &buttonBase, &simpleTexProgram);
+	gui = Sprite::createSprite(glm::ivec2(460, 260), glm::vec2(1.0f, 1.0f), &buttonBase, &simpleTexProgram);
 	gui->setNumberAnimations(1);
 	gui->addKeyframe(0, glm::vec2(0.0f, 0.0f));
 	gui->changeAnimation(0);
-	gui->setPosition(glm::vec2(-60, 70));
+	gui->setPosition(glm::vec2(-70, 50));
 
 	offsetX = 0;
 
@@ -123,8 +143,9 @@ void Scene::init(int numlvl,int skin)
 	FMOD::System_Create(&system);// create an instance of the game engine
 	system->init(32, FMOD_INIT_NORMAL, 0);// initialise the game engine with 32 channels
 
-	system->createSound("Sounds/song.wav", FMOD_DEFAULT, 0, &sound1);
+	system->createSound("Sounds/cave.mp3", FMOD_DEFAULT, 0, &sound1);
 	sound1->setMode(FMOD_LOOP_NORMAL);
+	system->createSound("Sounds/levelup.mp3", FMOD_DEFAULT, 0, &sound6);
 
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
@@ -145,7 +166,7 @@ void Scene::init(int numlvl,int skin)
 
 	
 	lemmingsInGame = 10;
-	howmanyButtons = 7;
+
 
 	for (int i = 0; i < lemmingsInGame; i++) {
 		lemming.init(glm::vec2(60, 30), simpleTexProgram, spritesheet, *system);
@@ -156,6 +177,9 @@ void Scene::init(int numlvl,int skin)
 	howmanyLem = 0;
 	allCreatedLemm = 0;
 	deathbybomb = 0;
+	bombCountdown = 5;
+	countDown.init(60, 60, simpleTexProgram, spritesheet, 40);
+	countDown.setValue(5);
 	wonLem = 0;
 	deadLem = 0;
 	requiredLemsToWin = 55;
@@ -163,7 +187,7 @@ void Scene::init(int numlvl,int skin)
 
 	//posGate = glm::vec2(200, 122);
 
-
+	//CURSOR
 	cursor = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &simpleTexProgram);
 	cursor->setNumberAnimations(3);
 	cursor->addKeyframe(0, glm::vec2(13 / 16.0f, 0.07142857143f * 2 / 2));
@@ -173,28 +197,113 @@ void Scene::init(int numlvl,int skin)
 	
 	glm::ivec2 pos = glm::ivec2(-20, -20);
 	cursor->setPosition(pos);
-	scloaded = true;
-	startbombing = 0.0f;
 
+
+	//TIME MODE ICON
+	time_mode = Sprite::createSprite(glm::ivec2(25, 25), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &simpleTexProgram);
+	time_mode->setNumberAnimations(3);
+	time_mode->addKeyframe(0, glm::vec2(11 / 16.0f, 0.07142857143f * 13 / 2));
+	time_mode->addKeyframe(1, glm::vec2(12 / 16.0f, 0.07142857143f * 13 / 2));
+	time_mode->addKeyframe(2, glm::vec2(13 / 16.0f, 0.07142857143f * 13 / 2));
+	time_mode->changeAnimation(1);
+
+	glm::ivec2 posTime = glm::ivec2(0, 170);
+	time_mode->setPosition(posTime);
+
+	//PERCENTAGE ICON
+	perc = Sprite::createSprite(glm::ivec2(20, 20), glm::vec2(0.0625, 0.07142857143 / 2.0), &spritesheet, &simpleTexProgram);
+	perc->setNumberAnimations(1);
+	perc->addKeyframe(0, glm::vec2(14 / 16.0f, 0.07142857143f * 13 / 2));
+	perc->changeAnimation(0);
+
+	glm::ivec2 posPerc = glm::ivec2(42 + 3*8, 175);
+	perc->setPosition(posPerc);
+
+
+	//NUMBER OF OUT LEMMINGS
+	for (int i = 0; i < 2; i++) {
+		number.init(20 + i * 8, 175, simpleTexProgram, spritesheet, 20);
+		number.setValue(0);
+		outLem.push_back(number);
+	}
+
+	//NUMBER OF OUT LEMMINGS
+	for (int i = 0; i < 3; i++) {
+		number.init(40 + i * 8, 175, simpleTexProgram, spritesheet, 20);
+		number.setValue(0);
+		inLem.push_back(number);
+	}
+
+	scloaded = true;
 	loadedSkill = -1;
 
-	
+
+	//BUTTONS & BUTTON USES
 	for (int i = 0; i < howmanyButtons; i++) {
-		button.init(i, 50 + i * 30, 171, simpleTexProgram, spritesheet);
+		//button.init(i, 50 + i * 30, 171, simpleTexProgram, spritesheet);
+		button.init(i, 85 + i * 20, 175, simpleTexProgram, spritesheet);
 		listOfButtons.push_back(button);
 		
+		number.init(91 + i * 20, 165, simpleTexProgram, spritesheet, 12);
+		skillUses.push_back(number);
+	}
+
+	if (numlvl == 1) {
+		//8 Botons
+		skillUses[0].setValue(5);
+		skillUses[1].setValue(5);
+		skillUses[2].setValue(5);
+		skillUses[3].setValue(5);
+		skillUses[4].setValue(5);
+		skillUses[5].setValue(5);
+		skillUses[6].setValue(5);
+		skillUses[7].setValue(5);
+	}
+	else if (numlvl == 2) {
+		//8 Botons
+		skillUses[0].setValue(5);
+		skillUses[1].setValue(5);
+		skillUses[2].setValue(5);
+		skillUses[3].setValue(5);
+		skillUses[4].setValue(5);
+		skillUses[5].setValue(5);
+		skillUses[6].setValue(5);
+		skillUses[7].setValue(5);
+	}
+	else if (numlvl == 3) {
+		//8 Botons
+		skillUses[0].setValue(5);
+		skillUses[1].setValue(5);
+		skillUses[2].setValue(5);
+		skillUses[3].setValue(5);
+		skillUses[4].setValue(5);
+		skillUses[5].setValue(5);
+		skillUses[6].setValue(5);
+		skillUses[7].setValue(5);
+	}
+	else if (numlvl == 4) {
+		//8 Botons
+		skillUses[0].setValue(5);
+		skillUses[1].setValue(5);
+		skillUses[2].setValue(5);
+		skillUses[3].setValue(5);
+		skillUses[4].setValue(5);
+		skillUses[5].setValue(5);
+		skillUses[6].setValue(5);
+		skillUses[7].setValue(5);
 	}
 
 	lastSecond = 0.0f;
-
 	settingPortal = false;
 	first_portalOn = second_portalOn = false;	
 	
 
 	system->playSound(sound1, FMOD_DEFAULT, false, 0);
+	system->playSound(sound6, FMOD_DEFAULT, false, 0);
 	system->createSound("Sounds/0477.wav", FMOD_DEFAULT, 0, &sound2);
 	system->createSound("Sounds/5463.wav", FMOD_DEFAULT, 0, &sound3);
 	system->createSound("Sounds/5301.wav", FMOD_DEFAULT, 0, &sound4);
+	system->createSound("Sounds/siren.wav", FMOD_DEFAULT, 0, &sound5);
 }
 
 //unsigned int x = 0;
@@ -220,7 +329,7 @@ void Scene::update(int deltaTime)
 					clock[0].update();
 					if (clock[0].getValue() == 9) {
 						//GAME LOST
-						
+						outOfTime = true;
 					}
 				}
 			}
@@ -228,9 +337,13 @@ void Scene::update(int deltaTime)
 	}
 		
 	if (deathbybomb == 0) { //No es creen mes lemmings un cop s'activa la bomba
-		if (currentTime - lastLemming > 1500.0f && allCreatedLemm < lemmingsInGame) {
+		if (currentTime - lastLemming > 2000.0f && allCreatedLemm < lemmingsInGame) {
 			lastLemming = currentTime;
 			++howmanyLem;
+			outLem[1].setValue(howmanyLem % 10);
+			outLem[1].update();
+			outLem[0].setValue(howmanyLem / 10);
+			outLem[0].update();
 			++allCreatedLemm;
 			system->playSound(sound3, NULL, false, 0);
 
@@ -243,6 +356,18 @@ void Scene::update(int deltaTime)
 			listOflemmings[i].change_state(7);
 			++wonLem;
 			listOflemmings[i].update(deltaTime);
+			inLem[2].setValue((wonLem * 100 / lemmingsInGame) % 10);
+			inLem[2].update();
+			if ((wonLem * 100 / lemmingsInGame) < 100) {
+				inLem[1].setValue(((wonLem * 100 / lemmingsInGame) / 10));
+				inLem[1].update();
+			}
+			else {
+				inLem[1].setValue(0);
+				inLem[1].update();
+			}
+			inLem[0].setValue(((wonLem * 100 / lemmingsInGame) / 100));
+			inLem[0].update();
 		}
 		if (listOflemmings[i].getState() == 1) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
@@ -253,7 +378,7 @@ void Scene::update(int deltaTime)
 		else if (listOflemmings[i].getState() == 2) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
 			if (listOflemmings[i].right) {
-				eraseMaskX(pos.x, pos.y);
+				eraseMaskX(pos.x, pos.y+3);
 				
 			}
 			else {
@@ -298,7 +423,7 @@ void Scene::update(int deltaTime)
 		else if (listOflemmings[i].getState() == 5 && !first_portalOn) {
 			if (!first_portalOn) {
 				glm::vec2 pos = listOflemmings[i].getLemPos();
-				portal_first.init(pos.x-20, pos.y-5, simpleTexProgram, spritesheet);
+				portal_first.init(pos.x-20, pos.y-7, simpleTexProgram, spritesheet);
 				first_portalOn = true;
 			}
 			settingPortal = true;
@@ -317,6 +442,10 @@ void Scene::update(int deltaTime)
 			listOflemmings.erase(listOflemmings.begin() + i);
 			//particlesystems.erase(particlesystems.begin() + i); Necessari?
 			howmanyLem--;
+			outLem[1].setValue(howmanyLem % 10);
+			outLem[1].update();
+			outLem[0].setValue(howmanyLem / 10);
+			outLem[0].update();
 			++deadLem;
 		}
 		else if (deathbybomb == 1 && listOflemmings[i].diedByBomb()) {
@@ -339,7 +468,12 @@ void Scene::update(int deltaTime)
 		}
 		else if (deathbybomb == 1){
 			//Actualitzar compte enrere:
-
+			int secFraction = (5 - bombCountdown) * 1000;
+			if ((currentTime - timeBombStarted - secFraction) > 1000 && bombCountdown > 0){
+				--bombCountdown;
+				countDown.diminish();
+				countDown.update();
+			}
 			//Un cop passat compte enrere:
 			if (listOflemmings[i].getState() != 52 && currentTime - timeBombStarted > 5000) {
 				listOflemmings[i].change_state(52);
@@ -353,6 +487,10 @@ void Scene::update(int deltaTime)
 			listOflemmings.erase(listOflemmings.begin() + i);
 			particlesystems.erase(particlesystems.begin() + i);
 			howmanyLem--;
+			outLem[1].setValue(howmanyLem % 10);
+			outLem[1].update();
+			outLem[0].setValue(howmanyLem / 10);
+			outLem[0].update();
 		}
 		else if (first_portalOn && second_portalOn) {
 			glm::ivec2 pos = listOflemmings[i].getLemPos();
@@ -367,6 +505,7 @@ void Scene::update(int deltaTime)
 
 		if (howmanyLem == 0 && !first_portalOn)
 			howmanyLem = -1;
+
 
 	}
 
@@ -396,10 +535,7 @@ void Scene::update(int deltaTime)
 
 
 
-	FMOD_RESULT a = system->update(); //update FMOD, need to call this once per frame to keep the sound engine running
-	if (a != FMOD_OK) {
-		int x = 3;
-	}
+	system->update(); //update FMOD, need to call this once per frame to keep the sound engine running
 
 }
 
@@ -449,6 +585,8 @@ void Scene::render()
 	}
 	
 
+	time_mode->render(0);
+	perc->render(0);
 	cursor->render(0);
 	gate.render(offsetX);
 
@@ -465,6 +603,21 @@ void Scene::render()
 		clock[i].render();
 	}
 
+	for (int i = 0; i < 3; i++) {
+		inLem[i].render();
+	}
+
+	for (int i = 0; i < 2; i++) {
+		outLem[i].render();
+	}
+
+	for (int i = 0; i < howmanyButtons; i++) {
+		skillUses[i].render();
+	}
+
+	if (deathbybomb != 0) {
+		countDown.render();
+	}
 }
 
 
@@ -509,7 +662,10 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 						}
 					}
 					else {
-						give_skill(mouseOffX, mouseY, loadedSkill);
+						if (loadedSkill == 7) {
+							give_skill(mouseOffX, mouseY, 8);
+						}
+						else give_skill(mouseOffX, mouseY, loadedSkill);
 					}
 				}
 				int skill = loadSkill(mouseOffX, mouseY);
@@ -549,6 +705,10 @@ glm::vec2 Scene::getDeadsWins() {
 
 bool Scene::lemArrived()
 {
+	if (outOfTime) {
+		if (wonLem >= requiredLemsToWin) return true;
+	}
+
 	if(!first_portalOn){
 		if (wonLem >= requiredLemsToWin && howmanyLem == -1)
 			return true;
@@ -564,6 +724,10 @@ bool Scene::lemArrived()
 
 bool Scene::lemEnded()
 {
+	if (outOfTime) {
+		if (wonLem < requiredLemsToWin) return true;
+	}
+
 	if (!first_portalOn) {
 		if (howmanyLem == -1)
 			return true;
@@ -584,25 +748,29 @@ void Scene::digging(int lem) {
 
 void Scene::give_skill(int mouseX, int mouseY, int skill) {
 	int posX, posY;
+	if (skillUses[skill].getValue() > 0) {
+		// Transform from mouse coordinates to map coordinates
+		//   The map is enlarged 3 times and displaced 120 pixels
+		posX = mouseX / 3;
+		posY = mouseY / 3;
 
-	// Transform from mouse coordinates to map coordinates
-	//   The map is enlarged 3 times and displaced 120 pixels
-	posX = mouseX / 3;
-	posY = mouseY / 3;
+		glm::ivec2 posMouse = glm::ivec2(posX, posY);
+		bool justOneLemming = false;
+		for (int i = 0; i < howmanyLem && !justOneLemming; i++) {
+			glm::ivec2 pos = listOflemmings[i].getLemPos();
+			bool xx = (pos.x + 5 < posMouse.x) && (pos.x + 15 > posMouse.x);
+			bool yy = (pos.y - 12 < posMouse.y) && (pos.y + 12 > posMouse.y);
+			//xx = yy = true;
+			if (xx && yy) {
 
-	glm::ivec2 posMouse = glm::ivec2(posX, posY);
-	bool justOneLemming = false;
-	for (int i = 0; i < howmanyLem && !justOneLemming; i++) {
-		glm::ivec2 pos = listOflemmings[i].getLemPos();
-		bool xx = (pos.x + 5 < posMouse.x) && (pos.x + 15 > posMouse.x);
-		bool yy = (pos.y - 12 < posMouse.y) && (pos.y + 12 > posMouse.y);
-		//xx = yy = true;
-		if(xx && yy) {
-			if (listOflemmings[i].getState() == 3) { //If it was blocking, erase shield
-				unApplyMask(pos.x, pos.y);
+				if (listOflemmings[i].getState() == 3) { //If it was blocking, erase shield
+					unApplyMask(pos.x, pos.y);
+				}
+				listOflemmings[i].change_state(skill);
+				skillUses[skill].diminish();
+				skillUses[skill].update();
+				justOneLemming = true;
 			}
-			listOflemmings[i].change_state(skill);
-			justOneLemming = true;
 		}
 	}
 }
@@ -841,9 +1009,9 @@ void Scene::applyMaskLadderLeft(int ladX, int ladY, int step) {
 
 void Scene::bombed()
 {
-	if (!deathbybomb) {
+	if (!deathbybomb && allCreatedLemm > 0) {
 		timeBombStarted = currentTime;
-		
+		system->playSound(sound5, FMOD_DEFAULT, false, 0);
 		deathbybomb = 1;
 		
 	}
@@ -863,6 +1031,11 @@ void Scene::silence() {
 		listOflemmings[i].silence();
 	}
 	system->release();
+}
+
+
+void Scene::changeTimemode(int mode) {
+	time_mode->changeAnimation(mode);
 }
 
 void Scene::initShaders()

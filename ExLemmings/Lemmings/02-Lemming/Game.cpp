@@ -41,9 +41,18 @@ bool Game::update(int deltaTime)
 			winSc.init(aux.y, aux.x, false);
 			gstate = 2;
 		}
-		if (!paused) {
-			if (fastmode) scene.update(deltaTime * 2);
-			else scene.update(deltaTime);
+		if (paused) {
+			scene.changeTimemode(0);
+		}
+		else {
+			if (fastmode) {
+				scene.changeTimemode(2);
+				scene.update(deltaTime * 2);
+			}
+			else {
+				scene.changeTimemode(1);
+				scene.update(deltaTime);
+			}
 		}
 		break;
 	case 2:
@@ -90,15 +99,30 @@ void Game::newAction(int act) {
 		gstate = 0;
 	}
 	else if (act == 1) {
+		if (gstate == 0) {
+			sceneaux.silence();
+		}
+		else if (gstate == 2) {
+			scene.silence();
+		}
 		initSc();
 	}
 	else if (act == 2) {
+		if (gstate == 0) {
+			sceneaux.silence();
+		}
 		gstate = 3;
 	}
 	else if (act == 3) {
+		if (gstate == 0) {
+			sceneaux.silence();
+		}
 		gstate = 4;
 	}
 	else if (act == 4) {
+		if (gstate == 0) {
+			sceneaux.silence();
+		}
 		gstate = 5;
 	}
 }
@@ -142,15 +166,15 @@ void Game::keyPressed(int key)
 			gstate = 0;
 		}
 	}
-	else if (key == 112 && !paused)
+	else if (gstate == 1 && key == 112 && !paused)
 		paused = true;
-	else if (key == 112 && paused)
+	else if (gstate == 1 && key == 112 && paused)
 		paused = false;
-	else if (key == 102 && !fastmode)
+	else if (gstate == 1 && key == 102 && !fastmode)
 		fastmode = true;
-	else if (key == 102 && fastmode)
+	else if (gstate == 1 && key == 102 && fastmode)
 		fastmode = false;
-	else if (key == 113)
+	else if (gstate == 1 && key == 113)
 		scene.bombed();
 	else if (key == 'a' && gstate == 1)
 		scene.setXoffset(-1);
@@ -195,6 +219,7 @@ void Game::mousePress(int button)
 	{
 		bLeftMouse = true;
 		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse, bMiddleMouse);
+		bLeftMouse = false;
 	}
 	else if(button == GLUT_RIGHT_BUTTON)
 	{

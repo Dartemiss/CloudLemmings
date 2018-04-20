@@ -43,7 +43,7 @@ public:
 	glm::vec2 getDeadsWins();
 	void bombed();
 	void setXoffset(int x);
-
+	void changeTimemode(int mode);
 	void silence();
 private:
 	void initShaders();
@@ -58,6 +58,7 @@ private:
 	void eraseMaskBOOM(int lemX, int lemY);
 	bool isOnLemming(int mouseX, int mouseY);
 	int loadSkill(int mouseX, int mouseY);
+
 
 private:
 	int lemmingsInGame;
@@ -83,17 +84,19 @@ private:
 	glm::vec2 posGate;
 	vector<Ladder> listOfLadders;
 	Texture spritesheet,spritesheetLadder,spritesheetGates,spritesheetGatesOut,buttonBase;
-	Sprite * sprite,* cursor,* gui;
+	Sprite *sprite,*gui;
 	ParticleSystem partSys;
 	vector<ParticleSystem> particlesystems;
 	float lastCurrentTime;
 	bool onesec;
+	Sprite *cursor, *time_mode, *perc;
+	int time_modeVal;
 	bool scloaded = false;
-	float startbombing;
 	int loadedSkill;
 	int howmanyButtons;
 	Button button;
 	vector<Button> listOfButtons;
+	vector<Number> skillUses;
 	bool settingPortal;
 	Portal portal_first, portal_second;
 	bool first_portalOn, second_portalOn;
@@ -101,14 +104,19 @@ private:
 	int offsetX;
 	float timeBombStarted;
 	Number number;
+	Number countDown;
 	vector<Number> clock;
+	vector<Number> outLem;
+	vector<Number> inLem;
 	float lastSecond;
 	int limitOffsetDreta;
 	int requiredLemsToWin;
+	int bombCountdown;
+	bool outOfTime;
 
 	//FMod Stuff
 	FMOD::System     *system; //handle to FMOD engine
-	FMOD::Sound      *sound1, *sound2, *sound3, *sound4; //sound that will be loaded and played
+	FMOD::Sound      *sound1, *sound2, *sound3, *sound4, *sound5, *sound6; //sound that will be loaded and played
 };
 
 

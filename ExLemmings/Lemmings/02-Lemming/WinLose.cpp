@@ -53,8 +53,10 @@ void WinLose::init(int numNeed, int numSaved, bool win)
 	won = win;
 
 	if (numNeed >= 10) {
-		lemN0.init(520, 335, texProgram, lemSpritesheet);
-		lemN1.init(512, 335, texProgram, lemSpritesheet);
+		//lemN0.init(362, 154, texProgram, lemSpritesheet, 20);
+		//lemN1.init(342, 154, texProgram, lemSpritesheet, 20);
+		lemN0.init(520, 335, texProgram, lemSpritesheet, 20);
+		lemN1.init(512, 335, texProgram, lemSpritesheet, 20);
 
 		int der = numNeed % 10;
 		int izq = int(numNeed / 10);
@@ -62,13 +64,16 @@ void WinLose::init(int numNeed, int numSaved, bool win)
 		lemN1.setValue(izq);
 	}
 	else {
-		lemN0.init(520, 335, texProgram, lemSpritesheet);
+		//lemN0.init(362, 154, texProgram, lemSpritesheet, 20);
+		lemN0.init(520, 335, texProgram, lemSpritesheet, 20);
 		lemN0.setValue(numNeed);
 	}
 
 	if (numSaved >= 10) {
-		lemS0.init(245, 335, texProgram, lemSpritesheet);
-		lemS1.init(235, 335, texProgram, lemSpritesheet);
+		//lemS0.init(362, 284, texProgram, lemSpritesheet, 20);
+		//lemS1.init(342, 284, texProgram, lemSpritesheet, 20);
+		lemS0.init(245, 335, texProgram, lemSpritesheet, 20);
+		lemS1.init(235, 335, texProgram, lemSpritesheet, 20);
 
 		int der = numSaved % 10;
 		int izq = int(numSaved / 10);
@@ -76,7 +81,8 @@ void WinLose::init(int numNeed, int numSaved, bool win)
 		lemS1.setValue(izq);
 	}
 	else {
-		lemS0.init(235, 335, texProgram, lemSpritesheet);
+		//lemS0.init(362, 284, texProgram, lemSpritesheet, 20);
+		lemS0.init(235, 335, texProgram, lemSpritesheet, 20);
 		lemS0.setValue(numSaved);
 	}
 

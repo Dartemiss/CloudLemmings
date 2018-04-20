@@ -116,6 +116,8 @@ void SceneAux::update(int deltaTime)
 	if(Game::instance().getKey(13)){
 		Game::instance().newAction(accion+1);
 	}
+
+	system->update();
 }
 
 void SceneAux::render()
