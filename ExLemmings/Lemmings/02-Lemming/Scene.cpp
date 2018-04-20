@@ -60,6 +60,9 @@ void Scene::init(int numlvl,int skin)
 		clock[1].setValue(0);
 		clock[3].setValue(5);
 		clock[4].setValue(0);
+
+		lemmingsInGame = 10;
+		requiredLemsToWin = 2;
 	}
 	else if (numlvl == 2) {
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+72), float(CAMERA_HEIGHT +85 - (120 / 3))) };
@@ -77,6 +80,9 @@ void Scene::init(int numlvl,int skin)
 		clock[1].setValue(0);
 		clock[3].setValue(5);
 		clock[4].setValue(0);
+
+		lemmingsInGame = 10;
+		requiredLemsToWin = 3;
 	}
 	else if (numlvl == 3) {
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+230), float(CAMERA_HEIGHT +85 - (120/3))) };
@@ -95,6 +101,9 @@ void Scene::init(int numlvl,int skin)
 		clock[3].setValue(3);
 		clock[4].setValue(0);
 
+		lemmingsInGame = 10;
+		requiredLemsToWin = 5;
+
 	}
 	else if (numlvl == 4) {
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH+487), float(CAMERA_HEIGHT +85 - (120 / 3))) };
@@ -112,6 +121,9 @@ void Scene::init(int numlvl,int skin)
 		clock[1].setValue(2);
 		clock[3].setValue(0);
 		clock[4].setValue(0);
+
+		lemmingsInGame = 10;
+		requiredLemsToWin = 8;
 	}
 
 	// taxing 1
@@ -164,8 +176,6 @@ void Scene::init(int numlvl,int skin)
 	spritesheetLadder.setMagFilter(GL_NEAREST);
 	
 
-	
-	lemmingsInGame = 10;
 
 
 	for (int i = 0; i < lemmingsInGame; i++) {
@@ -182,7 +192,7 @@ void Scene::init(int numlvl,int skin)
 	countDown.setValue(5);
 	wonLem = 0;
 	deadLem = 0;
-	requiredLemsToWin = 55;
+
 	//ladder.init(glm::vec2(120,130), simpleTexProgram, spritesheetLadder);
 
 	//posGate = glm::vec2(200, 122);
@@ -578,25 +588,25 @@ void Scene::render()
 			particlesystems[i].render(offsetX);
 		}	
 	}
+	
+	gate.render(offsetX);
+	for (int i = 0; i < listOfLadders.size(); i++) {
+		listOfLadders[i].render(offsetX);
+	}
+
 	gui->render(0);
 	for (int i = 0; i < howmanyButtons; i++) {
 		listOfButtons[i].render(offsetX);
-		
-	}
-	
 
-	time_mode->render(0);
+	}
+
 	perc->render(0);
+	time_mode->render(0);
 	cursor->render(0);
-	gate.render(offsetX);
 
 	for (int i = 0; i < listOfkames.size(); i++) {
 		listOfkames[i].render(offsetX);
 		
-	}
-
-	for (int i = 0; i < listOfLadders.size(); i++) {
-		listOfLadders[i].render(offsetX);
 	}
 
 	for (int i = 0; i < 5; i++) {
@@ -715,7 +725,7 @@ bool Scene::lemArrived()
 		return false;
 	}
 	else {
-		if (wonLem >= requiredLemsToWin && howmanyLem == 0)
+		if (wonLem >= requiredLemsToWin && howmanyLem == 1)
 			return true;
 		return false;
 	}
@@ -748,7 +758,11 @@ void Scene::digging(int lem) {
 
 void Scene::give_skill(int mouseX, int mouseY, int skill) {
 	int posX, posY;
-	if (skillUses[skill].getValue() > 0) {
+	int skill_access = skill;
+	if (skill == 8) {
+		skill_access = 7;
+	}
+	if (skillUses[skill_access].getValue() > 0) {
 		// Transform from mouse coordinates to map coordinates
 		//   The map is enlarged 3 times and displaced 120 pixels
 		posX = mouseX / 3;
@@ -767,8 +781,8 @@ void Scene::give_skill(int mouseX, int mouseY, int skill) {
 					unApplyMask(pos.x, pos.y);
 				}
 				listOflemmings[i].change_state(skill);
-				skillUses[skill].diminish();
-				skillUses[skill].update();
+				skillUses[skill_access].diminish();
+				skillUses[skill_access].update();
 				justOneLemming = true;
 			}
 		}
